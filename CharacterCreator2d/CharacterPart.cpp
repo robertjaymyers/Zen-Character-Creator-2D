@@ -10,14 +10,7 @@ CharacterPart::CharacterPart(QGraphicsItem* parent)
 
 void CharacterPart::init(PartType partType)
 {
-	// String passed to fileGetAssets function should correspond to a subdirectory
-	// found under Assets in the application directory path (e.g. AppPath/Assets/Head)
-	if (partType == PartType::HEAD)
-		this->populatePartsList(fileGetAssets("Head"));
-	else if (partType == PartType::CHEST)
-		this->populatePartsList(fileGetAssets("Chest"));
-	else if (partType == PartType::BOTTOM)
-		this->populatePartsList(fileGetAssets("Bottom"));
+	this->populatePartsList(fileGetAssets(PartTypeMap.at(partType)));
 }
 
 void CharacterPart::moveLeftInDisplay()

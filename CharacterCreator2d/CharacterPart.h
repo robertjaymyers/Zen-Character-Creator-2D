@@ -7,6 +7,19 @@
 
 enum class PartType { HEAD, CHEST, BOTTOM, NONE };
 
+// Companion string should correspond to a subdirectory
+// found under Assets in the application directory path (e.g. AppPath/Assets/Head)
+// We use this path to find assets from file for a particular character part.
+// This map should only be modified along with the PartType enum class when adding or removing
+// character parts to the design of the program as a whole.
+// (ex: removing BOTTOM and adding PANTS and SHOES)
+const std::map<PartType, QString> PartTypeMap = 
+{
+	{PartType::HEAD, "Head"},
+	{PartType::CHEST, "Chest"},
+	{PartType::BOTTOM, "Bottom"}
+};
+
 class CharacterPart : public QGraphicsPixmapItem
 {
 public:
