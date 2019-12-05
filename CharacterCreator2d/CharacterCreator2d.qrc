@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/CharacterCreator2d">
+        <file>Resources/button-left-pencil-sketch.png</file>
+        <file>Resources/button-left-pencil-sketch-hover.png</file>
+        <file>Resources/button-left-pencil-sketch-hover-pressed.png</file>
+        <file>Resources/button-right-pencil-sketch.png</file>
+        <file>Resources/button-right-pencil-sketch-hover.png</file>
+        <file>Resources/button-right-pencil-sketch-hover-pressed.png</file>
+    </qresource>
+</RCC>
