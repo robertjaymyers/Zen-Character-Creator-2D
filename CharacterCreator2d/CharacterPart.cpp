@@ -10,7 +10,9 @@ CharacterPart::CharacterPart(QGraphicsItem* parent)
 
 void CharacterPart::init(PartType partType)
 {
-	this->populatePartsList(fileGetAssets(PartTypeMap.at(partType)));
+	partTypeUnique = partType;
+	partTypeAssetStr = partTypeMap.at(partType);
+	this->populatePartsList(fileGetAssets(partTypeMap.at(partType)));
 }
 
 void CharacterPart::moveLeftInDisplay()
@@ -70,6 +72,11 @@ QString CharacterPart::getUrlOfDisplayed()
 	// by contents of pair, to avoid messing up pairing of filepaths to Pixmaps.
 	// We need them to match, so that creations can be saved/loaded by asset filepath.
 	return partsList[currentPartsListIndex].second;
+}
+
+QString CharacterPart::getPartTypeAssetStr()
+{
+	return partTypeAssetStr;
 }
 
 // private:

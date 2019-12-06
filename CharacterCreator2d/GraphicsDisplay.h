@@ -27,8 +27,8 @@ protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-	QString fileDirLastSaved;
-	QString fileDirLastOpened;
+	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
+	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
 	bool characterModified = false;
 
 	std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
@@ -42,6 +42,7 @@ private:
 	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>();
 	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>();
 	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>();
+	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>();
 	std::vector<QPixmap> characterHeadList;
 	std::vector<QPixmap> characterChestList;
 	std::vector<QPixmap> characterBottomList;
@@ -51,9 +52,11 @@ private:
 	std::unique_ptr<PartSwapButton> characterHeadBtnLeft = std::make_unique<PartSwapButton>(this, BtnFacing::LEFT);
 	std::unique_ptr<PartSwapButton> characterChestBtnLeft = std::make_unique<PartSwapButton>(this, BtnFacing::LEFT);
 	std::unique_ptr<PartSwapButton> characterBottomBtnLeft = std::make_unique<PartSwapButton>(this, BtnFacing::LEFT);
+	std::unique_ptr<PartSwapButton> characterFeetBtnLeft = std::make_unique<PartSwapButton>(this, BtnFacing::LEFT);
 	std::unique_ptr<PartSwapButton> characterHeadBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
 	std::unique_ptr<PartSwapButton> characterChestBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
 	std::unique_ptr<PartSwapButton> characterBottomBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
+	std::unique_ptr<PartSwapButton> characterFeetBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
 
 	// temporary keybind for testing export:
 	//std::unique_ptr<QShortcut> shortcutExport = std::make_unique<QShortcut>(QKeySequence(tr("E", "Export Creation")), this);

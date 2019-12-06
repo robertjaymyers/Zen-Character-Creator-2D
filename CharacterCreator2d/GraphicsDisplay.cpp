@@ -25,17 +25,21 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	layout.get()->addWidget(characterHeadBtnLeft.get(), 0, 0, Qt::AlignLeft);
 	layout.get()->addWidget(characterChestBtnLeft.get(), 1, 0, Qt::AlignLeft);
 	layout.get()->addWidget(characterBottomBtnLeft.get(), 2, 0, Qt::AlignLeft);
+	layout.get()->addWidget(characterFeetBtnLeft.get(), 3, 0, Qt::AlignLeft);
 	layout.get()->addWidget(characterHeadBtnRight.get(), 0, 1, Qt::AlignRight);
 	layout.get()->addWidget(characterChestBtnRight.get(), 1, 1, Qt::AlignRight);
 	layout.get()->addWidget(characterBottomBtnRight.get(), 2, 1, Qt::AlignRight);
+	layout.get()->addWidget(characterFeetBtnRight.get(), 3, 1, Qt::AlignRight);
 
 	scene.get()->addItem(characterHead.get());
 	scene.get()->addItem(characterChest.get());
 	scene.get()->addItem(characterBottom.get());
+	scene.get()->addItem(characterFeet.get());
 
 	characterHead.get()->init(PartType::HEAD);
 	characterChest.get()->init(PartType::CHEST);
 	characterBottom.get()->init(PartType::BOTTOM);
+	characterFeet.get()->init(PartType::FEET);
 
 	connect(characterHeadBtnLeft.get(), &QPushButton::clicked, this, [=]() {
 		characterHead.get()->moveLeftInDisplay();
@@ -59,6 +63,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	});
 	connect(characterBottomBtnRight.get(), &QPushButton::clicked, this, [=]() {
 		characterBottom.get()->moveRightInDisplay();
+		characterModified = true;
+	});
+	connect(characterFeetBtnLeft.get(), &QPushButton::clicked, this, [=]() {
+		characterFeet.get()->moveLeftInDisplay();
+		characterModified = true;
+	});
+	connect(characterFeetBtnRight.get(), &QPushButton::clicked, this, [=]() {
+		characterFeet.get()->moveRightInDisplay();
 		characterModified = true;
 	});
 
@@ -187,6 +199,11 @@ void GraphicsDisplay::fileOpen()
 					if (!characterBottom.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", "", line)))
 						partsMissing = true;
 				}
+				else if (line.contains("Feet="))
+				{
+					if (!characterFeet.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", "", line)))
+						partsMissing = true;
+				}
 			}
 			fileRead.close();
 			characterModified = false;
@@ -211,6 +228,7 @@ bool GraphicsDisplay::fileSave()
 			qStream << "Head=" + characterHead.get()->getUrlOfDisplayed() + "\r\n";
 			qStream << "Chest=" + characterChest.get()->getUrlOfDisplayed() + "\r\n";
 			qStream << "Bottom=" + characterBottom.get()->getUrlOfDisplayed();
+			qStream << "Feet=" + characterFeet.get()->getUrlOfDisplayed();
 			fileWrite.close();
 			fileDirLastSaved = fpath;
 			return true;

@@ -3,9 +3,10 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QCoreApplication>
+#include <QDebug>
 #include <vector>
 
-enum class PartType { HEAD, CHEST, BOTTOM, NONE };
+enum class PartType { HEAD, CHEST, BOTTOM, FEET, NONE };
 
 // Companion string should correspond to a subdirectory
 // found under Assets in the application directory path (e.g. AppPath/Assets/Head)
@@ -13,11 +14,12 @@ enum class PartType { HEAD, CHEST, BOTTOM, NONE };
 // This map should only be modified along with the PartType enum class when adding or removing
 // character parts to the design of the program as a whole.
 // (ex: removing BOTTOM and adding PANTS and SHOES)
-const std::map<PartType, QString> PartTypeMap = 
+const std::map<PartType, QString> partTypeMap = 
 {
 	{PartType::HEAD, "Head"},
 	{PartType::CHEST, "Chest"},
-	{PartType::BOTTOM, "Bottom"}
+	{PartType::BOTTOM, "Bottom"},
+	{PartType::FEET, "Feet"},
 };
 
 class CharacterPart : public QGraphicsPixmapItem
@@ -34,11 +36,14 @@ public:
 	bool setUrlAsCurrent(const QString url);
 	void setCurrentToDefault();
 	QString getUrlOfDisplayed();
+	QString getPartTypeAssetStr();
 
 private:
 	std::vector<std::pair<QPixmap, QString>> partsList;
 	int currentPartsListIndex = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
+	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
+	QString partTypeAssetStr; // The corresponding asset path string for this unique part.
 
 	void populatePartsList(QStringList newParts);
 	QStringList fileGetAssets(const QString subPath);
