@@ -206,6 +206,7 @@ void GraphicsDisplay::fileOpen()
 				}
 			}
 			fileRead.close();
+			fileDirLastOpened = QFileInfo(filename).path();
 			characterModified = false;
 			if (partsMissing)
 				QMessageBox::information(this->parentWidget(), tr("Parts Missing"), tr("One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail."));
@@ -230,7 +231,7 @@ bool GraphicsDisplay::fileSave()
 			qStream << "Bottom=" + characterBottom.get()->getUrlOfDisplayed() + "\r\n";
 			qStream << "Feet=" + characterFeet.get()->getUrlOfDisplayed();
 			fileWrite.close();
-			fileDirLastSaved = fpath;
+			fileDirLastSaved = QFileInfo(fpath).path();
 			return true;
 		}
 	}
@@ -239,7 +240,7 @@ bool GraphicsDisplay::fileSave()
 
 void GraphicsDisplay::fileExportCombination()
 {
-	QFileDialog dialog(this, tr("Save As"), fileDirLastSaved, tr("Image Files (*.png)"));
+	QFileDialog dialog(this, tr("Save As"), fileDirLastExported, tr("Image Files (*.png)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	if (dialog.exec() == QFileDialog::Accepted)
@@ -252,6 +253,6 @@ void GraphicsDisplay::fileExportCombination()
 		QPainter painter(&composite);
 		scene->render(&painter);
 		composite.save(&fileWrite, "PNG");
-		fileDirLastSaved = selectedFile;
+		fileDirLastExported = QFileInfo(selectedFile).path();
 	}
 }

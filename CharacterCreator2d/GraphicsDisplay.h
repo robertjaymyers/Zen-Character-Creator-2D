@@ -27,8 +27,9 @@ protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
+	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
+	QString fileDirLastExported = QCoreApplication::applicationDirPath() + "/Exports";
 	bool characterModified = false;
 
 	std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
