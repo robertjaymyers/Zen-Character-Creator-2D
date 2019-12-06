@@ -59,9 +59,6 @@ private:
 	std::unique_ptr<PartSwapButton> characterBottomBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
 	std::unique_ptr<PartSwapButton> characterFeetBtnRight = std::make_unique<PartSwapButton>(this, BtnFacing::RIGHT);
 
-	// temporary keybind for testing export:
-	//std::unique_ptr<QShortcut> shortcutExport = std::make_unique<QShortcut>(QKeySequence(tr("E", "Export Creation")), this);
-
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	void fileNew();
 	void fileOpen();

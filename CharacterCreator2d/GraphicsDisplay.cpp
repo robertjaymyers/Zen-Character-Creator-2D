@@ -3,9 +3,6 @@
 GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	: QGraphicsView(parent)
 {
-	/*actionFileOpen.get()->setShortcut(QKeySequence(tr("Ctrl+O", "Open Character")));
-	actionFileSave.get()->setShortcut(QKeySequence(tr("Ctrl+S", "Save Character")));
-	actionFileExport.get()->setShortcut(QKeySequence(Qt::Key_E));*/
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
 	contextMenu.get()->addAction(actionFileSave.get());
@@ -15,11 +12,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	scene.get()->setParent(this->parent());
 
 	this->setStyleSheet("border: none; background-color: #FFFFFF");
-	this->setMouseTracking(true);
 	this->setFixedSize(600, 600);
 	this->setLayout(layout.get());
-	//this->setAttribute(Qt::WA_TransparentForMouseEvents);
-	//scene.get()->setSceneRect(QRectF(QPoint(0, 0), QSize(600, 600)));
 
 	layout.get()->setMargin(50);
 	layout.get()->addWidget(characterHeadBtnLeft.get(), 0, 0, Qt::AlignLeft);
@@ -88,7 +82,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			characterModified = false;
 	});
 	connect(actionFileExport.get(), &QAction::triggered, this, &GraphicsDisplay::fileExportCombination);
-	//connect(shortcutExport.get(), &QShortcut::activated, this, &GraphicsDisplay::fileExportCombination);
 }
 
 // public:
