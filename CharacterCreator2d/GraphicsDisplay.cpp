@@ -227,7 +227,7 @@ bool GraphicsDisplay::fileSave()
 			QTextStream qStream(&fileWrite);
 			qStream << "Head=" + characterHead.get()->getUrlOfDisplayed() + "\r\n";
 			qStream << "Chest=" + characterChest.get()->getUrlOfDisplayed() + "\r\n";
-			qStream << "Bottom=" + characterBottom.get()->getUrlOfDisplayed();
+			qStream << "Bottom=" + characterBottom.get()->getUrlOfDisplayed() + "\r\n";
 			qStream << "Feet=" + characterFeet.get()->getUrlOfDisplayed();
 			fileWrite.close();
 			fileDirLastSaved = fpath;
