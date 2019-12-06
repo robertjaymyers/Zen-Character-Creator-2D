@@ -160,6 +160,7 @@ void GraphicsDisplay::fileNew()
 	characterHead.get()->setCurrentToDefault();
 	characterChest.get()->setCurrentToDefault();
 	characterBottom.get()->setCurrentToDefault();
+	characterFeet.get()->setCurrentToDefault();
 	characterModified = false;
 }
 
