@@ -110,14 +110,6 @@ void CharacterPart::setColorToScene(const QColor &newColor, ColorSet colorSet)
 	}
 	else if (colorSet == ColorSet::MULTIPLY)
 	{
-		// We can make all clothes have a white "fill" color normally
-		// (through image editing, not through code)
-		// With them all having white "fill" and black outline,
-		// multiply should change their "fill" color accurately and completely,
-		// without affecting the outline.
-		// Another option would be to store 2 versions of a given piece of clothing:
-		// one regular, one with white fill
-		// then the one with white fill gets called on for the overlay effect
 		partsList[currentPartsListIndex].currentColor = newColor;
 		QPixmap newImage = partsList[currentPartsListIndex].img;
 		QPixmap mask(newImage);
@@ -154,7 +146,6 @@ void CharacterPart::populatePartsList(QStringList newParts, const QColor color, 
 		newImgParts.defaultColor = color;
 
 		partsList.push_back(newImgParts);
-		//partsList.push_back(std::pair<QPixmap, QString>(QPixmap(part), QFileInfo(part).fileName()));
 	}
 	if (!partsList.empty())
 	{
@@ -166,6 +157,14 @@ void CharacterPart::populatePartsList(QStringList newParts, const QColor color, 
 			}
 			else if (colorSet == ColorSet::MULTIPLY)
 			{
+				// We can make all clothes have a white "fill" color normally
+				// (in asset creation, not as part of this program)
+				// With them all having white "fill" and black outline,
+				// multiply should change their "fill" color accurately and completely,
+				// without affecting the outline, no matter the color chosen.
+				// Default colors can be applied on load, so that clothes aren't all
+				// loading as white clothing on a white background.
+
 				QPixmap newImage = part.img;
 				QPixmap mask(newImage);
 
@@ -180,7 +179,6 @@ void CharacterPart::populatePartsList(QStringList newParts, const QColor color, 
 				painter.drawPixmap(newImage.rect(), mask);
 				painter.end();
 
-				//this->setPixmap(newImage);
 				part.imgAltered = newImage;
 				this->setPixmap(partsList[0].imgAltered);
 			}

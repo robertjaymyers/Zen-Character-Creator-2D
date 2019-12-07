@@ -50,9 +50,6 @@ private:
 	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>();
 	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>();
 	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>();
-	/*std::vector<QPixmap> characterHeadList;
-	std::vector<QPixmap> characterChestList;
-	std::vector<QPixmap> characterBottomList;*/
 
 	const int characterViewWidth = 500;
 	const int characterViewHeight = 550;

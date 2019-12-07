@@ -51,6 +51,10 @@ public:
 	void setColorToScene(const QColor &newColor, ColorSet colorSet);
 
 private:
+	// We store both img and altered img, so that we can display altered img,
+	// and apply color changes to base img, to get consistent results when altering color.
+	// Otherwise, we'd be applying changes to a modified img, which can result in inconsistent color changes
+	// over time, depending on the type of composition mode used with QPainter.
 	struct imgParts 
 	{ 
 		QPixmap img;
@@ -60,12 +64,10 @@ private:
 		QColor defaultColor = QColor("#FFFFFF");
 	};
 	std::vector<imgParts> partsList;
-	//std::vector<std::pair<QPixmap, QString>> partsList;
 	int currentPartsListIndex = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 	QString partTypeAssetStr; // The corresponding asset path string for this unique part.
-	//QColor currentColor = QColor(255, 255, 255);
 
 	void populatePartsList(QStringList newParts, const QColor color, ColorSet colorSet);
 	QStringList fileGetAssets(const QString subPath);

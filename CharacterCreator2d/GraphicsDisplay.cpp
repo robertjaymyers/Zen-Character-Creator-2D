@@ -39,16 +39,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	layout.get()->addWidget(characterBottomBtnRight.get(), 3, 3, Qt::AlignRight);
 	layout.get()->addWidget(characterFeetBtnRight.get(), 4, 3, Qt::AlignRight);
 
-	/*layout.get()->addWidget(characterHeadBtnLeft.get(), 0, 0, Qt::AlignLeft);
-	layout.get()->addWidget(characterChestBtnLeft.get(), 1, 0, Qt::AlignLeft);
-	layout.get()->addWidget(characterBottomBtnLeft.get(), 2, 0, Qt::AlignLeft);
-	layout.get()->addWidget(characterFeetBtnLeft.get(), 3, 0, Qt::AlignLeft);
-	layout.get()->addWidget(characterHeadBtnRight.get(), 0, 1, Qt::AlignRight);
-	layout.get()->addWidget(characterChestBtnRight.get(), 1, 1, Qt::AlignRight);
-	layout.get()->addWidget(characterBottomBtnRight.get(), 2, 1, Qt::AlignRight);
-	layout.get()->addWidget(characterFeetBtnRight.get(), 3, 1, Qt::AlignRight);*/
-
-	// Skin color should be added first, so that (in theory) it will be placed under the other elements.
+	// Skin color should be added first, so that it will be placed under the other elements.
 	scene.get()->addItem(characterSkinColor.get());
 
 	scene.get()->addItem(characterEyeColor.get());
@@ -59,10 +50,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	scene.get()->addItem(characterChest.get());
 	scene.get()->addItem(characterBottom.get());
 	scene.get()->addItem(characterFeet.get());
+
+	// Hair color should be added last, so that it will be placed over the other elements.
+	// (otherwise, it could be hidden under clothing, etc., in an awkward way)
 	scene.get()->addItem(characterHair.get());
 
 	characterSkinColor.get()->init(PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::FILL);
-	characterEyeColor.get()->init(PartType::EYE_COLOR, QColor("#000000"), ColorSet::FILL);
+	characterEyeColor.get()->init(PartType::EYE_COLOR, QColor("#FFFFFF"), ColorSet::FILL);
 	characterLipColor.get()->init(PartType::LIP_COLOR, QColor("#555500"), ColorSet::FILL);
 	characterBlushColor.get()->init(PartType::BLUSH_COLOR, QColor("#555500"), ColorSet::FILL);
 	characterHead.get()->init(PartType::HEAD, QColor("#FFFFFF"), ColorSet::NONE);
