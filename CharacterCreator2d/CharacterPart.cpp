@@ -27,7 +27,6 @@ void CharacterPart::moveLeftInDisplay()
 		currentPartsListIndex = partsList.size() - 1;
 		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
 	}
-	//qDebug() << "Current index is: " + QString::number(currentPartsListIndex);
 }
 
 void CharacterPart::moveRightInDisplay()
@@ -42,14 +41,13 @@ void CharacterPart::moveRightInDisplay()
 		currentPartsListIndex = 0;
 		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
 	}
-	//qDebug() << "Current index is: " + QString::number(currentPartsListIndex);
 }
 
-bool CharacterPart::setUrlAsCurrent(const QString url)
+bool CharacterPart::setFilenameAssetAsDisplayed(const QString &filename)
 {
 	for (int i = 0; i < partsList.size(); i++)
 	{
-		if (partsList[i].imgUrl == url)
+		if (partsList[i].imgFilename == filename)
 		{
 			currentPartsListIndex = i;
 			this->setPixmap(partsList[currentPartsListIndex].imgAltered);
@@ -64,7 +62,7 @@ void CharacterPart::setCurrentToDefault(const ColorSet colorSet)
 	currentPartsListIndex = 0;
 	if (colorSet == ColorSet::FILL)
 	{
-		applyColorFillDefault(partsList[currentPartsListIndex]);
+		applyColorFill(partsList[currentPartsListIndex], partsList[currentPartsListIndex].defaultColor, true);
 	}
 	else if (colorSet == ColorSet::MULTIPLY)
 	{
@@ -73,17 +71,17 @@ void CharacterPart::setCurrentToDefault(const ColorSet colorSet)
 	}
 	else if (colorSet == ColorSet::NONE)
 	{
-		this->setPixmap(partsList[currentPartsListIndex].img);
+		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
 	}
 }
 
-QString CharacterPart::getUrlOfDisplayed()
+QString CharacterPart::getFilenameOfDisplayed()
 {
-	// Parts list stores as pair of Pixmap and QString(filepath), so
-	// if you reorder parts list for some reason, reorder by pair, not
-	// by contents of pair, to avoid messing up pairing of filepaths to Pixmaps.
+	// Parts list stores Pixmap and QString(filepath) together, so
+	// if you reorder parts list for some reason, reorder by container, not
+	// by contents of container, to avoid messing up pairing of filepaths to Pixmaps.
 	// We need them to match, so that creations can be saved/loaded by asset filepath.
-	return partsList[currentPartsListIndex].imgUrl;
+	return partsList[currentPartsListIndex].imgFilename;
 }
 
 QString CharacterPart::getPartTypeAssetStr()
@@ -101,32 +99,12 @@ void CharacterPart::setColorToScene(const QColor &newColor, ColorSet colorSet)
 	if (colorSet == ColorSet::FILL)
 	{
 		partsList[currentPartsListIndex].currentColor = newColor;
-		QPixmap newImage = partsList[currentPartsListIndex].img;
-		QPainter painter(&newImage);
-		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-		painter.fillRect(newImage.rect(), partsList[currentPartsListIndex].currentColor);
-		painter.end();
-		this->setPixmap(newImage);
+		applyColorFill(partsList[currentPartsListIndex], partsList[currentPartsListIndex].currentColor, true);
 	}
 	else if (colorSet == ColorSet::MULTIPLY)
 	{
 		partsList[currentPartsListIndex].currentColor = newColor;
-		QPixmap newImage = partsList[currentPartsListIndex].img;
-		QPixmap mask(newImage);
-
-		QPainter painter;
-		painter.begin(&mask);
-		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-		painter.fillRect(newImage.rect(), partsList[currentPartsListIndex].currentColor);
-		painter.end();
-
-		painter.begin(&newImage);
-		painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-		painter.drawPixmap(newImage.rect(), mask);
-		painter.end();
-
-		this->setPixmap(newImage);
-		partsList[currentPartsListIndex].imgAltered = newImage;
+		applyColorMultiply(partsList[currentPartsListIndex], true);
 	}
 }
 
@@ -134,14 +112,14 @@ void CharacterPart::setColorToScene(const QColor &newColor, ColorSet colorSet)
 
 void CharacterPart::populatePartsList(QStringList newParts, const QColor color, ColorSet colorSet)
 {
-	// Note: Url is stored as filename only (e.g. NOT including full path), 
+	// Note: We store as filename only (e.g. NOT including full path), 
 	// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
 	for (auto& part : newParts)
 	{
 		imgParts newImgParts;
-		newImgParts.img = QPixmap(part);
-		newImgParts.imgAltered = newImgParts.img;
-		newImgParts.imgUrl = QFileInfo(part).fileName();
+		newImgParts.imgBase = QPixmap(part);
+		newImgParts.imgAltered = newImgParts.imgBase;
+		newImgParts.imgFilename = QFileInfo(part).fileName();
 		newImgParts.currentColor = color;
 		newImgParts.defaultColor = color;
 
@@ -153,7 +131,7 @@ void CharacterPart::populatePartsList(QStringList newParts, const QColor color, 
 		{
 			if (colorSet == ColorSet::FILL)
 			{
-				applyColorFillDefault(part);
+				applyColorFill(part, part.defaultColor, false);
 			}
 			else if (colorSet == ColorSet::MULTIPLY)
 			{
@@ -164,27 +142,19 @@ void CharacterPart::populatePartsList(QStringList newParts, const QColor color, 
 				// without affecting the outline, no matter the color chosen.
 				// Default colors can be applied on load, so that clothes aren't all
 				// loading as white clothing on a white background.
-
-				QPixmap newImage = part.img;
-				QPixmap mask(newImage);
-
-				QPainter painter;
-				painter.begin(&mask);
-				painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-				painter.fillRect(newImage.rect(), part.currentColor);
-				painter.end();
-
-				painter.begin(&newImage);
-				painter.setCompositionMode(QPainter::CompositionMode_Multiply);
-				painter.drawPixmap(newImage.rect(), mask);
-				painter.end();
-
-				part.imgAltered = newImage;
-				this->setPixmap(partsList[0].imgAltered);
+				applyColorMultiply(part, false);
 			}
-			else if (colorSet == ColorSet::NONE)
-				this->setPixmap(partsList[0].img);
 		}
+
+		// For simplicity, we make the default the first part in the list.
+		// (ex: the first Chest part in the list of Chest parts)
+		// This means default will be defined by load order, based on how folder traversal works.
+		// (so probably alphabetical)
+		// Note that an instance of this class initialized with a color set type of none still uses
+		// the altered image variable for display to avoid unnecessary complexity.
+		// It gets its altered image set to the normal image at the beginning, so despite never
+		// having color setting applied, it'll still have an image to display.
+		this->setPixmap(partsList[0].imgAltered);
 	}
 }
 
@@ -201,14 +171,38 @@ QStringList CharacterPart::fileGetAssets(const QString subPath)
 	return assetPathList;
 }
 
-void CharacterPart::applyColorFillDefault(imgParts &part)
+void CharacterPart::applyColorFill(imgParts &part, const QColor &color, bool applyToScene)
 {
-	this->setPixmap(part.img);
-	QPixmap newImage = part.img;
+	this->setPixmap(part.imgBase);
+	QPixmap newImage = part.imgBase;
 	QPainter painter;
 	painter.begin(&newImage);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), part.defaultColor);
+	painter.fillRect(newImage.rect(), color);
 	painter.end();
-	this->setPixmap(newImage);
+
+	part.imgAltered = newImage;
+	if (applyToScene)
+		this->setPixmap(part.imgAltered);
+}
+
+void CharacterPart::applyColorMultiply(imgParts &part, bool applyToScene)
+{
+	QPixmap newImage = part.imgBase;
+	QPixmap mask(newImage);
+
+	QPainter painter;
+	painter.begin(&mask);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(newImage.rect(), part.currentColor);
+	painter.end();
+
+	painter.begin(&newImage);
+	painter.setCompositionMode(QPainter::CompositionMode_Multiply);
+	painter.drawPixmap(newImage.rect(), mask);
+	painter.end();
+
+	part.imgAltered = newImage;
+	if (applyToScene)
+		this->setPixmap(part.imgAltered);
 }

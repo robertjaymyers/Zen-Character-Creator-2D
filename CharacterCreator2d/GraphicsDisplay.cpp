@@ -27,17 +27,22 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	layout.get()->addWidget(characterBottomBtnPicker.get(), 2, 1, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterFeetBtnPicker.get(), 3, 1, Qt::AlignLeft | Qt::AlignTop);
 
-	layout.get()->addWidget(characterHairBtnLeft.get(), 0, 2, Qt::AlignRight);
-	layout.get()->addWidget(characterHeadBtnLeft.get(), 1, 2, Qt::AlignRight);
-	layout.get()->addWidget(characterChestBtnLeft.get(), 2, 2, Qt::AlignRight);
-	layout.get()->addWidget(characterBottomBtnLeft.get(), 3, 2, Qt::AlignRight);
-	layout.get()->addWidget(characterFeetBtnLeft.get(), 4, 2, Qt::AlignRight);
+	layout.get()->addWidget(characterBtnSpacerPicker1.get(), 0, 2, Qt::AlignLeft | Qt::AlignTop);
+	layout.get()->addWidget(characterBtnSpacerPicker2.get(), 1, 2, Qt::AlignLeft | Qt::AlignTop);
+	layout.get()->addWidget(characterBtnSpacerPicker3.get(), 2, 2, Qt::AlignLeft | Qt::AlignTop);
+	layout.get()->addWidget(characterBtnSpacerPicker4.get(), 3, 2, Qt::AlignLeft | Qt::AlignTop);
 
-	layout.get()->addWidget(characterHairBtnRight.get(), 0, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterHeadBtnRight.get(), 1, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterChestBtnRight.get(), 2, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterBottomBtnRight.get(), 3, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterFeetBtnRight.get(), 4, 3, Qt::AlignRight);
+	layout.get()->addWidget(characterHairBtnLeft.get(), 0, 3, Qt::AlignRight);
+	layout.get()->addWidget(characterHeadBtnLeft.get(), 1, 3, Qt::AlignRight);
+	layout.get()->addWidget(characterChestBtnLeft.get(), 2, 3, Qt::AlignRight);
+	layout.get()->addWidget(characterBottomBtnLeft.get(), 3, 3, Qt::AlignRight);
+	layout.get()->addWidget(characterFeetBtnLeft.get(), 4, 3, Qt::AlignRight);
+
+	layout.get()->addWidget(characterHairBtnRight.get(), 0, 4, Qt::AlignRight);
+	layout.get()->addWidget(characterHeadBtnRight.get(), 1, 4, Qt::AlignRight);
+	layout.get()->addWidget(characterChestBtnRight.get(), 2, 4, Qt::AlignRight);
+	layout.get()->addWidget(characterBottomBtnRight.get(), 3, 4, Qt::AlignRight);
+	layout.get()->addWidget(characterFeetBtnRight.get(), 4, 4, Qt::AlignRight);
 
 	// Skin color should be added first, so that it will be placed under the other elements.
 	scene.get()->addItem(characterSkinColor.get());
@@ -55,7 +60,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	// (otherwise, it could be hidden under clothing, etc., in an awkward way)
 	scene.get()->addItem(characterHair.get());
 
-	characterSkinColor.get()->init(PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::FILL);
+	characterSkinColor.get()->init(PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::MULTIPLY);
 	characterEyeColor.get()->init(PartType::EYE_COLOR, QColor("#FFFFFF"), ColorSet::FILL);
 	characterLipColor.get()->init(PartType::LIP_COLOR, QColor("#555500"), ColorSet::FILL);
 	characterBlushColor.get()->init(PartType::BLUSH_COLOR, QColor("#555500"), ColorSet::FILL);
@@ -130,7 +135,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterSkinColor.get()->setColorToScene(colorNew, ColorSet::FILL);
+			characterSkinColor.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
 			characterModified = true;
 		}
 	});
@@ -266,7 +271,7 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 
 void GraphicsDisplay::fileNew()
 {
-	characterSkinColor.get()->setCurrentToDefault(ColorSet::FILL);
+	characterSkinColor.get()->setCurrentToDefault(ColorSet::MULTIPLY);
 	characterEyeColor.get()->setCurrentToDefault(ColorSet::FILL);
 	characterLipColor.get()->setCurrentToDefault(ColorSet::FILL);
 	characterBlushColor.get()->setCurrentToDefault(ColorSet::FILL);
@@ -294,7 +299,12 @@ void GraphicsDisplay::fileOpen()
 				QString line = qStream.readLine();
 				if (line.contains(characterSkinColor.get()->getPartTypeAssetStr() + "="))
 				{
-					characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)), ColorSet::FILL);
+					if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+					{
+						characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+					}
+					else
+						partsMissing = true;
 				}
 				else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
 				{
@@ -310,16 +320,16 @@ void GraphicsDisplay::fileOpen()
 				}
 				else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
 				{
-					if (characterHead.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", ",", line)))
+					if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::NONE);
 					}
 					else
 						partsMissing = true;
 				}
 				else if (line.contains(characterChest.get()->getPartTypeAssetStr() + "="))
 				{
-					if (characterChest.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", ",", line)))
+					if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
 						characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
 					}
@@ -328,7 +338,7 @@ void GraphicsDisplay::fileOpen()
 				}
 				else if (line.contains(characterBottom.get()->getPartTypeAssetStr() + "="))
 				{
-					if (characterBottom.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", ",", line)))
+					if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
 						characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
 					}
@@ -337,7 +347,7 @@ void GraphicsDisplay::fileOpen()
 				}
 				else if (line.contains(characterFeet.get()->getPartTypeAssetStr() + "="))
 				{
-					if (characterFeet.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", ",", line)))
+					if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
 						characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
 					}
@@ -346,7 +356,7 @@ void GraphicsDisplay::fileOpen()
 				}
 				else if (line.contains(characterHair.get()->getPartTypeAssetStr() + "="))
 				{
-					if (characterHair.get()->setUrlAsCurrent(extractSubstringInbetweenQt("=", ",", line)))
+					if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
 						characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
 					}
@@ -377,7 +387,8 @@ bool GraphicsDisplay::fileSave()
 			QTextStream qStream(&fileWrite);
 
 			qStream << characterSkinColor.get()->getPartTypeAssetStr() +
-				"=" + characterSkinColor.get()->getCurrentColor().name() + "\r\n";
+				"=" + characterSkinColor.get()->getFilenameOfDisplayed() +
+				"," + characterSkinColor.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterEyeColor.get()->getPartTypeAssetStr() +
 				"=" + characterEyeColor.get()->getCurrentColor().name() + "\r\n";
@@ -389,23 +400,23 @@ bool GraphicsDisplay::fileSave()
 				"=" + characterBlushColor.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterHead.get()->getPartTypeAssetStr() +
-				"=" + characterHead.get()->getUrlOfDisplayed() +
+				"=" + characterHead.get()->getFilenameOfDisplayed() +
 				"," + characterHead.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterChest.get()->getPartTypeAssetStr() +
-				"=" + characterChest.get()->getUrlOfDisplayed() +
+				"=" + characterChest.get()->getFilenameOfDisplayed() +
 				"," + characterChest.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterBottom.get()->getPartTypeAssetStr() + 
-				"=" + characterBottom.get()->getUrlOfDisplayed() + 
+				"=" + characterBottom.get()->getFilenameOfDisplayed() +
 				"," + characterBottom.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterFeet.get()->getPartTypeAssetStr() + 
-				"=" + characterFeet.get()->getUrlOfDisplayed() + 
+				"=" + characterFeet.get()->getFilenameOfDisplayed() +
 				"," + characterFeet.get()->getCurrentColor().name() + "\r\n";
 
 			qStream << characterHair.get()->getPartTypeAssetStr() +
-				"=" + characterHair.get()->getUrlOfDisplayed() +
+				"=" + characterHair.get()->getFilenameOfDisplayed() +
 				"," + characterHair.get()->getCurrentColor().name() + "\r\n";
 
 			fileWrite.close();

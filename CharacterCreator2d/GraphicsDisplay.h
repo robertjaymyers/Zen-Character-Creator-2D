@@ -74,6 +74,12 @@ private:
 	std::unique_ptr<PartSwapButton> characterFeetBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_FEET, BtnGeometry::PICKER);
 	std::unique_ptr<PartSwapButton> characterHairBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_HAIR, BtnGeometry::PICKER);
 
+	// These exist only to fill space and affect spacing of UI layout. They should be invisible and do nothing.
+	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker1 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker2 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker3 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker4 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+
 	// temporary shortcut for testing color change in image(s)
 	//std::unique_ptr<QShortcut> shortcutChangeColor = std::make_unique<QShortcut>(QKeySequence(tr("E", "Change Color")), this);
 

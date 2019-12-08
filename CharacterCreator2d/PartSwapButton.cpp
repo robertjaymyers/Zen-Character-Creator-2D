@@ -23,10 +23,12 @@ PartSwapButton::PartSwapButton(QWidget *parent, BtnIcon btnIcon, BtnGeometry btn
 		this->setStyleSheet(styleSheetTemplate.arg(btnPickerFeetIcons[0]).arg(btnPickerFeetIcons[1]).arg(btnPickerFeetIcons[2]));
 	else if (btnIcon == BtnIcon::COLOR_PICKER_HAIR)
 		this->setStyleSheet(styleSheetTemplate.arg(btnPickerHairIcons[0]).arg(btnPickerHairIcons[1]).arg(btnPickerHairIcons[2]));
+	else if (btnIcon == BtnIcon::NONE)
+		this->setStyleSheet("QPushButton{background-color: rgba(255, 255, 255, 0); border: none; image: url(:/CharacterCreator2d/Resources/picker-spacer-transparent-background.png);}");
 	
 	if (btnGeometry == BtnGeometry::SWAP)
 		this->setFixedSize(QSize(btnSwapWidth, btnSwapHeight));
-	else if (btnGeometry == BtnGeometry::PICKER)
+	else if (btnGeometry == BtnGeometry::PICKER || btnGeometry == BtnGeometry::PICKER_SPACER)
 		this->setFixedSize(QSize(btnPickerWidth, btnPickerHeight));
 
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

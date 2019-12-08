@@ -42,9 +42,9 @@ public:
 
 	void moveLeftInDisplay();
 	void moveRightInDisplay();
-	bool setUrlAsCurrent(const QString url);
+	bool setFilenameAssetAsDisplayed(const QString &filename);
 	void setCurrentToDefault(const ColorSet colorSet);
-	QString getUrlOfDisplayed();
+	QString getFilenameOfDisplayed();
 	QString getPartTypeAssetStr();
 
 	QColor getCurrentColor();
@@ -57,9 +57,9 @@ private:
 	// over time, depending on the type of composition mode used with QPainter.
 	struct imgParts 
 	{ 
-		QPixmap img;
-		QPixmap imgAltered;
-		QString imgUrl;
+		QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
+		QPixmap imgAltered; // Modify this one for color changes.
+		QString imgFilename;
 		QColor currentColor = QColor("#FFFFFF");
 		QColor defaultColor = QColor("#FFFFFF");
 	};
@@ -67,9 +67,10 @@ private:
 	int currentPartsListIndex = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
-	QString partTypeAssetStr; // The corresponding asset path string for this unique part.
+	QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
 
 	void populatePartsList(QStringList newParts, const QColor color, ColorSet colorSet);
 	QStringList fileGetAssets(const QString subPath);
-	void applyColorFillDefault(imgParts &part);
+	void applyColorFill(imgParts &part, const QColor &color, bool applyToScene);
+	void applyColorMultiply(imgParts &part, bool applyToScene);
 };
