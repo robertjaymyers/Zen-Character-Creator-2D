@@ -41,15 +41,15 @@ private:
 
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
-	std::unique_ptr<CharacterPart> characterSkinColor = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterEyeColor = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterLipColor = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterBlushColor = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>();
-	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>();
+	std::unique_ptr<CharacterPart> characterSkinColor = std::make_unique<CharacterPart>(nullptr, PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::MULTIPLY);
+	std::unique_ptr<CharacterPart> characterEyeColor = std::make_unique<CharacterPart>(nullptr, PartType::EYE_COLOR, QColor("#FFFFFF"), ColorSet::FILL);
+	std::unique_ptr<CharacterPart> characterLipColor = std::make_unique<CharacterPart>(nullptr, PartType::LIP_COLOR, QColor("#555500"), ColorSet::FILL);
+	std::unique_ptr<CharacterPart> characterBlushColor = std::make_unique<CharacterPart>(nullptr, PartType::BLUSH_COLOR, QColor("#555500"), ColorSet::FILL);
+	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>(nullptr, PartType::HEAD, QColor("#FFFFFF"), ColorSet::NONE);
+	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>(nullptr, PartType::CHEST, QColor("#B5B5B5"), ColorSet::MULTIPLY);
+	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>(nullptr, PartType::BOTTOM, QColor("#B5B5B5"), ColorSet::MULTIPLY);
+	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>(nullptr, PartType::FEET, QColor("#000000"), ColorSet::MULTIPLY);
+	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>(nullptr, PartType::HAIR, QColor("#000000"), ColorSet::MULTIPLY);
 
 	const int characterViewWidth = 500;
 	const int characterViewHeight = 550;

@@ -4,9 +4,8 @@
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QDebug>
-#include <vector>
-
 #include <QPainter>
+#include <vector>
 
 enum class ColorSet { FILL, MULTIPLY, NONE };
 
@@ -34,11 +33,7 @@ const std::map<PartType, QString> partTypeMap =
 class CharacterPart : public QGraphicsPixmapItem
 {
 public:
-	CharacterPart(QGraphicsItem *parent = NULL);
-
-	// Creates a list of pixmap parts for a given type from image assets in app Asset folder
-	// and sets the first one in the list as the initial display part.
-	void init(PartType partType, const QColor color, ColorSet colorSet);
+	CharacterPart(QGraphicsItem *parent = nullptr, const PartType partType = PartType::NONE, const QColor color = QColor("#FFFFFF"), ColorSet colorSet = ColorSet::NONE);
 
 	void moveLeftInDisplay();
 	void moveRightInDisplay();

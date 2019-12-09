@@ -60,16 +60,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	// (otherwise, it could be hidden under clothing, etc., in an awkward way)
 	scene.get()->addItem(characterHair.get());
 
-	characterSkinColor.get()->init(PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::MULTIPLY);
-	characterEyeColor.get()->init(PartType::EYE_COLOR, QColor("#FFFFFF"), ColorSet::FILL);
-	characterLipColor.get()->init(PartType::LIP_COLOR, QColor("#555500"), ColorSet::FILL);
-	characterBlushColor.get()->init(PartType::BLUSH_COLOR, QColor("#555500"), ColorSet::FILL);
-	characterHead.get()->init(PartType::HEAD, QColor("#FFFFFF"), ColorSet::NONE);
-	characterChest.get()->init(PartType::CHEST, QColor("#B5B5B5"), ColorSet::MULTIPLY);
-	characterBottom.get()->init(PartType::BOTTOM, QColor("#B5B5B5"), ColorSet::MULTIPLY);
-	characterFeet.get()->init(PartType::FEET, QColor("#000000"), ColorSet::MULTIPLY);
-	characterHair.get()->init(PartType::HAIR, QColor("#000000"), ColorSet::MULTIPLY);
-
 	connect(characterHeadBtnLeft.get(), &QPushButton::clicked, this, [=]() {
 		characterHead.get()->moveLeftInDisplay();
 		characterModified = true;

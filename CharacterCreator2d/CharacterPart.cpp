@@ -1,19 +1,17 @@
 #include "CharacterPart.h"
 
-CharacterPart::CharacterPart(QGraphicsItem* parent)
+CharacterPart::CharacterPart(QGraphicsItem* parent, const PartType partType, const QColor color, const ColorSet colorSet)
 	: QGraphicsPixmapItem(parent)
-{
-	
-}
-
-// public:
-
-void CharacterPart::init(PartType partType, const QColor color, ColorSet colorSet)
 {
 	partTypeUnique = partType;
 	partTypeAssetStr = partTypeMap.at(partType);
+
+	// Creates a list of pixmap parts for a given type from image assets in app Asset folder
+	// and sets the first one in the list as the initial display part.
 	this->populatePartsList(fileGetAssets(partTypeMap.at(partType)), color, colorSet);
 }
+
+// public:
 
 void CharacterPart::moveLeftInDisplay()
 {
