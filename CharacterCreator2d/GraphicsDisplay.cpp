@@ -12,7 +12,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	scene.get()->setParent(this->parent());
 
 	this->setStyleSheet("border: none; background-color: #FFFFFF");
-	this->setFixedSize(800, 600);
 	this->setLayout(layout.get());
 
 	layout.get()->setMargin(50);

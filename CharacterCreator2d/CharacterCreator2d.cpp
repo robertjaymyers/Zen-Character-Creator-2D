@@ -21,6 +21,7 @@ CharacterCreator2d::CharacterCreator2d(QWidget *parent)
 	ui.setupUi(this);
 
 	display.get()->setParent(this);
+	display.get()->setFixedSize(this->width(), this->height());
 	display.get()->show();
 }
 
