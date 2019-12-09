@@ -15,29 +15,29 @@ CharacterPart::CharacterPart(QGraphicsItem* parent, const PartType partType, con
 
 void CharacterPart::moveLeftInDisplay()
 {
-	if (currentPartsListIndex - 1 >= 0)
+	if (displayedPartI - 1 >= 0)
 	{
-		currentPartsListIndex--;
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+		displayedPartI--;
+		this->setPixmap(partsList[displayedPartI].imgAltered);
 	}
 	else
 	{
-		currentPartsListIndex = partsList.size() - 1;
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+		displayedPartI = partsList.size() - 1;
+		this->setPixmap(partsList[displayedPartI].imgAltered);
 	}
 }
 
 void CharacterPart::moveRightInDisplay()
 {
-	if (currentPartsListIndex + 1 <= partsList.size() - 1)
+	if (displayedPartI + 1 <= partsList.size() - 1)
 	{
-		currentPartsListIndex++;
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+		displayedPartI++;
+		this->setPixmap(partsList[displayedPartI].imgAltered);
 	}
 	else
 	{
-		currentPartsListIndex = 0;
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+		displayedPartI = 0;
+		this->setPixmap(partsList[displayedPartI].imgAltered);
 	}
 }
 
@@ -47,29 +47,29 @@ bool CharacterPart::setFilenameAssetAsDisplayed(const QString &filename)
 	{
 		if (partsList[i].imgFilename == filename)
 		{
-			currentPartsListIndex = i;
-			this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+			displayedPartI = i;
+			this->setPixmap(partsList[displayedPartI].imgAltered);
 			return true;
 		}
 	}
 	return false;
 }
 
-void CharacterPart::setCurrentToDefault(const ColorSet colorSet)
+void CharacterPart::setDisplayedToDefault(const ColorSet colorSet)
 {
-	currentPartsListIndex = 0;
+	displayedPartI = 0;
 	if (colorSet == ColorSet::FILL)
 	{
-		applyColorFill(partsList[currentPartsListIndex], partsList[currentPartsListIndex].defaultColor, true);
+		applyColorFill(partsList[displayedPartI], partsList[displayedPartI].defaultColor, true);
 	}
 	else if (colorSet == ColorSet::MULTIPLY)
 	{
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
-		setColorToScene(partsList[currentPartsListIndex].defaultColor, colorSet);
+		this->setPixmap(partsList[displayedPartI].imgAltered);
+		setColorToScene(partsList[displayedPartI].defaultColor, colorSet);
 	}
 	else if (colorSet == ColorSet::NONE)
 	{
-		this->setPixmap(partsList[currentPartsListIndex].imgAltered);
+		this->setPixmap(partsList[displayedPartI].imgAltered);
 	}
 }
 
@@ -79,7 +79,7 @@ QString CharacterPart::getFilenameOfDisplayed()
 	// if you reorder parts list for some reason, reorder by container, not
 	// by contents of container, to avoid messing up pairing of filepaths to Pixmaps.
 	// We need them to match, so that creations can be saved/loaded by asset filepath.
-	return partsList[currentPartsListIndex].imgFilename;
+	return partsList[displayedPartI].imgFilename;
 }
 
 QString CharacterPart::getPartTypeAssetStr()
@@ -87,22 +87,22 @@ QString CharacterPart::getPartTypeAssetStr()
 	return partTypeAssetStr;
 }
 
-QColor CharacterPart::getCurrentColor()
+QColor CharacterPart::getColorOfDisplayed()
 {
-	return partsList[currentPartsListIndex].currentColor;
+	return partsList[displayedPartI].currentColor;
 }
 
 void CharacterPart::setColorToScene(const QColor &newColor, ColorSet colorSet)
 {
 	if (colorSet == ColorSet::FILL)
 	{
-		partsList[currentPartsListIndex].currentColor = newColor;
-		applyColorFill(partsList[currentPartsListIndex], partsList[currentPartsListIndex].currentColor, true);
+		partsList[displayedPartI].currentColor = newColor;
+		applyColorFill(partsList[displayedPartI], partsList[displayedPartI].currentColor, true);
 	}
 	else if (colorSet == ColorSet::MULTIPLY)
 	{
-		partsList[currentPartsListIndex].currentColor = newColor;
-		applyColorMultiply(partsList[currentPartsListIndex], true);
+		partsList[displayedPartI].currentColor = newColor;
+		applyColorMultiply(partsList[displayedPartI], true);
 	}
 }
 

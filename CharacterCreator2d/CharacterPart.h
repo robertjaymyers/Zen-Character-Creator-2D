@@ -38,11 +38,11 @@ public:
 	void moveLeftInDisplay();
 	void moveRightInDisplay();
 	bool setFilenameAssetAsDisplayed(const QString &filename);
-	void setCurrentToDefault(const ColorSet colorSet);
+	void setDisplayedToDefault(const ColorSet colorSet);
 	QString getFilenameOfDisplayed();
 	QString getPartTypeAssetStr();
 
-	QColor getCurrentColor();
+	QColor getColorOfDisplayed();
 	void setColorToScene(const QColor &newColor, ColorSet colorSet);
 
 private:
@@ -59,7 +59,7 @@ private:
 		QColor defaultColor = QColor("#FFFFFF");
 	};
 	std::vector<imgParts> partsList;
-	int currentPartsListIndex = 0;
+	int displayedPartI = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 	QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").

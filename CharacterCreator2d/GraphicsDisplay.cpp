@@ -121,7 +121,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			characterSkinColor.get()->setColorToScene(colorNew);
 	});*/
 	connect(characterSkinBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterSkinColor.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
@@ -129,7 +129,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterEyeBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterEyeColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterEyeColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterEyeColor.get()->setColorToScene(colorNew, ColorSet::FILL);
@@ -137,7 +137,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterLipBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterLipColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterLipColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterLipColor.get()->setColorToScene(colorNew, ColorSet::FILL);
@@ -145,7 +145,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterBlushBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterBlushColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterBlushColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterBlushColor.get()->setColorToScene(colorNew, ColorSet::FILL);
@@ -154,7 +154,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	});
 
 	connect(characterChestBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterChest.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterChest.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterChest.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
@@ -162,7 +162,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterBottomBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterBottom.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterBottom.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterBottom.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
@@ -170,7 +170,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterFeetBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterFeet.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterFeet.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterFeet.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
@@ -178,7 +178,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	});
 	connect(characterHairBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterHair.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
+		QColor colorNew = QColorDialog::getColor(characterHair.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
 			characterHair.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
@@ -260,15 +260,15 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 
 void GraphicsDisplay::fileNew()
 {
-	characterSkinColor.get()->setCurrentToDefault(ColorSet::MULTIPLY);
-	characterEyeColor.get()->setCurrentToDefault(ColorSet::FILL);
-	characterLipColor.get()->setCurrentToDefault(ColorSet::FILL);
-	characterBlushColor.get()->setCurrentToDefault(ColorSet::FILL);
-	characterHead.get()->setCurrentToDefault(ColorSet::NONE);
-	characterChest.get()->setCurrentToDefault(ColorSet::MULTIPLY);
-	characterBottom.get()->setCurrentToDefault(ColorSet::MULTIPLY);
-	characterFeet.get()->setCurrentToDefault(ColorSet::MULTIPLY);
-	characterHair.get()->setCurrentToDefault(ColorSet::MULTIPLY);
+	characterSkinColor.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
+	characterEyeColor.get()->setDisplayedToDefault(ColorSet::FILL);
+	characterLipColor.get()->setDisplayedToDefault(ColorSet::FILL);
+	characterBlushColor.get()->setDisplayedToDefault(ColorSet::FILL);
+	characterHead.get()->setDisplayedToDefault(ColorSet::NONE);
+	characterChest.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
+	characterBottom.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
+	characterFeet.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
+	characterHair.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
 	characterModified = false;
 }
 
@@ -377,36 +377,36 @@ bool GraphicsDisplay::fileSave()
 
 			qStream << characterSkinColor.get()->getPartTypeAssetStr() +
 				"=" + characterSkinColor.get()->getFilenameOfDisplayed() +
-				"," + characterSkinColor.get()->getCurrentColor().name() + "\r\n";
+				"," + characterSkinColor.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterEyeColor.get()->getPartTypeAssetStr() +
-				"=" + characterEyeColor.get()->getCurrentColor().name() + "\r\n";
+				"=" + characterEyeColor.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterLipColor.get()->getPartTypeAssetStr() +
-				"=" + characterLipColor.get()->getCurrentColor().name() + "\r\n";
+				"=" + characterLipColor.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterBlushColor.get()->getPartTypeAssetStr() +
-				"=" + characterBlushColor.get()->getCurrentColor().name() + "\r\n";
+				"=" + characterBlushColor.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterHead.get()->getPartTypeAssetStr() +
 				"=" + characterHead.get()->getFilenameOfDisplayed() +
-				"," + characterHead.get()->getCurrentColor().name() + "\r\n";
+				"," + characterHead.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterChest.get()->getPartTypeAssetStr() +
 				"=" + characterChest.get()->getFilenameOfDisplayed() +
-				"," + characterChest.get()->getCurrentColor().name() + "\r\n";
+				"," + characterChest.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterBottom.get()->getPartTypeAssetStr() + 
 				"=" + characterBottom.get()->getFilenameOfDisplayed() +
-				"," + characterBottom.get()->getCurrentColor().name() + "\r\n";
+				"," + characterBottom.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterFeet.get()->getPartTypeAssetStr() + 
 				"=" + characterFeet.get()->getFilenameOfDisplayed() +
-				"," + characterFeet.get()->getCurrentColor().name() + "\r\n";
+				"," + characterFeet.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << characterHair.get()->getPartTypeAssetStr() +
 				"=" + characterHair.get()->getFilenameOfDisplayed() +
-				"," + characterHair.get()->getCurrentColor().name() + "\r\n";
+				"," + characterHair.get()->getColorOfDisplayed().name() + "\r\n";
 
 			fileWrite.close();
 			fileDirLastSaved = QFileInfo(fpath).path();
