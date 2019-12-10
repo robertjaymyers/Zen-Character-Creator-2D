@@ -7,11 +7,11 @@
 #include <QPainter>
 #include <vector>
 
-enum class ColorSet { FILL, MULTIPLY, NONE };
+enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 enum class PartType { SKIN_COLOR, EYE_COLOR, LIP_COLOR, BLUSH_COLOR, HEAD, CHEST, BOTTOM, FEET, HAIR, NONE };
 
-// Companion string should correspond to a subdirectory
+// Paired string should correspond to a subdirectory
 // found under Assets in the application directory path (e.g. AppPath/Assets/Head)
 // We use this path to find assets from file for a particular character part.
 // This map should only be modified along with the PartType enum class when adding or removing
@@ -33,17 +33,17 @@ const std::map<PartType, QString> partTypeMap =
 class CharacterPart : public QGraphicsPixmapItem
 {
 public:
-	CharacterPart(QGraphicsItem *parent = nullptr, const PartType partType = PartType::NONE, const QColor color = QColor("#FFFFFF"), ColorSet colorSet = ColorSet::NONE);
+	CharacterPart(QGraphicsItem *parent = nullptr, const PartType partType = PartType::NONE, const QColor color = QColor("#FFFFFF"), ColorSetType colorSetType = ColorSetType::NONE);
 
 	void moveLeftInDisplay();
 	void moveRightInDisplay();
 	bool setFilenameAssetAsDisplayed(const QString &filename);
-	void setDisplayedToDefault(const ColorSet colorSet);
+	void setDisplayedToDefault();
 	QString getFilenameOfDisplayed();
 	QString getPartTypeAssetStr();
 
 	QColor getColorOfDisplayed();
-	void setColorToScene(const QColor &newColor, ColorSet colorSet);
+	void setColorToScene(const QColor &newColor);
 
 private:
 	// We store both img and altered img, so that we can display altered img,
@@ -54,6 +54,7 @@ private:
 	{ 
 		QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
 		QPixmap imgAltered; // Modify this one for color changes.
+		QPixmap imgOutline;
 		QString imgFilename;
 		QColor currentColor = QColor("#FFFFFF");
 		QColor defaultColor = QColor("#FFFFFF");
@@ -61,11 +62,12 @@ private:
 	std::vector<imgParts> partsList;
 	int displayedPartI = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
+	ColorSetType partColorSetType;
 	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 	QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
 
-	void populatePartsList(QStringList newParts, const QColor color, ColorSet colorSet);
+	void populatePartsList(QStringList newParts, const QColor color);
 	QStringList fileGetAssets(const QString subPath);
-	void applyColorFill(imgParts &part, const QColor &color, bool applyToScene);
-	void applyColorMultiply(imgParts &part, bool applyToScene);
+	void applyColorFillNoOutline(imgParts &part, const QColor &color, bool applyToScene);
+	void applyColorFillWithOutline(imgParts &part, bool applyToScene);
 };

@@ -7,11 +7,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addAction(actionFileOpen.get());
 	contextMenu.get()->addAction(actionFileSave.get());
 	contextMenu.get()->addAction(actionFileExport.get());
+	contextMenu.get()->addSeparator();
+	contextMenu.get()->addAction(actionSetBackgroundColor.get());
 
 	this->setScene(scene.get());
 	scene.get()->setParent(this->parent());
 
-	this->setStyleSheet("border: none; background-color: #FFFFFF");
+	this->setStyleSheet(styleSheetEditable.arg(backgroundColorDefault.name()));
 	this->setLayout(layout.get());
 
 	layout.get()->setMargin(50);
@@ -51,8 +53,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	scene.get()->addItem(characterBlushColor.get());
 
 	scene.get()->addItem(characterHead.get());
-	scene.get()->addItem(characterChest.get());
 	scene.get()->addItem(characterBottom.get());
+
+	// Chest is added after Bottom, so that long tops will cover part of bottom.
+	// This can only work one way as designed; either chest can cover part of bottom or bottom can cover part of chest.
+	// Order according to which one gets priority.
+	// Note that long tops may not look right with all bottoms regardless, due to the flow of fabric.
+	scene.get()->addItem(characterChest.get());
+
 	scene.get()->addItem(characterFeet.get());
 
 	// Hair color should be added last, so that it will be placed over the other elements.
@@ -113,6 +121,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			characterModified = false;
 	});
 	connect(actionFileExport.get(), &QAction::triggered, this, &GraphicsDisplay::fileExportCombination);
+	connect(actionSetBackgroundColor.get(), &QAction::triggered, this, [=]() {
+		QColor colorNew = QColorDialog::getColor(backgroundColor, this->parentWidget(), "Choose Color");
+		if (colorNew.isValid())
+			setBackgroundColor(colorNew);
+	});
 
 	// temporary shortcut for testing color change in image(s)
 	/*connect(shortcutChangeColor.get(), &QShortcut::activated, this, [=]() {
@@ -124,7 +137,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterSkinColor.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
+			characterSkinColor.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -132,7 +145,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterEyeColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterEyeColor.get()->setColorToScene(colorNew, ColorSet::FILL);
+			characterEyeColor.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -140,7 +153,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterLipColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterLipColor.get()->setColorToScene(colorNew, ColorSet::FILL);
+			characterLipColor.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -148,7 +161,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterBlushColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterBlushColor.get()->setColorToScene(colorNew, ColorSet::FILL);
+			characterBlushColor.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -157,7 +170,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterChest.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterChest.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
+			characterChest.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -165,7 +178,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterBottom.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterBottom.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
+			characterBottom.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -173,7 +186,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterFeet.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterFeet.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
+			characterFeet.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -181,7 +194,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(characterHair.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 		{
-			characterHair.get()->setColorToScene(colorNew, ColorSet::MULTIPLY);
+			characterHair.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
 	});
@@ -260,15 +273,17 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 
 void GraphicsDisplay::fileNew()
 {
-	characterSkinColor.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
-	characterEyeColor.get()->setDisplayedToDefault(ColorSet::FILL);
-	characterLipColor.get()->setDisplayedToDefault(ColorSet::FILL);
-	characterBlushColor.get()->setDisplayedToDefault(ColorSet::FILL);
-	characterHead.get()->setDisplayedToDefault(ColorSet::NONE);
-	characterChest.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
-	characterBottom.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
-	characterFeet.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
-	characterHair.get()->setDisplayedToDefault(ColorSet::MULTIPLY);
+	characterSkinColor.get()->setDisplayedToDefault();
+	characterEyeColor.get()->setDisplayedToDefault();
+	characterLipColor.get()->setDisplayedToDefault();
+	characterBlushColor.get()->setDisplayedToDefault();
+	characterHead.get()->setDisplayedToDefault();
+	characterChest.get()->setDisplayedToDefault();
+	characterBottom.get()->setDisplayedToDefault();
+	characterFeet.get()->setDisplayedToDefault();
+	characterHair.get()->setDisplayedToDefault();
+	backgroundColor = backgroundColorDefault;
+	setBackgroundColor(backgroundColor);
 	characterModified = false;
 }
 
@@ -290,28 +305,28 @@ void GraphicsDisplay::fileOpen()
 				{
 					if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
 				}
 				else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
 				{
-					characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)), ColorSet::FILL);
+					characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
 				}
 				else if (line.contains(characterLipColor.get()->getPartTypeAssetStr() + "="))
 				{
-					characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)), ColorSet::FILL);
+					characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
 				}
 				else if (line.contains(characterBlushColor.get()->getPartTypeAssetStr() + "="))
 				{
-					characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)), ColorSet::FILL);
+					characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
 				}
 				else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
 				{
 					if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::NONE);
+						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
@@ -320,7 +335,7 @@ void GraphicsDisplay::fileOpen()
 				{
 					if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
@@ -329,7 +344,7 @@ void GraphicsDisplay::fileOpen()
 				{
 					if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
@@ -338,7 +353,7 @@ void GraphicsDisplay::fileOpen()
 				{
 					if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
@@ -347,10 +362,14 @@ void GraphicsDisplay::fileOpen()
 				{
 					if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
 					{
-						characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)), ColorSet::MULTIPLY);
+						characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
 					}
 					else
 						partsMissing = true;
+				}
+				else if (line.contains("backgroundColor="))
+				{
+					setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
 				}
 			}
 			fileRead.close();
@@ -408,6 +427,8 @@ bool GraphicsDisplay::fileSave()
 				"=" + characterHair.get()->getFilenameOfDisplayed() +
 				"," + characterHair.get()->getColorOfDisplayed().name() + "\r\n";
 
+			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
+
 			fileWrite.close();
 			fileDirLastSaved = QFileInfo(fpath).path();
 			return true;
@@ -427,10 +448,17 @@ void GraphicsDisplay::fileExportCombination()
 		QFile fileWrite(selectedFile);
 		fileWrite.open(QIODevice::WriteOnly);
 		QImage composite(scene.get()->sceneRect().size().toSize(), QImage::Format_ARGB32_Premultiplied);
-		composite.fill(Qt::white);
+		composite.fill(backgroundColor);
 		QPainter painter(&composite);
 		scene->render(&painter);
 		composite.save(&fileWrite, "PNG");
 		fileDirLastExported = QFileInfo(selectedFile).path();
 	}
+}
+
+void GraphicsDisplay::setBackgroundColor(const QColor &color)
+{
+	backgroundColor = color;
+	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
+	characterModified = true;
 }

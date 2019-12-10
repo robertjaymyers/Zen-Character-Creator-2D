@@ -21,7 +21,6 @@
         <file>Resources/button-pick-hair-color.png</file>
         <file>Resources/button-pick-hair-color-hover.png</file>
         <file>Resources/button-pick-hair-color-hover-pressed.png</file>
-        <file>Resources/button-pick-chest-color.png</file>
         <file>Resources/button-pick-chest-color-hover.png</file>
         <file>Resources/button-pick-chest-color-hover-pressed.png</file>
         <file>Resources/button-pick-bottom-color.png</file>
@@ -31,5 +30,6 @@
         <file>Resources/button-pick-feet-color-hover.png</file>
         <file>Resources/button-pick-feet-color-hover-pressed.png</file>
         <file>Resources/picker-spacer-transparent-background.png</file>
+        <file>Resources/button-pick-chest-color.png</file>
     </qresource>
 </RCC>

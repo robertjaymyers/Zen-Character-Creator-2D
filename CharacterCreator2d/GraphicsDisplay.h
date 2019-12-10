@@ -32,24 +32,28 @@ private:
 	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastExported = QCoreApplication::applicationDirPath() + "/Exports";
 	bool characterModified = false;
+	QString styleSheetEditable = "border: none; background-color: %1";
+	const QColor backgroundColorDefault = QColor("#FFFFFF");
+	QColor backgroundColor = backgroundColorDefault;
 
 	std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
 	std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
 	std::unique_ptr<QAction> actionFileOpen = std::make_unique<QAction>("Open Character");
 	std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
 	std::unique_ptr<QAction> actionFileExport = std::make_unique<QAction>("Export Character");
+	std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
 
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
-	std::unique_ptr<CharacterPart> characterSkinColor = std::make_unique<CharacterPart>(nullptr, PartType::SKIN_COLOR, QColor("#764c39"), ColorSet::MULTIPLY);
-	std::unique_ptr<CharacterPart> characterEyeColor = std::make_unique<CharacterPart>(nullptr, PartType::EYE_COLOR, QColor("#FFFFFF"), ColorSet::FILL);
-	std::unique_ptr<CharacterPart> characterLipColor = std::make_unique<CharacterPart>(nullptr, PartType::LIP_COLOR, QColor("#555500"), ColorSet::FILL);
-	std::unique_ptr<CharacterPart> characterBlushColor = std::make_unique<CharacterPart>(nullptr, PartType::BLUSH_COLOR, QColor("#555500"), ColorSet::FILL);
-	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>(nullptr, PartType::HEAD, QColor("#FFFFFF"), ColorSet::NONE);
-	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>(nullptr, PartType::CHEST, QColor("#B5B5B5"), ColorSet::MULTIPLY);
-	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>(nullptr, PartType::BOTTOM, QColor("#B5B5B5"), ColorSet::MULTIPLY);
-	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>(nullptr, PartType::FEET, QColor("#000000"), ColorSet::MULTIPLY);
-	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>(nullptr, PartType::HAIR, QColor("#000000"), ColorSet::MULTIPLY);
+	std::unique_ptr<CharacterPart> characterSkinColor = std::make_unique<CharacterPart>(nullptr, PartType::SKIN_COLOR, QColor("#764c39"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterEyeColor = std::make_unique<CharacterPart>(nullptr, PartType::EYE_COLOR, QColor("#aaaa7f"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterLipColor = std::make_unique<CharacterPart>(nullptr, PartType::LIP_COLOR, QColor("#555500"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterBlushColor = std::make_unique<CharacterPart>(nullptr, PartType::BLUSH_COLOR, QColor("#555500"), ColorSetType::FILL_NO_OUTLINE);
+	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>(nullptr, PartType::HEAD, QColor("#FFFFFF"), ColorSetType::NONE);
+	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>(nullptr, PartType::CHEST, QColor("#B5B5B5"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>(nullptr, PartType::BOTTOM, QColor("#B5B5B5"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>(nullptr, PartType::FEET, QColor("#000000"), ColorSetType::FILL_WITH_OUTLINE);
+	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>(nullptr, PartType::HAIR, QColor("#000000"), ColorSetType::FILL_WITH_OUTLINE);
 
 	const int characterViewWidth = 500;
 	const int characterViewHeight = 550;
@@ -88,4 +92,5 @@ private:
 	void fileOpen();
 	bool fileSave();
 	void fileExportCombination();
+	void setBackgroundColor(const QColor &color);
 };
