@@ -62,12 +62,11 @@ private:
 	std::vector<imgParts> partsList;
 	int displayedPartI = 0;
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
-	ColorSetType partColorSetType;
 	PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 	QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
+	ColorSetType partColorSetType;
 
 	void populatePartsList(QStringList newParts, const QColor color);
 	QStringList fileGetAssets(const QString subPath);
-	void applyColorFillNoOutline(imgParts &part, const QColor &color, bool applyToScene);
-	void applyColorFillWithOutline(imgParts &part, bool applyToScene);
+	void applyColorFill(imgParts &part, bool applyToScene);
 };
