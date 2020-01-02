@@ -101,6 +101,7 @@ private:
 	// temporary shortcut for testing color change in image(s)
 	//std::unique_ptr<QShortcut> shortcutChangeColor = std::make_unique<QShortcut>(QKeySequence(tr("E", "Change Color")), this);
 
+	void loadDefaultCharacterOnInit();
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	void fileNew();
 	void fileOpen();
