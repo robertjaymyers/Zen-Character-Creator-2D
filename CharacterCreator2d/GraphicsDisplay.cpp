@@ -257,102 +257,6 @@ void GraphicsDisplay::contextMenuEvent(QContextMenuEvent *event)
 
 // private:
 
-void GraphicsDisplay::loadDefaultCharacterOnInit()
-{
-	// To provide a little more control over default character settings,
-	// a default character can be loaded from a template file.
-	// Template is built identical to a saved character, so the logic can be reused.
-	const QString templatePath = QCoreApplication::applicationDirPath() + "/Assets" + "/default-character-template.txt";
-	if (QFile::exists(templatePath))
-	{
-		QString fileContents;
-		QFile fileRead(templatePath);
-		if (fileRead.open(QIODevice::ReadOnly))
-		{
-			bool partsMissing = false;
-			QTextStream qStream(&fileRead);
-			while (!qStream.atEnd())
-			{
-				QString line = qStream.readLine();
-				if (line.contains(characterSkinColor.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterLipColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterBlushColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterChest.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterBottom.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterFeet.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterHair.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains("backgroundColor="))
-				{
-					setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
-				}
-			}
-			fileRead.close();
-			characterModified = false;
-			if (partsMissing)
-				QMessageBox::information(this->parentWidget(), tr("Parts Missing"), tr("One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail."));
-		}
-	}
-}
-
 QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom)
 {
 	QString extracted = "";
@@ -363,7 +267,7 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 		while (strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) != -1)
 		{
 			int posBegin = strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
-			int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive) + 1 - strEnd.length();
+			int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
 			extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
 			posFound = posEnd;
 		}
@@ -371,7 +275,7 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 	else if (strBegin.isEmpty() && !strEnd.isEmpty())
 	{
 		int posBegin = 0;
-		int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive) + 1 - strEnd.length();
+		int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
 		extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
 		posFound = posEnd;
 	}
@@ -383,6 +287,105 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 		posFound = posEnd;
 	}
 	return extracted;
+}
+
+void GraphicsDisplay::loadDefaultCharacterOnInit()
+{
+	// To provide a little more control over default character settings,
+	// a default character can be loaded from a template file.
+	// Template is built identical to a saved character, so the loading logic can be reused.
+	const QString templatePath = QCoreApplication::applicationDirPath() + "/Assets" + "/default-character-template.txt";
+	if (QFile::exists(templatePath))
+		fileLoadSavedCharacter(templatePath);
+}
+
+void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
+{
+	QString fileContents;
+	QFile fileRead(filePath);
+	if (fileRead.open(QIODevice::ReadOnly))
+	{
+		bool partsMissing = false;
+		QTextStream qStream(&fileRead);
+		while (!qStream.atEnd())
+		{
+			QString line = qStream.readLine();
+			if (line.contains(characterSkinColor.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
+			{
+				characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
+			}
+			else if (line.contains(characterLipColor.get()->getPartTypeAssetStr() + "="))
+			{
+				characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
+			}
+			else if (line.contains(characterBlushColor.get()->getPartTypeAssetStr() + "="))
+			{
+				characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
+			}
+			else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains(characterChest.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains(characterBottom.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains(characterFeet.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains(characterHair.get()->getPartTypeAssetStr() + "="))
+			{
+				if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				{
+					characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+				}
+				else
+					partsMissing = true;
+			}
+			else if (line.contains("backgroundColor="))
+			{
+				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
+			}
+		}
+		fileRead.close();
+		characterModified = false;
+		if (partsMissing)
+			QMessageBox::information(this->parentWidget(), tr("Parts Missing"), tr("One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail."));
+	}
 }
 
 void GraphicsDisplay::fileNew()
@@ -406,92 +409,8 @@ void GraphicsDisplay::fileOpen()
 	QString filename = QFileDialog::getOpenFileName(this, tr("Open"), fileDirLastOpened, tr("Text Files (*.txt)"));
 	if (!filename.isEmpty())
 	{
-		QString fileContents;
-		QFile fileRead(filename);
-		if (fileRead.open(QIODevice::ReadOnly))
-		{
-			bool partsMissing = false;
-			QTextStream qStream(&fileRead);
-			while (!qStream.atEnd())
-			{
-				QString line = qStream.readLine();
-				if (line.contains(characterSkinColor.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterLipColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterBlushColor.get()->getPartTypeAssetStr() + "="))
-				{
-					characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-				}
-				else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterChest.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterBottom.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterFeet.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains(characterHair.get()->getPartTypeAssetStr() + "="))
-				{
-					if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-					{
-						characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-					}
-					else
-						partsMissing = true;
-				}
-				else if (line.contains("backgroundColor="))
-				{
-					setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
-				}
-			}
-			fileRead.close();
-			fileDirLastOpened = QFileInfo(filename).path();
-			characterModified = false;
-			if (partsMissing)
-				QMessageBox::information(this->parentWidget(), tr("Parts Missing"), tr("One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail."));
-		}
+		fileLoadSavedCharacter(filename);
+		fileDirLastOpened = QFileInfo(filename).path();
 	}
 }
 
