@@ -98,7 +98,7 @@ private:
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker3 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker4 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 
-	QColor pickerCopiedColor;
+	QColor pickerCopiedColor = QColor("#000000");
 
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	void loadDefaultCharacterOnInit();

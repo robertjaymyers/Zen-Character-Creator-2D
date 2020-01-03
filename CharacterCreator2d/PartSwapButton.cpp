@@ -51,7 +51,8 @@ PartSwapButton::PartSwapButton(QWidget *parent, BtnIcon btnIcon, BtnGeometry btn
 
 	contextMenuPicker.get()->addAction(actionCopyColor.get());
 	contextMenuPicker.get()->addAction(actionPasteColor.get());
-	//contextMenuPicker.get()->addAction(actionApplyColorToAllInSet.get());
+	contextMenuPicker.get()->addSeparator();
+	contextMenuPicker.get()->addAction(actionApplyColorToAllInSet.get());
 }
 
 // protected:

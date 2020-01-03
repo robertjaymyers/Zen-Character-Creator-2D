@@ -121,7 +121,10 @@ void CharacterPart::applyCurrentColorToAll()
 	{
 		QColor current = partsList[displayedPartI].currentColor;
 		for (auto& part : partsList)
+		{
 			part.currentColor = current;
+			applyColorFill(part, false);
+		}
 	}
 }
 
