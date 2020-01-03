@@ -114,6 +114,17 @@ void CharacterPart::setColorToScene(const QColor &newColor)
 	}
 }
 
+void CharacterPart::applyCurrentColorToAll()
+{
+	if (partColorSetType == ColorSetType::FILL_NO_OUTLINE ||
+		partColorSetType == ColorSetType::FILL_WITH_OUTLINE)
+	{
+		QColor current = partsList[displayedPartI].currentColor;
+		for (auto& part : partsList)
+			part.currentColor = current;
+	}
+}
+
 // private:
 
 void CharacterPart::populatePartsList(QStringList newParts, const QColor color)

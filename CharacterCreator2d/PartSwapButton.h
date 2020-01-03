@@ -14,6 +14,8 @@ This file is part of CharacterCreator2d.
 
 #pragma once
 #include <QPushButton>
+#include <QMenu>
+#include <QContextMenuEvent>
 
 enum class BtnIcon 
 { 
@@ -37,8 +39,17 @@ class PartSwapButton : public QPushButton
 
 public:
 	PartSwapButton(QWidget *parent = NULL, BtnIcon btnIcon = BtnIcon::NONE, BtnGeometry btnGeometry = BtnGeometry::NONE);
+	std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
+	std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
+	std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
+
+protected:
+	void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
+	std::unique_ptr<QMenu> contextMenuPicker = std::make_unique<QMenu>();
+	BtnGeometry btnTypeForRef = BtnGeometry::NONE;
+
 	QString styleSheetTemplate = 
 		"QPushButton{border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{border: none; image: url(%2);}"

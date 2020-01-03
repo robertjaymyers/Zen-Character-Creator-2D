@@ -58,6 +58,7 @@ public:
 
 	QColor getColorOfDisplayed();
 	void setColorToScene(const QColor &newColor);
+	void applyCurrentColorToAll();
 
 private:
 	// We store both img and altered img, so that we can display altered img,

@@ -145,12 +145,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			setBackgroundColor(colorNew);
 	});
 
-	// temporary shortcut for testing color change in image(s)
-	/*connect(shortcutChangeColor.get(), &QShortcut::activated, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getCurrentColor(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
-			characterSkinColor.get()->setColorToScene(colorNew);
-	});*/
+
 	connect(characterSkinBtnPicker.get(), &QPushButton::clicked, this, [=]() {
 		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
@@ -215,6 +210,82 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			characterHair.get()->setColorToScene(colorNew);
 			characterModified = true;
 		}
+	});
+
+
+	connect(characterSkinBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterSkinColor.get());
+	});
+	connect(characterEyeBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterEyeColor.get());
+	});
+	connect(characterLipBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterLipColor.get());
+	});
+	connect(characterBlushBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterBlushColor.get());
+	});
+	connect(characterChestBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterChest.get());
+	});
+	connect(characterBottomBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterBottom.get());
+	});
+	connect(characterFeetBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterFeet.get());
+	});
+	connect(characterHairBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
+		pickerCopyColor(characterHair.get());
+	});
+
+	connect(characterSkinBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterSkinColor.get());
+	});
+	connect(characterEyeBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterEyeColor.get());
+	});
+	connect(characterLipBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterLipColor.get());
+	});
+	connect(characterBlushBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterBlushColor.get());
+	});
+	connect(characterChestBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterChest.get());
+	});
+	connect(characterBottomBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterBottom.get());
+	});
+	connect(characterFeetBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterFeet.get());
+	});
+	connect(characterHairBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
+		pickerPasteColor(characterHair.get());
+	});
+
+	connect(characterSkinBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterSkinColor.get());
+	});
+	connect(characterEyeBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterEyeColor.get());
+	});
+	connect(characterLipBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterLipColor.get());
+	});
+	connect(characterBlushBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterBlushColor.get());
+	});
+	connect(characterChestBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterChest.get());
+	});
+	connect(characterBottomBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterBottom.get());
+	});
+	connect(characterFeetBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterFeet.get());
+	});
+	connect(characterHairBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
+		pickerApplyColorToAllInSet(characterHair.get());
 	});
 }
 
@@ -494,4 +565,23 @@ void GraphicsDisplay::setBackgroundColor(const QColor &color)
 	backgroundColor = color;
 	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
 	characterModified = true;
+}
+
+void GraphicsDisplay::pickerCopyColor(CharacterPart *characterPart)
+{
+	pickerCopiedColor = characterPart->getColorOfDisplayed();
+}
+
+void GraphicsDisplay::pickerPasteColor(CharacterPart *characterPart)
+{
+	if (pickerCopiedColor.isValid())
+	{
+		characterPart->setColorToScene(pickerCopiedColor);
+		characterModified = true;
+	}
+}
+
+void GraphicsDisplay::pickerApplyColorToAllInSet(CharacterPart *characterPart)
+{
+		characterPart->applyCurrentColorToAll();
 }

@@ -98,8 +98,7 @@ private:
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker3 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker4 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 
-	// temporary shortcut for testing color change in image(s)
-	//std::unique_ptr<QShortcut> shortcutChangeColor = std::make_unique<QShortcut>(QKeySequence(tr("E", "Change Color")), this);
+	QColor pickerCopiedColor;
 
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	void loadDefaultCharacterOnInit();
@@ -109,4 +108,7 @@ private:
 	bool fileSave();
 	void fileExportCombination();
 	void setBackgroundColor(const QColor &color);
+	void pickerCopyColor(CharacterPart *characterPart);
+	void pickerPasteColor(CharacterPart *characterPart);
+	void pickerApplyColorToAllInSet(CharacterPart *characterPart);
 };

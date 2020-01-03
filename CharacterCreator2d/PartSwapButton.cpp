@@ -45,5 +45,19 @@ PartSwapButton::PartSwapButton(QWidget *parent, BtnIcon btnIcon, BtnGeometry btn
 	else if (btnGeometry == BtnGeometry::PICKER || btnGeometry == BtnGeometry::PICKER_SPACER)
 		this->setFixedSize(QSize(btnPickerWidth, btnPickerHeight));
 
+	btnTypeForRef = btnGeometry;
+
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	contextMenuPicker.get()->addAction(actionCopyColor.get());
+	contextMenuPicker.get()->addAction(actionPasteColor.get());
+	//contextMenuPicker.get()->addAction(actionApplyColorToAllInSet.get());
+}
+
+// protected:
+
+void PartSwapButton::contextMenuEvent(QContextMenuEvent *event)
+{
+	if (btnTypeForRef == BtnGeometry::PICKER)
+		contextMenuPicker.get()->exec(event->globalPos());
 }
