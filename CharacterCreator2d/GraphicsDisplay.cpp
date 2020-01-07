@@ -36,11 +36,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	layout.get()->addWidget(characterEyeBtnPicker.get(), 1, 0, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterLipBtnPicker.get(), 2, 0, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterBlushBtnPicker.get(), 3, 0, Qt::AlignLeft | Qt::AlignTop);
+	layout.get()->addWidget(characterTextInputFirstName.get(), 4, 0, Qt::AlignLeft | Qt::AlignBottom);
 
 	layout.get()->addWidget(characterHairBtnPicker.get(), 0, 1, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterChestBtnPicker.get(), 1, 1, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterBottomBtnPicker.get(), 2, 1, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterFeetBtnPicker.get(), 3, 1, Qt::AlignLeft | Qt::AlignTop);
+	layout.get()->addWidget(characterTextInputLastName.get(), 4, 1, Qt::AlignLeft | Qt::AlignBottom);
 
 	layout.get()->addWidget(characterBtnSpacerPicker1.get(), 0, 2, Qt::AlignLeft | Qt::AlignTop);
 	layout.get()->addWidget(characterBtnSpacerPicker2.get(), 1, 2, Qt::AlignLeft | Qt::AlignTop);
@@ -451,6 +453,14 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			{
 				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
 			}
+			else if (line.contains("characterFirstName="))
+			{
+				characterTextInputFirstName.get()->setText(extractSubstringInbetweenQt("=", ",", line));
+			}
+			else if (line.contains("characterLastName="))
+			{
+				characterTextInputLastName.get()->setText(extractSubstringInbetweenQt("=", ",", line));
+			}
 		}
 		fileRead.close();
 		characterModified = false;
@@ -461,6 +471,9 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 
 void GraphicsDisplay::fileNew()
 {
+	// TODO: Make it so that fileNew reverts to loaded template, if there is one.
+	// otherwise, use fallback defaults.
+
 	characterSkinColor.get()->setDisplayedToDefault();
 	characterEyeColor.get()->setDisplayedToDefault();
 	characterLipColor.get()->setDisplayedToDefault();
@@ -472,6 +485,8 @@ void GraphicsDisplay::fileNew()
 	characterHair.get()->setDisplayedToDefault();
 	backgroundColor = backgroundColorDefault;
 	setBackgroundColor(backgroundColor);
+	characterTextInputFirstName.get()->setText("");
+	characterTextInputLastName.get()->setText("");
 	characterModified = false;
 }
 
@@ -487,7 +502,12 @@ void GraphicsDisplay::fileOpen()
 
 bool GraphicsDisplay::fileSave()
 {
-	QFileDialog dialog(this, tr("Save As"), fileDirLastSaved, tr("Text Files (*.txt)"));
+	QString proposedSaveName = 
+		fileDirLastSaved + "/" 
+		+ characterTextInputFirstName.get()->text()
+		+ characterTextInputLastName.get()->text()
+		+ QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
+	QFileDialog dialog(this, tr("Save As"), proposedSaveName, tr("Text Files (*.txt)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	if (dialog.exec() == QFileDialog::Accepted)
@@ -532,6 +552,9 @@ bool GraphicsDisplay::fileSave()
 				"," + characterHair.get()->getColorOfDisplayed().name() + "\r\n";
 
 			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
+
+			qStream << "characterFirstName=" + characterTextInputFirstName.get()->text() + "\r\n";
+			qStream << "characterLastName=" + characterTextInputLastName.get()->text() + "\r\n";
 
 			fileWrite.close();
 			fileDirLastSaved = QFileInfo(fpath).path();

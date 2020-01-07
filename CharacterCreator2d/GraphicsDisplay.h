@@ -15,6 +15,7 @@ This file is part of CharacterCreator2d.
 #pragma once
 #include "CharacterPart.h"
 #include "PartSwapButton.h"
+#include "TextInputSingleLine.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
@@ -28,6 +29,7 @@ This file is part of CharacterCreator2d.
 #include <QAction>
 #include <QMessageBox>
 #include <QColorDialog>
+#include <QDateTime>
 #include <vector>
 
 class GraphicsDisplay : public QGraphicsView
@@ -97,6 +99,9 @@ private:
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker2 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker3 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
 	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker4 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+
+	std::unique_ptr<TextInputSingleLine> characterTextInputFirstName = std::make_unique<TextInputSingleLine>(this, "First Name");
+	std::unique_ptr<TextInputSingleLine> characterTextInputLastName = std::make_unique<TextInputSingleLine>(this, "Last Name");
 
 	QColor pickerCopiedColor = QColor("#000000");
 

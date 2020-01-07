@@ -40,6 +40,9 @@
     <ClCompile Include="PartSwapButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextInputSingleLine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CharacterCreator2d.h">
@@ -49,6 +52,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="PartSwapButton.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="TextInputSingleLine.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
