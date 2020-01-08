@@ -111,7 +111,7 @@ private:
 	void fileNew();
 	void fileOpen();
 	bool fileSave();
-	void fileExportCombination();
+	void fileExportCharacter();
 	void setBackgroundColor(const QColor &color);
 	void pickerCopyColor(CharacterPart *characterPart);
 	void pickerPasteColor(CharacterPart *characterPart);

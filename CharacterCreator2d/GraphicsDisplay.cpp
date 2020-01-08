@@ -140,7 +140,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		if (fileSave())
 			characterModified = false;
 	});
-	connect(actionFileExport.get(), &QAction::triggered, this, &GraphicsDisplay::fileExportCombination);
+	connect(actionFileExport.get(), &QAction::triggered, this, &GraphicsDisplay::fileExportCharacter);
 	connect(actionSetBackgroundColor.get(), &QAction::triggered, this, [=]() {
 		QColor colorNew = QColorDialog::getColor(backgroundColor, this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
@@ -367,7 +367,7 @@ bool GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	// To provide a little more control over default character settings,
 	// a default character can be loaded from a template file.
 	// Template is built identical to a saved character, so the loading logic can be reused.
-	const QString templatePath = QCoreApplication::applicationDirPath() + "/Assets" + "/default-character-template.txt";
+	const QString templatePath = QCoreApplication::applicationDirPath() + "/Assets" + "/default-character-template.zen2dx";
 	if (QFile::exists(templatePath))
 	{
 		fileLoadSavedCharacter(templatePath);
@@ -496,7 +496,7 @@ void GraphicsDisplay::fileNew()
 
 void GraphicsDisplay::fileOpen()
 {
-	QString filename = QFileDialog::getOpenFileName(this, tr("Open"), fileDirLastOpened, tr("Text Files (*.txt)"));
+	QString filename = QFileDialog::getOpenFileName(this, tr("Open"), fileDirLastOpened, tr("Zen Character Creator 2D Files (*.zen2dx)"));
 	if (!filename.isEmpty())
 	{
 		fileLoadSavedCharacter(filename);
@@ -511,7 +511,7 @@ bool GraphicsDisplay::fileSave()
 		+ characterTextInputFirstName.get()->text()
 		+ characterTextInputLastName.get()->text()
 		+ QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
-	QFileDialog dialog(this, tr("Save As"), proposedSaveName, tr("Text Files (*.txt)"));
+	QFileDialog dialog(this, tr("Save As"), proposedSaveName, tr("Zen Character Creator 2D Files (*.zen2dx)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	if (dialog.exec() == QFileDialog::Accepted)
@@ -568,9 +568,14 @@ bool GraphicsDisplay::fileSave()
 	return false;
 }
 
-void GraphicsDisplay::fileExportCombination()
+void GraphicsDisplay::fileExportCharacter()
 {
-	QFileDialog dialog(this, tr("Save As"), fileDirLastExported, tr("Image Files (*.png)"));
+	QString proposedExportName =
+		fileDirLastExported + "/"
+		+ characterTextInputFirstName.get()->text()
+		+ characterTextInputLastName.get()->text()
+		+ QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
+	QFileDialog dialog(this, tr("Save As"), proposedExportName, tr("Image Files (*.png)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
 	if (dialog.exec() == QFileDialog::Accepted)
