@@ -85,7 +85,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 	// Template load should be last init operation in graphics display,
 	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
-	loadDefaultCharacterOnInit();
+	loadDefaultCharacterFromTemplate();
 
 	connect(characterHeadBtnLeft.get(), &QPushButton::clicked, this, [=]() {
 		characterHead.get()->moveLeftInDisplay();
@@ -362,14 +362,18 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 	return extracted;
 }
 
-void GraphicsDisplay::loadDefaultCharacterOnInit()
+bool GraphicsDisplay::loadDefaultCharacterFromTemplate()
 {
 	// To provide a little more control over default character settings,
 	// a default character can be loaded from a template file.
 	// Template is built identical to a saved character, so the loading logic can be reused.
 	const QString templatePath = QCoreApplication::applicationDirPath() + "/Assets" + "/default-character-template.txt";
 	if (QFile::exists(templatePath))
+	{
 		fileLoadSavedCharacter(templatePath);
+		return true;
+	}
+	return false;
 }
 
 void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
@@ -451,15 +455,15 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			}
 			else if (line.contains("backgroundColor="))
 			{
-				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", ",", line)));
+				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", "", line)));
 			}
 			else if (line.contains("characterFirstName="))
 			{
-				characterTextInputFirstName.get()->setText(extractSubstringInbetweenQt("=", ",", line));
+				characterTextInputFirstName.get()->setText(extractSubstringInbetweenQt("=", "", line));
 			}
 			else if (line.contains("characterLastName="))
 			{
-				characterTextInputLastName.get()->setText(extractSubstringInbetweenQt("=", ",", line));
+				characterTextInputLastName.get()->setText(extractSubstringInbetweenQt("=", "", line));
 			}
 		}
 		fileRead.close();
@@ -471,23 +475,23 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 
 void GraphicsDisplay::fileNew()
 {
-	// TODO: Make it so that fileNew reverts to loaded template, if there is one.
-	// otherwise, use fallback defaults.
-
-	characterSkinColor.get()->setDisplayedToDefault();
-	characterEyeColor.get()->setDisplayedToDefault();
-	characterLipColor.get()->setDisplayedToDefault();
-	characterBlushColor.get()->setDisplayedToDefault();
-	characterHead.get()->setDisplayedToDefault();
-	characterChest.get()->setDisplayedToDefault();
-	characterBottom.get()->setDisplayedToDefault();
-	characterFeet.get()->setDisplayedToDefault();
-	characterHair.get()->setDisplayedToDefault();
-	backgroundColor = backgroundColorDefault;
-	setBackgroundColor(backgroundColor);
-	characterTextInputFirstName.get()->setText("");
-	characterTextInputLastName.get()->setText("");
-	characterModified = false;
+	if (!loadDefaultCharacterFromTemplate())
+	{
+		characterSkinColor.get()->setDisplayedToDefault();
+		characterEyeColor.get()->setDisplayedToDefault();
+		characterLipColor.get()->setDisplayedToDefault();
+		characterBlushColor.get()->setDisplayedToDefault();
+		characterHead.get()->setDisplayedToDefault();
+		characterChest.get()->setDisplayedToDefault();
+		characterBottom.get()->setDisplayedToDefault();
+		characterFeet.get()->setDisplayedToDefault();
+		characterHair.get()->setDisplayedToDefault();
+		backgroundColor = backgroundColorDefault;
+		setBackgroundColor(backgroundColor);
+		characterTextInputFirstName.get()->setText("");
+		characterTextInputLastName.get()->setText("");
+		characterModified = false;
+	}
 }
 
 void GraphicsDisplay::fileOpen()

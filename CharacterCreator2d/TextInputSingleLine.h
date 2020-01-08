@@ -15,13 +15,6 @@ This file is part of CharacterCreator2d.
 #pragma once
 #include <QLineEdit>
 
-// reimplement QLineEdit
-
-// add styling in constructor
-
-// make custom constructor, if necessary, to set placeholder text immediately.
-// (e.g. so placeholder text can be set as "First Name" or "Last Name")
-
 class TextInputSingleLine : public QLineEdit
 {
 	Q_OBJECT

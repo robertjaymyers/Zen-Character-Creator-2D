@@ -106,7 +106,7 @@ private:
 	QColor pickerCopiedColor = QColor("#000000");
 
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
-	void loadDefaultCharacterOnInit();
+	bool loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
 	void fileNew();
 	void fileOpen();
