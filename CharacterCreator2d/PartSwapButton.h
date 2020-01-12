@@ -16,6 +16,7 @@ This file is part of Zen Character Creator 2D.
 #include <QPushButton>
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QPainter>
 
 enum class BtnIcon 
 { 
@@ -43,12 +44,16 @@ public:
 	std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
 	std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
 
+	void applyColorFill(const QColor &color);
+
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
 	std::unique_ptr<QMenu> contextMenuPicker = std::make_unique<QMenu>();
 	BtnGeometry btnTypeForRef = BtnGeometry::NONE;
+
+	QPixmap pasteColorIcon = QPixmap(":/CharacterCreator2d/Resources/clipboardColorIcon.png");
 
 	QString styleSheetTemplate = 
 		"QPushButton{border: none; image: url(%1);}"

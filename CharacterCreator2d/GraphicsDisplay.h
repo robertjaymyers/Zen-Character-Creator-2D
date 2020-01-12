@@ -84,6 +84,8 @@ private:
 	std::unique_ptr<PartSwapButton> characterHairBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
 	std::unique_ptr<PartSwapButton> characterHairBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
 	
+	//std::unique_ptr<QShortcut> shortcutChangeBody = std::make_unique<QShortcut>(QKeySequence(tr("E", "**DEBUG** Change Pose")), this);
+
 	std::unique_ptr<PartSwapButton> characterSkinBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_SKIN, BtnGeometry::PICKER);
 	std::unique_ptr<PartSwapButton> characterEyeBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_EYE, BtnGeometry::PICKER);
 	std::unique_ptr<PartSwapButton> characterLipBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_LIP, BtnGeometry::PICKER);
@@ -116,4 +118,5 @@ private:
 	void pickerCopyColor(CharacterPart *characterPart);
 	void pickerPasteColor(CharacterPart *characterPart);
 	void pickerApplyColorToAllInSet(CharacterPart *characterPart);
+	void pickerUpdatePasteIconColor(const QColor &color);
 };

@@ -49,10 +49,25 @@ PartSwapButton::PartSwapButton(QWidget *parent, BtnIcon btnIcon, BtnGeometry btn
 
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+	actionPasteColor->setIcon(QIcon(pasteColorIcon));
+
 	contextMenuPicker.get()->addAction(actionCopyColor.get());
 	contextMenuPicker.get()->addAction(actionPasteColor.get());
 	contextMenuPicker.get()->addSeparator();
 	contextMenuPicker.get()->addAction(actionApplyColorToAllInSet.get());
+}
+
+// public:
+
+void PartSwapButton::applyColorFill(const QColor &color)
+{
+	QPainter painter;
+	painter.begin(&pasteColorIcon);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(pasteColorIcon.rect(), color);
+	painter.end();
+
+	actionPasteColor->setIcon(QIcon(pasteColorIcon));
 }
 
 // protected:

@@ -31,5 +31,6 @@
         <file>Resources/button-pick-feet-color-hover-pressed.png</file>
         <file>Resources/picker-spacer-transparent-background.png</file>
         <file>Resources/button-pick-chest-color.png</file>
+        <file>Resources/clipboardColorIcon.png</file>
     </qresource>
 </RCC>

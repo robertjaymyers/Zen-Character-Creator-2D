@@ -83,6 +83,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	// (otherwise, it could be hidden under clothing, etc., in an awkward way)
 	scene.get()->addItem(characterHair.get());
 
+	pickerUpdatePasteIconColor(pickerCopiedColor);
+
 	// Template load should be last init operation in graphics display,
 	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
 	loadDefaultCharacterFromTemplate();
@@ -127,6 +129,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		characterHair.get()->moveRightInDisplay();
 		characterModified = true;
 	});
+
+	/*connect(shortcutChangeBody.get(), &QShortcut::activated, this, [=]() {
+		characterSkinColor.get()->moveRightInDisplay();
+		characterModified = true;
+	});*/
 
 	connect(actionFileNew.get(), &QAction::triggered, this, [=]() {
 		if (fileSaveModifCheck())
@@ -602,6 +609,7 @@ void GraphicsDisplay::setBackgroundColor(const QColor &color)
 void GraphicsDisplay::pickerCopyColor(CharacterPart *characterPart)
 {
 	pickerCopiedColor = characterPart->getColorOfDisplayed();
+	pickerUpdatePasteIconColor(pickerCopiedColor);
 }
 
 void GraphicsDisplay::pickerPasteColor(CharacterPart *characterPart)
@@ -616,4 +624,16 @@ void GraphicsDisplay::pickerPasteColor(CharacterPart *characterPart)
 void GraphicsDisplay::pickerApplyColorToAllInSet(CharacterPart *characterPart)
 {
 		characterPart->applyCurrentColorToAll();
+}
+
+void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
+{
+	characterSkinBtnPicker.get()->applyColorFill(color);
+	characterEyeBtnPicker.get()->applyColorFill(color);
+	characterLipBtnPicker.get()->applyColorFill(color);
+	characterBlushBtnPicker.get()->applyColorFill(color);
+	characterChestBtnPicker.get()->applyColorFill(color);
+	characterBottomBtnPicker.get()->applyColorFill(color);
+	characterFeetBtnPicker.get()->applyColorFill(color);
+	characterHairBtnPicker.get()->applyColorFill(color);
 }
