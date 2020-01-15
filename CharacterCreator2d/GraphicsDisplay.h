@@ -13,31 +13,49 @@ This file is part of Zen Character Creator 2D.
 */
 
 #pragma once
-#include "CharacterPart.h"
-#include "PartSwapButton.h"
-#include "TextInputSingleLine.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QGraphicsPixmapItem>
-#include <QMouseEvent>
-#include <QPushButton>
 #include <QGridLayout>
-#include <QDebug>
-#include <QFileDialog>
-#include <QShortcut>
+#include <QContextMenuEvent>
 #include <QMenu>
 #include <QAction>
-#include <QMessageBox>
+#include <QCoreApplication>
+#include <QGraphicsPixmapItem>
+#include <QDirIterator>
+#include <QPushButton>
+#include <QDebug>
 #include <QColorDialog>
+#include <QPainter>
+#include <QFileDialog>
+#include <QLineEdit>
 #include <QDateTime>
+#include <QMessageBox>
 #include <vector>
+#include <algorithm>
+#include <iterator>
+
+struct uiBtnInvisibleSpacer
+{
+	int width;
+	int height;
+	QString style;
+	std::vector<int> gridPlace;
+	Qt::Alignment gridAlign;
+	std::unique_ptr<QPushButton> spacerBtn = std::make_unique<QPushButton>(nullptr);
+};
+
+enum class TextInputSingleLineType { FIRST_NAME, LAST_NAME, NONE };
+
+enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
+
+enum class PartType { SKIN_COLOR, EYE_COLOR, LIP_COLOR, BLUSH_COLOR, HEAD, CHEST, BOTTOM, FEET, HAIR, NONE };
 
 class GraphicsDisplay : public QGraphicsView
 {
 	Q_OBJECT
 
 public:
-	GraphicsDisplay(QWidget *parent = NULL);
+	GraphicsDisplay(QWidget *parent = nullptr);
 	bool fileSaveModifCheck();
 
 protected:
@@ -52,71 +70,160 @@ private:
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
 	QColor backgroundColor = backgroundColorDefault;
 
-	std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
-	std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
-	std::unique_ptr<QAction> actionFileOpen = std::make_unique<QAction>("Open Character");
-	std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
-	std::unique_ptr<QAction> actionFileExport = std::make_unique<QAction>("Export Character");
-	std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
-
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
-	std::unique_ptr<CharacterPart> characterSkinColor = std::make_unique<CharacterPart>(nullptr, PartType::SKIN_COLOR, QColor("#764c39"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterEyeColor = std::make_unique<CharacterPart>(nullptr, PartType::EYE_COLOR, QColor("#aaaa7f"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterLipColor = std::make_unique<CharacterPart>(nullptr, PartType::LIP_COLOR, QColor("#555500"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterBlushColor = std::make_unique<CharacterPart>(nullptr, PartType::BLUSH_COLOR, QColor("#555500"), ColorSetType::FILL_NO_OUTLINE);
-	std::unique_ptr<CharacterPart> characterHead = std::make_unique<CharacterPart>(nullptr, PartType::HEAD, QColor("#FFFFFF"), ColorSetType::NONE);
-	std::unique_ptr<CharacterPart> characterChest = std::make_unique<CharacterPart>(nullptr, PartType::CHEST, QColor("#B5B5B5"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterBottom = std::make_unique<CharacterPart>(nullptr, PartType::BOTTOM, QColor("#B5B5B5"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterFeet = std::make_unique<CharacterPart>(nullptr, PartType::FEET, QColor("#000000"), ColorSetType::FILL_WITH_OUTLINE);
-	std::unique_ptr<CharacterPart> characterHair = std::make_unique<CharacterPart>(nullptr, PartType::HAIR, QColor("#000000"), ColorSetType::FILL_WITH_OUTLINE);
 
-	const int characterViewWidth = 500;
-	const int characterViewHeight = 550;
-	std::unique_ptr<PartSwapButton> characterHeadBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterHeadBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterChestBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterChestBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterBottomBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterBottomBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterFeetBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterFeetBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterHairBtnLeft = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_LEFT, BtnGeometry::SWAP);
-	std::unique_ptr<PartSwapButton> characterHairBtnRight = std::make_unique<PartSwapButton>(this, BtnIcon::SWAP_RIGHT, BtnGeometry::SWAP);
-	
-	//std::unique_ptr<QShortcut> shortcutChangeBody = std::make_unique<QShortcut>(QKeySequence(tr("E", "**DEBUG** Change Pose")), this);
+	const std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
+	const std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
+	const std::unique_ptr<QAction> actionFileOpen = std::make_unique<QAction>("Open Character");
+	const std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
+	const std::unique_ptr<QAction> actionFileExport = std::make_unique<QAction>("Export Character");
+	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
 
-	std::unique_ptr<PartSwapButton> characterSkinBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_SKIN, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterEyeBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_EYE, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterLipBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_LIP, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterBlushBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_BLUSH, BtnGeometry::PICKER);
-	
-	std::unique_ptr<PartSwapButton> characterChestBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_CHEST, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterBottomBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_BOTTOM, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterFeetBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_FEET, BtnGeometry::PICKER);
-	std::unique_ptr<PartSwapButton> characterHairBtnPicker = std::make_unique<PartSwapButton>(this, BtnIcon::COLOR_PICKER_HAIR, BtnGeometry::PICKER);
+	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
-	// These exist only to fill space and affect spacing of UI layout. They should be invisible and do nothing.
-	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker1 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
-	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker2 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
-	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker3 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
-	std::unique_ptr<PartSwapButton> characterBtnSpacerPicker4 = std::make_unique<PartSwapButton>(this, BtnIcon::NONE, BtnGeometry::PICKER_SPACER);
+	struct characterPart
+	{
+		PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 
-	std::unique_ptr<TextInputSingleLine> characterTextInputFirstName = std::make_unique<TextInputSingleLine>(this, "First Name");
-	std::unique_ptr<TextInputSingleLine> characterTextInputLastName = std::make_unique<TextInputSingleLine>(this, "Last Name");
+		// Since we're working with 2D elements that can overlap, we use a display order
+		// to ensure that the elements get added to the scene to overlap in the way we want.
+		// For example, having HAIR added after CHEST so that long hair goes over clothing.
+		int displayOrder;
+
+		QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
+		QColor defaultInitialColor;
+		ColorSetType colorSetType = ColorSetType::NONE;
+		bool partHasBtnSwap;
+		bool partHasBtnPicker;
+		QStringList btnSwapLeftIcons;
+		QStringList btnSwapRightIcons;
+		QStringList btnPickerIcons;
+		std::vector<int> gridPlacePicker;
+		Qt::Alignment gridAlignPicker;
+		std::vector<int> gridPlaceSwapLeft;
+		Qt::Alignment gridAlignSwapLeft;
+		std::vector<int> gridPlaceSwapRight;
+		Qt::Alignment gridAlignSwapRight;
+		int btnSwapWidth;
+		int btnSwapHeight;
+		int btnPickerWidth;
+		int btnPickerHeight;
+
+		std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
+		std::unique_ptr<QPushButton> btnSwapLeft = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QPushButton> btnSwapRight = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
+		std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
+		std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
+		std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
+
+		QString btnStyleSheetTemplate =
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}"
+			;
+
+		// We store both base img and altered img, so that we can display altered img,
+		// and apply color changes to base img, to get consistent results when altering color.
+		// Otherwise, we'd be applying changes to a modified img, which can result in inconsistent color changes
+		// over time, depending on the type of composition mode used with QPainter.
+		struct imgParts
+		{
+			QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
+			QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
+			QPixmap imgAltered; // Modify this one for color changes.
+			QString imgFilename;
+			QColor colorBase; // Don't modify this after initial setting it from parts map
+			QColor colorAltered; // Modify this one for color changes.
+		};
+		int displayedPartI = 0;
+		std::vector<imgParts> partsList;
+	};
+
+	std::vector<characterPart> characterPartList;
+
+	struct textInputSingleLine
+	{
+		TextInputSingleLineType inputType = TextInputSingleLineType::NONE;
+		QString inputTypeStr;
+		QString styleSheet;
+		QString placeholderText;
+		std::vector<int> gridPlace;
+		Qt::Alignment gridAlign;
+		std::unique_ptr<QLineEdit> inputWidget = std::make_unique<QLineEdit>();
+	};
+
+	std::vector<textInputSingleLine> textInputSingleLineList;
+
+	const uiBtnInvisibleSpacer uiSpacerList[4] =
+	{
+		{
+			75,
+			75,
+			"QPushButton"
+			"{"
+				"background-color: rgba(255, 255, 255, 0);"
+				"border: none;"
+				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
+			"}",
+			{0, 2},
+			Qt::AlignLeft | Qt::AlignTop
+		},
+		{
+			75,
+			75,
+			"QPushButton"
+			"{"
+				"background-color: rgba(255, 255, 255, 0);"
+				"border: none;"
+				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
+			"}",
+			{1, 2},
+			Qt::AlignLeft | Qt::AlignTop
+		},
+		{
+			75,
+			75,
+			"QPushButton"
+			"{"
+				"background-color: rgba(255, 255, 255, 0);"
+				"border: none;"
+				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
+			"}",
+			{2, 2},
+			Qt::AlignLeft | Qt::AlignTop
+		},
+		{
+			75,
+			75,
+			"QPushButton"
+			"{"
+				"background-color: rgba(255, 255, 255, 0);"
+				"border: none;"
+				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
+			"}",
+			{3, 2},
+			Qt::AlignLeft | Qt::AlignTop
+		},
+	};
 
 	QColor pickerCopiedColor = QColor("#000000");
+	const QPixmap pickerPasteColorIcon = QPixmap(":/ZenCharacterCreator2D/Resources/clipboardColorIcon.png");
 
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
-	bool loadDefaultCharacterFromTemplate();
+	QStringList fileGetAssets(const QString &subPath);
+	QPixmap recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color);
+	QPixmap recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color);
+	static bool compareDisplayOrder(const characterPart &lhs, const characterPart &rhs);
+	void pickerUpdatePasteIconColor(const QColor &color);
+	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
 	void fileNew();
 	void fileOpen();
 	bool fileSave();
 	void fileExportCharacter();
+	int findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename);
 	void setBackgroundColor(const QColor &color);
-	void pickerCopyColor(CharacterPart *characterPart);
-	void pickerPasteColor(CharacterPart *characterPart);
-	void pickerApplyColorToAllInSet(CharacterPart *characterPart);
-	void pickerUpdatePasteIconColor(const QColor &color);
 };

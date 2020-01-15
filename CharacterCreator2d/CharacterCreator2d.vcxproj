@@ -89,11 +89,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CharacterCreator2d.cpp" />
-    <ClCompile Include="CharacterPart.cpp" />
     <ClCompile Include="GraphicsDisplay.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PartSwapButton.cpp" />
-    <ClCompile Include="TextInputSingleLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CharacterCreator2d.h" />
@@ -106,11 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GraphicsDisplay.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CharacterPart.h" />
-    <QtMoc Include="TextInputSingleLine.h" />
-    <QtMoc Include="PartSwapButton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -34,27 +34,12 @@
     <ClCompile Include="GraphicsDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterPart.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PartSwapButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextInputSingleLine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CharacterCreator2d.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="GraphicsDisplay.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="PartSwapButton.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="TextInputSingleLine.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -67,10 +52,5 @@
     <QtRcc Include="CharacterCreator2d.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CharacterPart.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

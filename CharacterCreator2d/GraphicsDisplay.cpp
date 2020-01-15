@@ -24,117 +24,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addAction(actionSetBackgroundColor.get());
 
-	this->setScene(scene.get());
-	scene.get()->setParent(this->parent());
-
-	this->setStyleSheet(styleSheetEditable.arg(backgroundColorDefault.name()));
-	this->setLayout(layout.get());
-
-	layout.get()->setMargin(50);
-
-	layout.get()->addWidget(characterSkinBtnPicker.get(), 0, 0, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterEyeBtnPicker.get(), 1, 0, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterLipBtnPicker.get(), 2, 0, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterBlushBtnPicker.get(), 3, 0, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterTextInputFirstName.get(), 4, 0, Qt::AlignLeft | Qt::AlignBottom);
-
-	layout.get()->addWidget(characterHairBtnPicker.get(), 0, 1, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterChestBtnPicker.get(), 1, 1, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterBottomBtnPicker.get(), 2, 1, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterFeetBtnPicker.get(), 3, 1, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterTextInputLastName.get(), 4, 1, Qt::AlignLeft | Qt::AlignBottom);
-
-	layout.get()->addWidget(characterBtnSpacerPicker1.get(), 0, 2, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterBtnSpacerPicker2.get(), 1, 2, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterBtnSpacerPicker3.get(), 2, 2, Qt::AlignLeft | Qt::AlignTop);
-	layout.get()->addWidget(characterBtnSpacerPicker4.get(), 3, 2, Qt::AlignLeft | Qt::AlignTop);
-
-	layout.get()->addWidget(characterHairBtnLeft.get(), 0, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterHeadBtnLeft.get(), 1, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterChestBtnLeft.get(), 2, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterBottomBtnLeft.get(), 3, 3, Qt::AlignRight);
-	layout.get()->addWidget(characterFeetBtnLeft.get(), 4, 3, Qt::AlignRight);
-
-	layout.get()->addWidget(characterHairBtnRight.get(), 0, 4, Qt::AlignRight);
-	layout.get()->addWidget(characterHeadBtnRight.get(), 1, 4, Qt::AlignRight);
-	layout.get()->addWidget(characterChestBtnRight.get(), 2, 4, Qt::AlignRight);
-	layout.get()->addWidget(characterBottomBtnRight.get(), 3, 4, Qt::AlignRight);
-	layout.get()->addWidget(characterFeetBtnRight.get(), 4, 4, Qt::AlignRight);
-
-	// Skin color should be added first, so that it will be placed under the other elements.
-	scene.get()->addItem(characterSkinColor.get());
-
-	scene.get()->addItem(characterEyeColor.get());
-	scene.get()->addItem(characterLipColor.get());
-	scene.get()->addItem(characterBlushColor.get());
-
-	scene.get()->addItem(characterHead.get());
-	scene.get()->addItem(characterBottom.get());
-
-	// Chest is added after Bottom, so that long tops will cover part of bottom.
-	// This can only work one way as designed; either chest can cover part of bottom or bottom can cover part of chest.
-	// Order according to which one gets priority.
-	// Note that long tops may not look right with all bottoms regardless, due to the flow of fabric.
-	scene.get()->addItem(characterChest.get());
-
-	scene.get()->addItem(characterFeet.get());
-
-	// Hair color should be added last, so that it will be placed over the other elements.
-	// (otherwise, it could be hidden under clothing, etc., in an awkward way)
-	scene.get()->addItem(characterHair.get());
-
-	pickerUpdatePasteIconColor(pickerCopiedColor);
-
-	// Template load should be last init operation in graphics display,
-	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
-	loadDefaultCharacterFromTemplate();
-
-	connect(characterHeadBtnLeft.get(), &QPushButton::clicked, this, [=]() {
-		characterHead.get()->moveLeftInDisplay();
-		characterModified = true;
-	});
-	connect(characterHeadBtnRight.get(), &QPushButton::clicked, this, [=]() {
-		characterHead.get()->moveRightInDisplay();
-		characterModified = true;
-	});
-	connect(characterChestBtnLeft.get(), &QPushButton::clicked, this, [=]() {
-		characterChest.get()->moveLeftInDisplay();
-		characterModified = true;
-	});
-	connect(characterChestBtnRight.get(), &QPushButton::clicked, this, [=]() {
-		characterChest.get()->moveRightInDisplay();
-		characterModified = true;
-	});
-	connect(characterBottomBtnLeft.get(), &QPushButton::clicked, this, [=]() {
-		characterBottom.get()->moveLeftInDisplay();
-		characterModified = true;
-	});
-	connect(characterBottomBtnRight.get(), &QPushButton::clicked, this, [=]() {
-		characterBottom.get()->moveRightInDisplay();
-		characterModified = true;
-	});
-	connect(characterFeetBtnLeft.get(), &QPushButton::clicked, this, [=]() {
-		characterFeet.get()->moveLeftInDisplay();
-		characterModified = true;
-	});
-	connect(characterFeetBtnRight.get(), &QPushButton::clicked, this, [=]() {
-		characterFeet.get()->moveRightInDisplay();
-		characterModified = true;
-	});
-	connect(characterHairBtnLeft.get(), &QPushButton::clicked, this, [=]() {
-		characterHair.get()->moveLeftInDisplay();
-		characterModified = true;
-	});
-	connect(characterHairBtnRight.get(), &QPushButton::clicked, this, [=]() {
-		characterHair.get()->moveRightInDisplay();
-		characterModified = true;
-	});
-
-	/*connect(shortcutChangeBody.get(), &QShortcut::activated, this, [=]() {
-		characterSkinColor.get()->moveRightInDisplay();
-		characterModified = true;
-	});*/
-
 	connect(actionFileNew.get(), &QAction::triggered, this, [=]() {
 		if (fileSaveModifCheck())
 			fileNew();
@@ -154,148 +43,622 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			setBackgroundColor(colorNew);
 	});
 
+	{
+		textInputSingleLine textInputSL =
+		{
+			TextInputSingleLineType::FIRST_NAME,
+			"characterFirstName",
+			"QLineEdit"
+			"{"
+				"color: #000000;"
+				"background-color: #FFFFFF;"
+				"selection-background-color: #A96539;"
+				"border-width: 1px;"
+				"border-style: solid;"
+				"border-color: #000000;"
+				"border-radius: 4px;"
+				"font-size: 12px;"
+				"padding: 5px;"
+			"}"
+			"QLineEdit:hover{color: #A96539;}",
+			"First Name",
+			{4, 0}, // Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
+		};
+		textInputSingleLineList.push_back(std::move(textInputSL));
+	}
+	{
+		textInputSingleLine textInputSL =
+		{
+			TextInputSingleLineType::LAST_NAME,
+			"characterLastName",
+			"QLineEdit"
+			"{"
+				"color: #000000;"
+				"background-color: #FFFFFF;"
+				"selection-background-color: #A96539;"
+				"border-width: 1px;"
+				"border-style: solid;"
+				"border-color: #000000;"
+				"border-radius: 4px;"
+				"font-size: 12px;"
+				"padding: 5px;"
+			"}"
+			"QLineEdit:hover{color: #A96539;}",
+			"Last Name",
+			{4, 1}, // Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
+		};
+		textInputSingleLineList.push_back(std::move(textInputSL));
+	}
 
-	connect(characterSkinBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterSkinColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
+	{
+		characterPart cPart =
 		{
-			characterSkinColor.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterEyeBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterEyeColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
+			PartType::SKIN_COLOR,
+			0, // Display order in scene (higher numbers overlap lower numbers)
+			"SkinColor",
+			"#764c39",
+			ColorSetType::FILL_WITH_OUTLINE,
+			false, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
+			{0, 0}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
 		{
-			characterEyeColor.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterLipBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterLipColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
+			PartType::EYE_COLOR,
+			1, // Display order in scene (higher numbers overlap lower numbers)
+			"EyeColor",
+			"#aaaa7f",
+			ColorSetType::FILL_WITH_OUTLINE,
+			false, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
+			{1, 0}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
 		{
-			characterLipColor.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterBlushBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterBlushColor.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
+			PartType::LIP_COLOR,
+			2, // Display order in scene (higher numbers overlap lower numbers)
+			"LipColor",
+			"#555500",
+			ColorSetType::FILL_WITH_OUTLINE,
+			false, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
+			{2, 0}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
 		{
-			characterBlushColor.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
+			PartType::BLUSH_COLOR,
+			3, // Display order in scene (higher numbers overlap lower numbers)
+			"BlushColor",
+			"#555500",
+			ColorSetType::FILL_NO_OUTLINE,
+			false, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
+			{3, 0}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
+		{
+			PartType::HEAD,
+			4, // Display order in scene (higher numbers overlap lower numbers)
+			"Head",
+			"#FFFFFF",
+			ColorSetType::NONE,
+			true, // SWAP BTN: Flag for whether part is expected to display btn
+			false, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList(), // Head color changing is controlled by skin color, so we leave this empty
+			{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
+			nullptr, // PICKER BTN: Alignment in grid layout
+			{1, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			{1, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
+		{
+			PartType::BOTTOM,
+			5, // Display order in scene (higher numbers overlap lower numbers)
+			"Bottom",
+			"#B5B5B5",
+			ColorSetType::FILL_WITH_OUTLINE,
+			true, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
+			{2, 1}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{3, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			{3, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
+		{
+			PartType::CHEST,
+			6, // Display order in scene (higher numbers overlap lower numbers)
+			"Chest",
+			"#B5B5B5",
+			ColorSetType::FILL_WITH_OUTLINE,
+			true, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
+			{1, 1}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{2, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			{2, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
+		{
+			PartType::FEET,
+			7, // Display order in scene (higher numbers overlap lower numbers)
+			"Feet",
+			"#000000",
+			ColorSetType::FILL_WITH_OUTLINE,
+			true, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+			{3, 1}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{4, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			{4, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
+	{
+		characterPart cPart =
+		{
+			PartType::HAIR,
+			8, // Display order in scene (higher numbers overlap lower numbers)
+			"Hair",
+			"#000000",
+			ColorSetType::FILL_WITH_OUTLINE,
+			true, // SWAP BTN: Flag for whether part is expected to display btn
+			true, // PICKER BTN: Flag for whether part is expected to display btn
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
+			{0, 1}, // PICKER BTN: Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+			{0, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			{0, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+			75, // SWAP BTN: Width
+			75, // SWAP BTN: Height
+			75, // PICKER BTN: Width
+			75, // PICKER BTN: Height
+		};
+		characterPartList.push_back(std::move(cPart));
+	}
 
-	connect(characterChestBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterChest.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
-		{
-			characterChest.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterBottomBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterBottom.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
-		{
-			characterBottom.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterFeetBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterFeet.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
-		{
-			characterFeet.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
-	connect(characterHairBtnPicker.get(), &QPushButton::clicked, this, [=]() {
-		QColor colorNew = QColorDialog::getColor(characterHair.get()->getColorOfDisplayed(), this->parentWidget(), "Choose Color");
-		if (colorNew.isValid())
-		{
-			characterHair.get()->setColorToScene(colorNew);
-			characterModified = true;
-		}
-	});
+	this->setScene(scene.get());
+	scene.get()->setParent(this->parent());
 
+	this->setStyleSheet(styleSheetEditable.arg(backgroundColorDefault.name()));
+	this->setLayout(layout.get());
 
-	connect(characterSkinBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterSkinColor.get());
-	});
-	connect(characterEyeBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterEyeColor.get());
-	});
-	connect(characterLipBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterLipColor.get());
-	});
-	connect(characterBlushBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterBlushColor.get());
-	});
-	connect(characterChestBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterChest.get());
-	});
-	connect(characterBottomBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterBottom.get());
-	});
-	connect(characterFeetBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterFeet.get());
-	});
-	connect(characterHairBtnPicker.get()->actionCopyColor.get(), &QAction::triggered, this, [=]() {
-		pickerCopyColor(characterHair.get());
-	});
+	layout.get()->setMargin(50);
 
-	connect(characterSkinBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterSkinColor.get());
-	});
-	connect(characterEyeBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterEyeColor.get());
-	});
-	connect(characterLipBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterLipColor.get());
-	});
-	connect(characterBlushBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterBlushColor.get());
-	});
-	connect(characterChestBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterChest.get());
-	});
-	connect(characterBottomBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterBottom.get());
-	});
-	connect(characterFeetBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterFeet.get());
-	});
-	connect(characterHairBtnPicker.get()->actionPasteColor.get(), &QAction::triggered, this, [=]() {
-		pickerPasteColor(characterHair.get());
-	});
+	// Before adding to scene, we need to sort the stored part types to match their display order.
+	// Depending on how parts are added to the list, this may be unnecessary, but we do it anyway
+	// as a safeguard against programmer error in ordering how parts get added to the list.
+	std::sort(characterPartList.begin(), characterPartList.end(), compareDisplayOrder);
 
-	connect(characterSkinBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterSkinColor.get());
-	});
-	connect(characterEyeBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterEyeColor.get());
-	});
-	connect(characterLipBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterLipColor.get());
-	});
-	connect(characterBlushBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterBlushColor.get());
-	});
-	connect(characterChestBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterChest.get());
-	});
-	connect(characterBottomBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterBottom.get());
-	});
-	connect(characterFeetBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterFeet.get());
-	});
-	connect(characterHairBtnPicker.get()->actionApplyColorToAllInSet.get(), &QAction::triggered, this, [=]() {
-		pickerApplyColorToAllInSet(characterHair.get());
-	});
+	for (auto& cPart : characterPartList)
+	{
+		QStringList partsFromFile = fileGetAssets(cPart.partTypeAssetStr);
+
+		// Note: We store as filename only (e.g. NOT including full path), 
+		// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
+		for (auto& part : partsFromFile)
+		{
+			characterPart::imgParts newImgParts;
+			newImgParts.imgBase = QPixmap(part);
+			newImgParts.imgAltered = newImgParts.imgBase;
+			newImgParts.imgFilename = QFileInfo(part).fileName();
+			newImgParts.colorBase = cPart.defaultInitialColor;
+			newImgParts.colorAltered = newImgParts.colorBase;
+
+			if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+				newImgParts.imgOutline = QPixmap(part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()));
+
+			cPart.partsList.push_back(newImgParts);
+		}
+		if (!cPart.partsList.empty())
+		{
+			for (auto& p : cPart.partsList)
+			{
+				if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+					p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
+				else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+					p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
+			}
+
+			// For simplicity, we make the default the first part in the list.
+			// (ex: the first Chest part in the list of Chest parts)
+			// This means default will be defined by load order, based on how folder traversal works.
+			// (so probably alphabetical)
+			// Note that an instance of this class initialized with a color set type of none still uses
+			// the altered image variable for display to avoid unnecessary complexity.
+			// It gets its altered image set to the normal image at the beginning, so despite never
+			// having color setting applied, it'll still have an image to display.
+			cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+		}
+
+		if (cPart.partHasBtnSwap)
+		{
+			cPart.btnSwapLeft.get()->setStyleSheet
+			(
+				cPart.btnStyleSheetTemplate
+				.arg(cPart.btnSwapLeftIcons[0])
+				.arg(cPart.btnSwapLeftIcons[1])
+				.arg(cPart.btnSwapLeftIcons[2])
+			);
+			cPart.btnSwapLeft.get()->setParent(this);
+			cPart.btnSwapLeft.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+			cPart.btnSwapLeft.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
+		}
+		if (cPart.partHasBtnSwap)
+		{
+			cPart.btnSwapRight.get()->setStyleSheet
+			(
+				cPart.btnStyleSheetTemplate
+				.arg(cPart.btnSwapRightIcons[0])
+				.arg(cPart.btnSwapRightIcons[1])
+				.arg(cPart.btnSwapRightIcons[2])
+			);
+			cPart.btnSwapRight.get()->setParent(this);
+			cPart.btnSwapRight.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+			cPart.btnSwapRight.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
+		}
+		if (cPart.partHasBtnPicker)
+		{
+			cPart.btnPicker.get()->setStyleSheet
+			(
+				cPart.btnStyleSheetTemplate
+				.arg(cPart.btnPickerIcons[0])
+				.arg(cPart.btnPickerIcons[1])
+				.arg(cPart.btnPickerIcons[2])
+			);
+			cPart.btnPicker.get()->setParent(this);
+			cPart.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+			cPart.btnPicker.get()->setFixedSize(QSize(cPart.btnPickerWidth, cPart.btnPickerHeight));
+		}
+
+		if (cPart.partHasBtnPicker)
+		{
+			layout.get()->addWidget
+			(
+				cPart.btnPicker.get(),
+				cPart.gridPlacePicker[0],
+				cPart.gridPlacePicker[1],
+				cPart.gridAlignPicker
+			);
+
+			cPart.contextMenuColorPicker.get()->addAction(cPart.actionCopyColor.get());
+			cPart.contextMenuColorPicker.get()->addAction(cPart.actionPasteColor.get());
+			cPart.contextMenuColorPicker.get()->addSeparator();
+			cPart.contextMenuColorPicker.get()->addAction(cPart.actionApplyColorToAllInSet.get());
+
+			cPart.btnPicker.get()->setContextMenuPolicy(Qt::CustomContextMenu);
+			connect(cPart.btnPicker.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
+				QPoint globalPos = cPart.btnPicker.get()->mapToGlobal(point);
+				cPart.contextMenuColorPicker.get()->exec(globalPos);
+			});
+
+			connect(cPart.actionCopyColor.get(), &QAction::triggered, this, [&]() {
+				pickerCopiedColor = cPart.partsList[cPart.displayedPartI].colorAltered;
+				pickerUpdatePasteIconColor(pickerCopiedColor);
+			});
+
+			connect(cPart.actionPasteColor.get(), &QAction::triggered, this, [&]() {
+				if (pickerCopiedColor.isValid())
+				{
+					auto& currentPart = cPart.partsList[cPart.displayedPartI];
+					currentPart.colorAltered = pickerCopiedColor;
+					if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+						currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
+					else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+						currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
+					cPart.item.get()->setPixmap(currentPart.imgAltered);
+					characterModified = true;
+				}
+			});
+
+			connect(cPart.actionApplyColorToAllInSet.get(), &QAction::triggered, this, [&]() {
+				if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+					cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+				{
+					QColor current = cPart.partsList[cPart.displayedPartI].colorAltered;
+					for (auto& p : cPart.partsList)
+					{
+						p.colorAltered = current;
+						if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+							p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
+						else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+							p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
+						characterModified = true;
+					}
+				}
+			});
+
+			connect(cPart.btnPicker.get(), &QPushButton::clicked, this, [&]() {
+				auto& currentPart = cPart.partsList[cPart.displayedPartI];
+				QColor colorNew = QColorDialog::getColor(currentPart.colorAltered, this->parentWidget(), "Choose Color");
+				if (colorNew.isValid())
+				{
+					currentPart.colorAltered = colorNew;
+					if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+						currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
+					else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+						currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
+					cPart.item.get()->setPixmap(currentPart.imgAltered);
+					characterModified = true;
+				}
+			});
+		}
+		if (cPart.partHasBtnSwap)
+		{
+			layout.get()->addWidget
+			(
+				cPart.btnSwapLeft.get(),
+				cPart.gridPlaceSwapLeft[0],
+				cPart.gridPlaceSwapLeft[1],
+				cPart.gridAlignSwapLeft
+			);
+
+			connect(cPart.btnSwapLeft.get(), &QPushButton::clicked, this, [&]() {
+				if (cPart.displayedPartI - 1 >= 0)
+				{
+					cPart.displayedPartI--;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				else
+				{
+					cPart.displayedPartI = cPart.partsList.size() - 1;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				characterModified = true;
+			});
+		}
+		if (cPart.partHasBtnSwap)
+		{
+			layout.get()->addWidget
+			(
+				cPart.btnSwapRight.get(),
+				cPart.gridPlaceSwapRight[0],
+				cPart.gridPlaceSwapRight[1],
+				cPart.gridAlignSwapRight
+			);
+
+			connect(cPart.btnSwapRight.get(), &QPushButton::clicked, this, [&]() {
+				if (cPart.displayedPartI + 1 <= cPart.partsList.size() - 1)
+				{
+					cPart.displayedPartI++;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				else
+				{
+					cPart.displayedPartI = 0;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				characterModified = true;
+			});
+		}
+
+		scene.get()->addItem(cPart.item.get());
+
+		cPart.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
+	}
+	pickerUpdatePasteIconColor(pickerCopiedColor);
+
+	for (const auto& textInputSL : textInputSingleLineList)
+	{
+		textInputSL.inputWidget.get()->setParent(this);
+		textInputSL.inputWidget.get()->setStyleSheet(textInputSL.styleSheet);
+		textInputSL.inputWidget.get()->setPlaceholderText(textInputSL.placeholderText);
+
+		layout.get()->addWidget
+		(
+			textInputSL.inputWidget.get(),
+			textInputSL.gridPlace[0],
+			textInputSL.gridPlace[1],
+			textInputSL.gridAlign
+		);
+	}
+
+	for (auto& uiSpacer : uiSpacerList)
+	{
+		uiSpacer.spacerBtn.get()->setParent(this);
+		uiSpacer.spacerBtn.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		uiSpacer.spacerBtn.get()->setFixedSize(QSize(uiSpacer.width, uiSpacer.height));
+		uiSpacer.spacerBtn.get()->setStyleSheet(uiSpacer.style);
+		layout.get()->addWidget
+		(
+			uiSpacer.spacerBtn.get(),
+			uiSpacer.gridPlace[0],
+			uiSpacer.gridPlace[1],
+			uiSpacer.gridAlign
+		);
+	}
+
+	// Template load should be last init operation in graphics display,
+	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
+	loadDefaultCharacterFromTemplate();
 }
 
 // public:
@@ -369,7 +732,58 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 	return extracted;
 }
 
-bool GraphicsDisplay::loadDefaultCharacterFromTemplate()
+QStringList GraphicsDisplay::fileGetAssets(const QString &subPath)
+{
+	QStringList assetPathList;
+	QDirIterator dirIt(appExecutablePath + "/Assets/" + subPath);
+	while (dirIt.hasNext())
+	{
+		QString assetPath = dirIt.next();
+		if (QFileInfo(assetPath).suffix() == "png")
+			assetPathList.append(assetPath);
+	}
+	return assetPathList;
+}
+
+QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color)
+{
+	QPixmap newImage = imgSolid;
+	QPainter painter;
+	painter.begin(&newImage);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(newImage.rect(), color);
+	painter.end();
+	return newImage;
+}
+
+QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color)
+{
+	QPixmap newImage = imgSolid;
+	QPainter painter;
+	painter.begin(&newImage);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(newImage.rect(), color);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+	painter.drawPixmap(imgOutline.rect(), imgOutline);
+	painter.end();
+	return newImage;
+}
+
+/*static*/ bool GraphicsDisplay::compareDisplayOrder(const characterPart &lhs, const characterPart &rhs)
+{
+	return lhs.displayOrder < rhs.displayOrder;
+}
+
+void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
+{
+	for (auto& cPart : characterPartList)
+	{
+		QPixmap newIcon = recolorPixmapSolid(cPart.actionPasteColor->icon().pixmap(QSize(20, 20)), color);
+		cPart.actionPasteColor->setIcon(newIcon);
+	}
+}
+
+void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 {
 	// To provide a little more control over default character settings,
 	// a default character can be loaded from a template file.
@@ -378,9 +792,7 @@ bool GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	if (QFile::exists(templatePath))
 	{
 		fileLoadSavedCharacter(templatePath);
-		return true;
 	}
-	return false;
 }
 
 void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
@@ -394,83 +806,40 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 		while (!qStream.atEnd())
 		{
 			QString line = qStream.readLine();
-			if (line.contains(characterSkinColor.get()->getPartTypeAssetStr() + "="))
+			for (auto& cPart : characterPartList)
 			{
-				if (characterSkinColor.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
+				if (line.contains(cPart.partTypeAssetStr + "="))
 				{
-					characterSkinColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
+					int pos = findPosOfFilenameInPartsList(cPart, extractSubstringInbetweenQt("=", ",", line));
+					if (pos != -1)
+					{
+						cPart.displayedPartI = pos;
+						if (cPart.colorSetType != ColorSetType::NONE)
+						{
+							auto& currentPart = cPart.partsList[cPart.displayedPartI];
+							currentPart.colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
+							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+								currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
+							else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+								currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
+						}
+						cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+					}
+					else
+						partsMissing = true;
+					break;
 				}
-				else
-					partsMissing = true;
 			}
-			else if (line.contains(characterEyeColor.get()->getPartTypeAssetStr() + "="))
-			{
-				characterEyeColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-			}
-			else if (line.contains(characterLipColor.get()->getPartTypeAssetStr() + "="))
-			{
-				characterLipColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-			}
-			else if (line.contains(characterBlushColor.get()->getPartTypeAssetStr() + "="))
-			{
-				characterBlushColor.get()->setColorToScene(QColor(extractSubstringInbetweenQt("=", "", line)));
-			}
-			else if (line.contains(characterHead.get()->getPartTypeAssetStr() + "="))
-			{
-				if (characterHead.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-				{
-					characterHead.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-				}
-				else
-					partsMissing = true;
-			}
-			else if (line.contains(characterChest.get()->getPartTypeAssetStr() + "="))
-			{
-				if (characterChest.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-				{
-					characterChest.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-				}
-				else
-					partsMissing = true;
-			}
-			else if (line.contains(characterBottom.get()->getPartTypeAssetStr() + "="))
-			{
-				if (characterBottom.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-				{
-					characterBottom.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-				}
-				else
-					partsMissing = true;
-			}
-			else if (line.contains(characterFeet.get()->getPartTypeAssetStr() + "="))
-			{
-				if (characterFeet.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-				{
-					characterFeet.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-				}
-				else
-					partsMissing = true;
-			}
-			else if (line.contains(characterHair.get()->getPartTypeAssetStr() + "="))
-			{
-				if (characterHair.get()->setFilenameAssetAsDisplayed(extractSubstringInbetweenQt("=", ",", line)))
-				{
-					characterHair.get()->setColorToScene(QColor(extractSubstringInbetweenQt(",", "", line)));
-				}
-				else
-					partsMissing = true;
-			}
-			else if (line.contains("backgroundColor="))
+			if (line.contains("backgroundColor="))
 			{
 				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", "", line)));
 			}
-			else if (line.contains("characterFirstName="))
+			for (auto& textInputSL : textInputSingleLineList)
 			{
-				characterTextInputFirstName.get()->setText(extractSubstringInbetweenQt("=", "", line));
-			}
-			else if (line.contains("characterLastName="))
-			{
-				characterTextInputLastName.get()->setText(extractSubstringInbetweenQt("=", "", line));
+				if (line.contains(textInputSL.inputTypeStr + "="))
+				{
+					textInputSL.inputWidget.get()->setText(extractSubstringInbetweenQt("=", "", line));
+				}
 			}
 		}
 		fileRead.close();
@@ -482,23 +851,32 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 
 void GraphicsDisplay::fileNew()
 {
-	if (!loadDefaultCharacterFromTemplate())
+	for (auto& cPart : characterPartList)
 	{
-		characterSkinColor.get()->setDisplayedToDefault();
-		characterEyeColor.get()->setDisplayedToDefault();
-		characterLipColor.get()->setDisplayedToDefault();
-		characterBlushColor.get()->setDisplayedToDefault();
-		characterHead.get()->setDisplayedToDefault();
-		characterChest.get()->setDisplayedToDefault();
-		characterBottom.get()->setDisplayedToDefault();
-		characterFeet.get()->setDisplayedToDefault();
-		characterHair.get()->setDisplayedToDefault();
-		backgroundColor = backgroundColorDefault;
-		setBackgroundColor(backgroundColor);
-		characterTextInputFirstName.get()->setText("");
-		characterTextInputLastName.get()->setText("");
-		characterModified = false;
+		cPart.displayedPartI = 0;
+		for (auto& p : cPart.partsList)
+		{
+			p.colorAltered = p.colorBase;
+			if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+				cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+			{
+				if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+					p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
+				else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+					p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
+				cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+			}
+		}
 	}
+	backgroundColor = backgroundColorDefault;
+	setBackgroundColor(backgroundColor);
+	for (auto& textInputSL : textInputSingleLineList)
+	{
+		textInputSL.inputWidget.get()->setText("");
+	}
+	characterModified = false;
+
+	loadDefaultCharacterFromTemplate();
 }
 
 void GraphicsDisplay::fileOpen()
@@ -513,11 +891,16 @@ void GraphicsDisplay::fileOpen()
 
 bool GraphicsDisplay::fileSave()
 {
-	QString proposedSaveName = 
-		fileDirLastSaved + "/" 
-		+ characterTextInputFirstName.get()->text()
-		+ characterTextInputLastName.get()->text()
-		+ QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
+	QString proposedSaveName;
+	proposedSaveName += fileDirLastSaved + "/";
+	for (const auto& textInputSL : textInputSingleLineList)
+	{
+		if (textInputSL.inputType == TextInputSingleLineType::FIRST_NAME)
+			proposedSaveName += textInputSL.inputWidget.get()->text();
+		else if (textInputSL.inputType == TextInputSingleLineType::LAST_NAME)
+			proposedSaveName += textInputSL.inputWidget.get()->text();
+	}
+	proposedSaveName += QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
 	QFileDialog dialog(this, tr("Save As"), proposedSaveName, tr("Zen Character Creator 2D Files (*.zen2dx)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -529,43 +912,19 @@ bool GraphicsDisplay::fileSave()
 		{
 			QTextStream qStream(&fileWrite);
 
-			qStream << characterSkinColor.get()->getPartTypeAssetStr() +
-				"=" + characterSkinColor.get()->getFilenameOfDisplayed() +
-				"," + characterSkinColor.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterEyeColor.get()->getPartTypeAssetStr() +
-				"=" + characterEyeColor.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterLipColor.get()->getPartTypeAssetStr() +
-				"=" + characterLipColor.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterBlushColor.get()->getPartTypeAssetStr() +
-				"=" + characterBlushColor.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterHead.get()->getPartTypeAssetStr() +
-				"=" + characterHead.get()->getFilenameOfDisplayed() +
-				"," + characterHead.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterChest.get()->getPartTypeAssetStr() +
-				"=" + characterChest.get()->getFilenameOfDisplayed() +
-				"," + characterChest.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterBottom.get()->getPartTypeAssetStr() + 
-				"=" + characterBottom.get()->getFilenameOfDisplayed() +
-				"," + characterBottom.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterFeet.get()->getPartTypeAssetStr() + 
-				"=" + characterFeet.get()->getFilenameOfDisplayed() +
-				"," + characterFeet.get()->getColorOfDisplayed().name() + "\r\n";
-
-			qStream << characterHair.get()->getPartTypeAssetStr() +
-				"=" + characterHair.get()->getFilenameOfDisplayed() +
-				"," + characterHair.get()->getColorOfDisplayed().name() + "\r\n";
+			for (const auto& cPart : characterPartList)
+			{
+				qStream << cPart.partTypeAssetStr +
+					"=" + cPart.partsList[cPart.displayedPartI].imgFilename +
+					"," + cPart.partsList[cPart.displayedPartI].colorAltered.name() + "\r\n";
+			}
 
 			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
 
-			qStream << "characterFirstName=" + characterTextInputFirstName.get()->text() + "\r\n";
-			qStream << "characterLastName=" + characterTextInputLastName.get()->text() + "\r\n";
+			for (const auto& textInputSL : textInputSingleLineList)
+			{
+				qStream << textInputSL.inputTypeStr + "=" + textInputSL.inputWidget.get()->text() + "\r\n";
+			}
 
 			fileWrite.close();
 			fileDirLastSaved = QFileInfo(fpath).path();
@@ -577,11 +936,16 @@ bool GraphicsDisplay::fileSave()
 
 void GraphicsDisplay::fileExportCharacter()
 {
-	QString proposedExportName =
-		fileDirLastExported + "/"
-		+ characterTextInputFirstName.get()->text()
-		+ characterTextInputLastName.get()->text()
-		+ QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
+	QString proposedExportName;
+	proposedExportName += fileDirLastExported + "/";
+	for (const auto& textInputSL : textInputSingleLineList)
+	{
+		if (textInputSL.inputType == TextInputSingleLineType::FIRST_NAME)
+			proposedExportName += textInputSL.inputWidget.get()->text();
+		else if (textInputSL.inputType == TextInputSingleLineType::LAST_NAME)
+			proposedExportName += textInputSL.inputWidget.get()->text();
+	}
+	proposedExportName += QDateTime::currentDateTime().toString("_yyyy_MM_dd_HH_mm_ss");
 	QFileDialog dialog(this, tr("Save As"), proposedExportName, tr("Image Files (*.png)"));
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -599,41 +963,21 @@ void GraphicsDisplay::fileExportCharacter()
 	}
 }
 
+int GraphicsDisplay::findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename)
+{
+	for (int i = 0; i < cPart.partsList.size(); i++)
+	{
+		if (cPart.partsList[i].imgFilename == filename)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
 void GraphicsDisplay::setBackgroundColor(const QColor &color)
 {
 	backgroundColor = color;
 	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
 	characterModified = true;
-}
-
-void GraphicsDisplay::pickerCopyColor(CharacterPart *characterPart)
-{
-	pickerCopiedColor = characterPart->getColorOfDisplayed();
-	pickerUpdatePasteIconColor(pickerCopiedColor);
-}
-
-void GraphicsDisplay::pickerPasteColor(CharacterPart *characterPart)
-{
-	if (pickerCopiedColor.isValid())
-	{
-		characterPart->setColorToScene(pickerCopiedColor);
-		characterModified = true;
-	}
-}
-
-void GraphicsDisplay::pickerApplyColorToAllInSet(CharacterPart *characterPart)
-{
-		characterPart->applyCurrentColorToAll();
-}
-
-void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
-{
-	characterSkinBtnPicker.get()->applyColorFill(color);
-	characterEyeBtnPicker.get()->applyColorFill(color);
-	characterLipBtnPicker.get()->applyColorFill(color);
-	characterBlushBtnPicker.get()->applyColorFill(color);
-	characterChestBtnPicker.get()->applyColorFill(color);
-	characterBottomBtnPicker.get()->applyColorFill(color);
-	characterFeetBtnPicker.get()->applyColorFill(color);
-	characterHairBtnPicker.get()->applyColorFill(color);
 }

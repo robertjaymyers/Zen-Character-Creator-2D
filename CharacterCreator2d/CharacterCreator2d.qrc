@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/CharacterCreator2d">
+    <qresource prefix="/ZenCharacterCreator2D">
         <file>Resources/button-left-pencil-sketch.png</file>
         <file>Resources/button-left-pencil-sketch-hover.png</file>
         <file>Resources/button-left-pencil-sketch-hover-pressed.png</file>
