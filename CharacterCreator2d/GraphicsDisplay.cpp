@@ -471,9 +471,29 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			cPart.btnSwapLeft.get()->setParent(this);
 			cPart.btnSwapLeft.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 			cPart.btnSwapLeft.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
-		}
-		if (cPart.partHasBtnSwap)
-		{
+
+			layout.get()->addWidget
+			(
+				cPart.btnSwapLeft.get(),
+				cPart.gridPlaceSwapLeft[0],
+				cPart.gridPlaceSwapLeft[1],
+				cPart.gridAlignSwapLeft
+			);
+
+			connect(cPart.btnSwapLeft.get(), &QPushButton::clicked, this, [&]() {
+				if (cPart.displayedPartI - 1 >= 0)
+				{
+					cPart.displayedPartI--;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				else
+				{
+					cPart.displayedPartI = cPart.partsList.size() - 1;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				characterModified = true;
+			});
+
 			cPart.btnSwapRight.get()->setStyleSheet
 			(
 				cPart.btnStyleSheetTemplate
@@ -484,6 +504,28 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			cPart.btnSwapRight.get()->setParent(this);
 			cPart.btnSwapRight.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 			cPart.btnSwapRight.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
+
+			layout.get()->addWidget
+			(
+				cPart.btnSwapRight.get(),
+				cPart.gridPlaceSwapRight[0],
+				cPart.gridPlaceSwapRight[1],
+				cPart.gridAlignSwapRight
+			);
+
+			connect(cPart.btnSwapRight.get(), &QPushButton::clicked, this, [&]() {
+				if (cPart.displayedPartI + 1 <= cPart.partsList.size() - 1)
+				{
+					cPart.displayedPartI++;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				else
+				{
+					cPart.displayedPartI = 0;
+					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+				}
+				characterModified = true;
+			});
 		}
 		if (cPart.partHasBtnPicker)
 		{
@@ -497,10 +539,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			cPart.btnPicker.get()->setParent(this);
 			cPart.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 			cPart.btnPicker.get()->setFixedSize(QSize(cPart.btnPickerWidth, cPart.btnPickerHeight));
-		}
 
-		if (cPart.partHasBtnPicker)
-		{
 			layout.get()->addWidget
 			(
 				cPart.btnPicker.get(),
@@ -571,54 +610,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				}
 			});
 		}
-		if (cPart.partHasBtnSwap)
-		{
-			layout.get()->addWidget
-			(
-				cPart.btnSwapLeft.get(),
-				cPart.gridPlaceSwapLeft[0],
-				cPart.gridPlaceSwapLeft[1],
-				cPart.gridAlignSwapLeft
-			);
-
-			connect(cPart.btnSwapLeft.get(), &QPushButton::clicked, this, [&]() {
-				if (cPart.displayedPartI - 1 >= 0)
-				{
-					cPart.displayedPartI--;
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
-				}
-				else
-				{
-					cPart.displayedPartI = cPart.partsList.size() - 1;
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
-				}
-				characterModified = true;
-			});
-		}
-		if (cPart.partHasBtnSwap)
-		{
-			layout.get()->addWidget
-			(
-				cPart.btnSwapRight.get(),
-				cPart.gridPlaceSwapRight[0],
-				cPart.gridPlaceSwapRight[1],
-				cPart.gridAlignSwapRight
-			);
-
-			connect(cPart.btnSwapRight.get(), &QPushButton::clicked, this, [&]() {
-				if (cPart.displayedPartI + 1 <= cPart.partsList.size() - 1)
-				{
-					cPart.displayedPartI++;
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
-				}
-				else
-				{
-					cPart.displayedPartI = 0;
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
-				}
-				characterModified = true;
-			});
-		}
 
 		scene.get()->addItem(cPart.item.get());
 
@@ -641,7 +632,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		);
 	}
 
-	for (auto& uiSpacer : uiSpacerList)
+	for (const auto& uiSpacer : uiSpacerList)
 	{
 		uiSpacer.spacerBtn.get()->setParent(this);
 		uiSpacer.spacerBtn.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
