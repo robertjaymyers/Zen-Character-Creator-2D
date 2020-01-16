@@ -36,11 +36,11 @@ This file is part of Zen Character Creator 2D.
 
 struct uiBtnInvisibleSpacer
 {
-	int width;
-	int height;
-	QString style;
-	std::vector<int> gridPlace;
-	Qt::Alignment gridAlign;
+	const int width;
+	const int height;
+	const QString style;
+	const std::vector<int> gridPlace;
+	const Qt::Alignment gridAlign;
 	std::unique_ptr<QPushButton> spacerBtn = std::make_unique<QPushButton>(nullptr);
 };
 
@@ -110,15 +110,6 @@ private:
 		int btnPickerWidth;
 		int btnPickerHeight;
 
-		std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
-		std::unique_ptr<QPushButton> btnSwapLeft = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QPushButton> btnSwapRight = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
-		std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
-		std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
-		std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
-
 		QString btnStyleSheetTemplate =
 			"QPushButton{border: none; image: url(%1);}"
 			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
@@ -140,18 +131,27 @@ private:
 		};
 		int displayedPartI = 0;
 		std::vector<imgParts> partsList;
+
+		std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
+		std::unique_ptr<QPushButton> btnSwapLeft = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QPushButton> btnSwapRight = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
+		std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
+		std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
+		std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
+		std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
 	};
 
 	std::vector<characterPart> characterPartList;
 
 	struct textInputSingleLine
 	{
-		TextInputSingleLineType inputType = TextInputSingleLineType::NONE;
-		QString inputTypeStr;
-		QString styleSheet;
-		QString placeholderText;
-		std::vector<int> gridPlace;
-		Qt::Alignment gridAlign;
+		const TextInputSingleLineType inputType = TextInputSingleLineType::NONE;
+		const QString inputTypeStr;
+		const QString styleSheet;
+		const QString placeholderText;
+		const std::vector<int> gridPlace;
+		const Qt::Alignment gridAlign;
 		std::unique_ptr<QLineEdit> inputWidget = std::make_unique<QLineEdit>();
 	};
 

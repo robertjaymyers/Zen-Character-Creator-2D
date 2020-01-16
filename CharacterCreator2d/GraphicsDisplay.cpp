@@ -43,32 +43,33 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			setBackgroundColor(colorNew);
 	});
 
-	{
-		textInputSingleLine textInputSL =
+	textInputSingleLineList.emplace_back
+	(
+		textInputSingleLine
 		{
 			TextInputSingleLineType::FIRST_NAME,
 			"characterFirstName",
 			"QLineEdit"
 			"{"
-				"color: #000000;"
-				"background-color: #FFFFFF;"
-				"selection-background-color: #A96539;"
-				"border-width: 1px;"
-				"border-style: solid;"
-				"border-color: #000000;"
-				"border-radius: 4px;"
-				"font-size: 12px;"
-				"padding: 5px;"
+			"color: #000000;"
+			"background-color: #FFFFFF;"
+			"selection-background-color: #A96539;"
+			"border-width: 1px;"
+			"border-style: solid;"
+			"border-color: #000000;"
+			"border-radius: 4px;"
+			"font-size: 12px;"
+			"padding: 5px;"
 			"}"
 			"QLineEdit:hover{color: #A96539;}",
 			"First Name",
-			{4, 0}, // Row/Col placement in grid layout
+			{ 4, 0 }, // Row/Col placement in grid layout
 			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
-		};
-		textInputSingleLineList.push_back(std::move(textInputSL));
-	}
-	{
-		textInputSingleLine textInputSL =
+		}
+	);
+	textInputSingleLineList.emplace_back
+	(
+		textInputSingleLine
 		{
 			TextInputSingleLineType::LAST_NAME,
 			"characterLastName",
@@ -88,12 +89,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			"Last Name",
 			{4, 1}, // Row/Col placement in grid layout
 			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
-		};
-		textInputSingleLineList.push_back(std::move(textInputSL));
-	}
+		}
+	);
 
-	{
-		characterPart cPart =
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::SKIN_COLOR,
 			0, // Display order in scene (higher numbers overlap lower numbers)
@@ -124,11 +125,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::EYE_COLOR,
 			1, // Display order in scene (higher numbers overlap lower numbers)
@@ -159,11 +160,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::LIP_COLOR,
 			2, // Display order in scene (higher numbers overlap lower numbers)
@@ -194,11 +195,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::BLUSH_COLOR,
 			3, // Display order in scene (higher numbers overlap lower numbers)
@@ -229,11 +230,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::HEAD,
 			4, // Display order in scene (higher numbers overlap lower numbers)
@@ -261,11 +262,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::BOTTOM,
 			5, // Display order in scene (higher numbers overlap lower numbers)
@@ -296,11 +297,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::CHEST,
 			6, // Display order in scene (higher numbers overlap lower numbers)
@@ -331,11 +332,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::FEET,
 			7, // Display order in scene (higher numbers overlap lower numbers)
@@ -366,11 +367,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
-	{
-		characterPart cPart =
+		}
+	);
+	characterPartList.emplace_back
+	(
+		characterPart
 		{
 			PartType::HAIR,
 			8, // Display order in scene (higher numbers overlap lower numbers)
@@ -401,9 +402,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			75, // SWAP BTN: Height
 			75, // PICKER BTN: Width
 			75, // PICKER BTN: Height
-		};
-		characterPartList.push_back(std::move(cPart));
-	}
+		}
+	);
 
 	this->setScene(scene.get());
 	scene.get()->setParent(this->parent());
