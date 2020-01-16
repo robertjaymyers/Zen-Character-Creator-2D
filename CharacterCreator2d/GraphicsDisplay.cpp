@@ -103,6 +103,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			false, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -138,6 +141,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			false, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -173,6 +179,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			false, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -208,6 +217,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_NO_OUTLINE,
 			false, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -243,6 +255,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::NONE,
 			true, // SWAP BTN: Flag for whether part is expected to display btn
 			false, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -275,6 +290,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			true, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -310,6 +328,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			true, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -345,6 +366,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			true, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -380,6 +404,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			ColorSetType::FILL_WITH_OUTLINE,
 			true, // SWAP BTN: Flag for whether part is expected to display btn
 			true, // PICKER BTN: Flag for whether part is expected to display btn
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
 			QStringList()
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -412,11 +439,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	this->setLayout(layout.get());
 
 	layout.get()->setMargin(50);
-
-	// Before adding to scene, we need to sort the stored part types to match their display order.
-	// Depending on how parts are added to the list, this may be unnecessary, but we do it anyway
-	// as a safeguard against programmer error in ordering how parts get added to the list.
-	std::sort(characterPartList.begin(), characterPartList.end(), compareDisplayOrder);
 
 	for (auto& cPart : characterPartList)
 	{
@@ -611,6 +633,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			});
 		}
 
+		cPart.item.get()->setZValue(cPart.displayOrder);
 		scene.get()->addItem(cPart.item.get());
 
 		cPart.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
@@ -758,11 +781,6 @@ QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const QPixmap &imgSolid, 
 	painter.drawPixmap(imgOutline.rect(), imgOutline);
 	painter.end();
 	return newImage;
-}
-
-/*static*/ bool GraphicsDisplay::compareDisplayOrder(const characterPart &lhs, const characterPart &rhs)
-{
-	return lhs.displayOrder < rhs.displayOrder;
 }
 
 void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)

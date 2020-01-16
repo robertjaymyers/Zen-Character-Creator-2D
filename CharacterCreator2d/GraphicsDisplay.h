@@ -84,37 +84,34 @@ private:
 
 	struct characterPart
 	{
-		PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
+		const PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 
 		// Since we're working with 2D elements that can overlap, we use a display order
 		// to ensure that the elements get added to the scene to overlap in the way we want.
-		// For example, having HAIR added after CHEST so that long hair goes over clothing.
-		int displayOrder;
+		// With Qt's QGraphicsScene class, we can set the Z value of an item to determine
+		// what it's on top of (per Qt documentation: higher Z values overlap lower Z values).
+		// For example, we give HAIR a higher value than CHEST so that long hair goes over shirts.
+		const int displayOrder;
 
-		QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
-		QColor defaultInitialColor;
-		ColorSetType colorSetType = ColorSetType::NONE;
-		bool partHasBtnSwap;
-		bool partHasBtnPicker;
-		QStringList btnSwapLeftIcons;
-		QStringList btnSwapRightIcons;
-		QStringList btnPickerIcons;
-		std::vector<int> gridPlacePicker;
-		Qt::Alignment gridAlignPicker;
-		std::vector<int> gridPlaceSwapLeft;
-		Qt::Alignment gridAlignSwapLeft;
-		std::vector<int> gridPlaceSwapRight;
-		Qt::Alignment gridAlignSwapRight;
-		int btnSwapWidth;
-		int btnSwapHeight;
-		int btnPickerWidth;
-		int btnPickerHeight;
-
-		QString btnStyleSheetTemplate =
-			"QPushButton{border: none; image: url(%1);}"
-			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-			"QPushButton:hover:pressed{border: none; image: url(%3);}"
-			;
+		const QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
+		const QColor defaultInitialColor;
+		const ColorSetType colorSetType = ColorSetType::NONE;
+		const bool partHasBtnSwap;
+		const bool partHasBtnPicker;
+		const QString btnStyleSheetTemplate;
+		const QStringList btnSwapLeftIcons;
+		const QStringList btnSwapRightIcons;
+		const QStringList btnPickerIcons;
+		const std::vector<int> gridPlacePicker;
+		const Qt::Alignment gridAlignPicker;
+		const std::vector<int> gridPlaceSwapLeft;
+		const Qt::Alignment gridAlignSwapLeft;
+		const std::vector<int> gridPlaceSwapRight;
+		const Qt::Alignment gridAlignSwapRight;
+		const int btnSwapWidth;
+		const int btnSwapHeight;
+		const int btnPickerWidth;
+		const int btnPickerHeight;
 
 		// We store both base img and altered img, so that we can display altered img,
 		// and apply color changes to base img, to get consistent results when altering color.
@@ -216,7 +213,6 @@ private:
 	QStringList fileGetAssets(const QString &subPath);
 	QPixmap recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color);
 	QPixmap recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color);
-	static bool compareDisplayOrder(const characterPart &lhs, const characterPart &rhs);
 	void pickerUpdatePasteIconColor(const QColor &color);
 	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
