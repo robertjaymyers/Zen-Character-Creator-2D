@@ -34,6 +34,8 @@ This file is part of Zen Character Creator 2D.
 #include <algorithm>
 #include <iterator>
 
+enum class SpeciesType { HUMAN, ELF };
+
 struct uiBtnInvisibleSpacer
 {
 	const int width;
@@ -79,6 +81,8 @@ private:
 	const std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
 	const std::unique_ptr<QAction> actionFileExport = std::make_unique<QAction>("Export Character");
 	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
+	std::unique_ptr<QMenu> speciesMenu = std::make_unique<QMenu>("Species", contextMenu.get());
+	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
 
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
@@ -139,7 +143,18 @@ private:
 		std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
 	};
 
-	std::vector<characterPart> characterPartList;
+	std::vector<characterPart> characterPartListHuman;
+	std::vector<characterPart> characterPartListElf;
+
+	struct speciesData
+	{
+		const QString speciesTypeAssetStr;
+		std::vector<characterPart> characterPartList;
+		std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
+	};
+
+	std::map<SpeciesType, speciesData> speciesMap;
+	SpeciesType speciesCurrent = SpeciesType::HUMAN;
 
 	struct textInputSingleLine
 	{
@@ -222,4 +237,6 @@ private:
 	void fileExportCharacter();
 	int findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename);
 	void setBackgroundColor(const QColor &color);
+	void removeCurrentSpeciesFromScene();
+	void applyCurrentSpeciesToScene();
 };
