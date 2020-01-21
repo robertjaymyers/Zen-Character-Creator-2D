@@ -32,5 +32,11 @@
         <file>Resources/picker-spacer-transparent-background.png</file>
         <file>Resources/button-pick-chest-color.png</file>
         <file>Resources/clipboardColorIcon.png</file>
+        <file>Resources/button-pose-swap-left-hover.png</file>
+        <file>Resources/button-pose-swap-left-hover-pressed.png</file>
+        <file>Resources/button-pose-swap-left-normal.png</file>
+        <file>Resources/button-pose-swap-right-hover.png</file>
+        <file>Resources/button-pose-swap-right-hover-pressed.png</file>
+        <file>Resources/button-pose-swap-right-normal.png</file>
     </qresource>
 </RCC>

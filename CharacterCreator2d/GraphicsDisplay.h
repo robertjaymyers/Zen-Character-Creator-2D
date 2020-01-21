@@ -30,11 +30,10 @@ This file is part of Zen Character Creator 2D.
 #include <QLineEdit>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QGroupBox>
 #include <vector>
 #include <algorithm>
 #include <iterator>
-
-enum class SpeciesType { HUMAN, ELF };
 
 struct uiBtnInvisibleSpacer
 {
@@ -48,9 +47,10 @@ struct uiBtnInvisibleSpacer
 
 enum class TextInputSingleLineType { FIRST_NAME, LAST_NAME, NONE };
 
+enum class SpeciesType { HUMAN, ELF };
+enum class GenderType { FEMALE, MALE };
+enum class PartType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
-
-enum class PartType { SKIN_COLOR, EYE_COLOR, LIP_COLOR, BLUSH_COLOR, HEAD, CHEST, BOTTOM, FEET, HAIR, NONE };
 
 class GraphicsDisplay : public QGraphicsView
 {
@@ -75,6 +75,18 @@ private:
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
 
+	std::unique_ptr<QGroupBox> partSwapGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QGridLayout> partSwapGroupLayout = std::make_unique<QGridLayout>();
+
+	std::unique_ptr<QGroupBox> partPickerGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QGridLayout> partPickerGroupLayout = std::make_unique<QGridLayout>();
+
+	std::unique_ptr<QGroupBox> characterNameInputGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QGridLayout> characterNameInputGroupLayout = std::make_unique<QGridLayout>();
+
+	std::unique_ptr<QGroupBox> poseSwapGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QGridLayout> poseSwapGroupLayout = std::make_unique<QGridLayout>();
+
 	const std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
 	const std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
 	const std::unique_ptr<QAction> actionFileOpen = std::make_unique<QAction>("Open Character");
@@ -83,6 +95,8 @@ private:
 	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
 	std::unique_ptr<QMenu> speciesMenu = std::make_unique<QMenu>("Species", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
+	std::unique_ptr<QMenu> genderMenu = std::make_unique<QMenu>("Gender", contextMenu.get());
+	std::unique_ptr<QActionGroup> actionGenderGroup = std::make_unique<QActionGroup>(this);
 
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
@@ -123,15 +137,29 @@ private:
 		// over time, depending on the type of composition mode used with QPainter.
 		struct imgParts
 		{
-			QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
-			QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
+			const QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
 			QPixmap imgAltered; // Modify this one for color changes.
 			QString imgFilename;
-			QColor colorBase; // Don't modify this after initial setting it from parts map
+			const QColor colorBase; // Don't modify this after initial setting it from parts map
 			QColor colorAltered; // Modify this one for color changes.
+			const QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
 		};
 		int displayedPartI = 0;
-		std::vector<imgParts> partsList;
+
+		struct poseData
+		{
+			const QString poseNameAssetStr;
+			std::vector<imgParts> partsList;
+		};
+
+		struct genderData
+		{
+			const QString genderTypeAssetStr;
+			std::vector<poseData> poseList;
+			std::unique_ptr<QAction> actionGender = std::make_unique<QAction>();
+		};
+
+		std::map<GenderType, genderData> genderMap;
 
 		std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
 		std::unique_ptr<QPushButton> btnSwapLeft = std::make_unique<QPushButton>(nullptr);
@@ -155,6 +183,8 @@ private:
 
 	std::map<SpeciesType, speciesData> speciesMap;
 	SpeciesType speciesCurrent = SpeciesType::HUMAN;
+	GenderType genderCurrent = GenderType::FEMALE;
+	int poseCurrentI = 0;
 
 	struct textInputSingleLine
 	{
@@ -168,6 +198,47 @@ private:
 	};
 
 	std::vector<textInputSingleLine> textInputSingleLineList;
+
+	struct poseSwapButton
+	{
+		const QString styleSheetTemplate;
+		const QStringList icons;
+		const std::vector<int> gridPlace;
+		const Qt::Alignment gridAlign;
+		const int width;
+		const int height;
+		std::unique_ptr<QPushButton> btn = std::make_unique<QPushButton>(nullptr);
+	};
+
+	const poseSwapButton poseSwapButtonList[2] =
+	{
+		{
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-normal.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover-pressed.png",
+			{0, 0}, // Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
+			50,
+			50
+		},
+		{
+			"QPushButton{border: none; image: url(%1);}"
+			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+			QStringList()
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-normal.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover.png"
+			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover-pressed.png",
+			{0, 1}, // Row/Col placement in grid layout
+			Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
+			50,
+			50
+		}
+	};
 
 	const uiBtnInvisibleSpacer uiSpacerList[4] =
 	{
@@ -218,14 +289,16 @@ private:
 			"}",
 			{3, 2},
 			Qt::AlignLeft | Qt::AlignTop
-		},
+		}
 	};
 
 	QColor pickerCopiedColor = QColor("#000000");
 	const QPixmap pickerPasteColorIcon = QPixmap(":/ZenCharacterCreator2D/Resources/clipboardColorIcon.png");
 
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
-	QStringList fileGetAssets(const QString &subPath);
+	QString extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
+	QStringList fileGetAssetDirectories(const QString &subPath);
+	QStringList fileGetAssets(const QString &path);
 	QPixmap recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color);
 	QPixmap recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color);
 	void pickerUpdatePasteIconColor(const QColor &color);

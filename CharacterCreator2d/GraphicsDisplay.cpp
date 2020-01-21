@@ -25,6 +25,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addAction(actionSetBackgroundColor.get());
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addMenu(speciesMenu.get());
+	contextMenu.get()->addMenu(genderMenu.get());
 
 	connect(actionFileNew.get(), &QAction::triggered, this, [=]() {
 		if (fileSaveModifCheck())
@@ -65,8 +66,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			"}"
 			"QLineEdit:hover{color: #A96539;}",
 			"First Name",
-			{ 4, 0 }, // Row/Col placement in grid layout
-			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
+			{0, 0}, // Row/Col placement in grid layout
+			Qt::AlignLeft // Alignment in grid layout
 		}
 	);
 	textInputSingleLineList.emplace_back
@@ -89,8 +90,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			"}"
 			"QLineEdit:hover{color: #A96539;}",
 			"Last Name",
-			{4, 1}, // Row/Col placement in grid layout
-			Qt::AlignLeft | Qt::AlignBottom // Alignment in grid layout
+			{0, 1}, // Row/Col placement in grid layout
+			Qt::AlignLeft // Alignment in grid layout
 		}
 	);
 
@@ -99,9 +100,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::SKIN_COLOR,
+				PartType::BODY,
 				0, // Display order in scene (higher numbers overlap lower numbers)
-				"SkinColor",
+				"Body",
 				"#764c39",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -137,9 +138,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::EYE_COLOR,
+				PartType::EYES,
 				1, // Display order in scene (higher numbers overlap lower numbers)
-				"EyeColor",
+				"Eyes",
 				"#aaaa7f",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -175,9 +176,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::LIP_COLOR,
+				PartType::LIPS,
 				2, // Display order in scene (higher numbers overlap lower numbers)
-				"LipColor",
+				"Lips",
 				"#555500",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -213,9 +214,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::BLUSH_COLOR,
+				PartType::BLUSH,
 				3, // Display order in scene (higher numbers overlap lower numbers)
-				"BlushColor",
+				"Blush",
 				"#555500",
 				ColorSetType::FILL_NO_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -272,9 +273,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 				{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
 				nullptr, // PICKER BTN: Alignment in grid layout
-				{1, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{1, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -310,9 +311,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
 				{2, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{3, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{3, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -348,9 +349,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
 				{1, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{2, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{2, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -386,9 +387,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
 				{3, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{4, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{4, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -424,9 +425,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
 				{0, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{0, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{0, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -441,9 +442,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::SKIN_COLOR,
+				PartType::BODY,
 				0, // Display order in scene (higher numbers overlap lower numbers)
-				"SkinColor",
+				"Body",
 				"#764c39",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -479,9 +480,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::EYE_COLOR,
+				PartType::EYES,
 				1, // Display order in scene (higher numbers overlap lower numbers)
-				"EyeColor",
+				"Eyes",
 				"#aaaa7f",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -517,9 +518,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::LIP_COLOR,
+				PartType::LIPS,
 				2, // Display order in scene (higher numbers overlap lower numbers)
-				"LipColor",
+				"Lips",
 				"#555500",
 				ColorSetType::FILL_WITH_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -555,9 +556,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		(
 			characterPart
 			{
-				PartType::BLUSH_COLOR,
+				PartType::BLUSH,
 				3, // Display order in scene (higher numbers overlap lower numbers)
-				"BlushColor",
+				"Blush",
 				"#555500",
 				ColorSetType::FILL_NO_OUTLINE,
 				false, // SWAP BTN: Flag for whether part is expected to display btn
@@ -614,9 +615,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 				{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
 				nullptr, // PICKER BTN: Alignment in grid layout
-				{1, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{1, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -652,9 +653,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
 				{2, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{3, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{3, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -690,9 +691,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
 				{1, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{2, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{2, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -728,9 +729,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
 				{3, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{4, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{4, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -766,9 +767,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
 				{0, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{0, 3}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{0, 4}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -798,6 +799,50 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			}
 	));
 
+	[&](std::vector<characterPart> &characterPartList) {
+		for (auto& cPart : characterPartList)
+		{
+			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+				(
+					GenderType::FEMALE,
+					characterPart::genderData
+					{
+						"Female"
+					}
+			));
+			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+				(
+					GenderType::MALE,
+					characterPart::genderData
+					{
+						"Male"
+					}
+			));
+		}
+	}(speciesMap.at(SpeciesType::HUMAN).characterPartList);
+
+	[&](std::vector<characterPart> &characterPartList) {
+		for (auto& cPart : characterPartList)
+		{
+			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+				(
+					GenderType::FEMALE,
+					characterPart::genderData
+					{
+						"Female"
+					}
+			));
+			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+				(
+					GenderType::MALE,
+					characterPart::genderData
+					{
+						"Male"
+					}
+			));
+		}
+	}(speciesMap.at(SpeciesType::ELF).characterPartList);
+
 	this->setScene(scene.get());
 	scene.get()->setParent(this->parent());
 
@@ -811,44 +856,86 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		[&](std::vector<characterPart> &characterPartList) {
 			for (auto& cPart : characterPartList)
 			{
-				QStringList partsFromFile = fileGetAssets(cPart.partTypeAssetStr + "/" + species.second.speciesTypeAssetStr);
-
-				// Note: We store as filename only (e.g. NOT including full path), 
-				// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
-				for (auto& part : partsFromFile)
+				for (auto& gender : cPart.genderMap)
 				{
-					characterPart::imgParts newImgParts;
-					newImgParts.imgBase = QPixmap(part);
-					newImgParts.imgAltered = newImgParts.imgBase;
-					newImgParts.imgFilename = QFileInfo(part).fileName();
-					newImgParts.colorBase = cPart.defaultInitialColor;
-					newImgParts.colorAltered = newImgParts.colorBase;
+					QStringList posePathList = fileGetAssetDirectories(
+						"Species/" +
+						species.second.speciesTypeAssetStr + "/" +
+						gender.second.genderTypeAssetStr
+					);
 
-					if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-						newImgParts.imgOutline = QPixmap(part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()));
-
-					cPart.partsList.push_back(newImgParts);
-				}
-				if (!cPart.partsList.empty())
-				{
-					for (auto& p : cPart.partsList)
+					for (const auto& posePath : posePathList)
 					{
-						if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-							p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
-						else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-							p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
-					}
+						QStringList partsFromFile = fileGetAssets(posePath + "/" + cPart.partTypeAssetStr);
 
-					// For simplicity, we make the default the first part in the list.
-					// (ex: the first Chest part in the list of Chest parts)
-					// This means default will be defined by load order, based on how folder traversal works.
-					// (so probably alphabetical)
-					// Note that an instance of this class initialized with a color set type of none still uses
-					// the altered image variable for display to avoid unnecessary complexity.
-					// It gets its altered image set to the normal image at the beginning, so despite never
-					// having color setting applied, it'll still have an image to display.
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+						if (!partsFromFile.isEmpty())
+						{
+							gender.second.poseList.emplace_back
+							(
+								characterPart::poseData
+								{
+									extractSubstringInbetweenRevFind("/", "", posePath)
+								}
+							);
+						}
+
+						// Note: We store as filename only (e.g. NOT including full path), 
+						// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
+						for (auto& part : partsFromFile)
+						{
+							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+							{
+								gender.second.poseList.back().partsList.emplace_back
+								(
+									characterPart::imgParts
+									{
+										QPixmap(part),
+										QPixmap(part),
+										QFileInfo(part).fileName(),
+										cPart.defaultInitialColor,
+										cPart.defaultInitialColor,
+										QPixmap(part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()))
+									}
+								);
+							}
+							else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+								cPart.colorSetType == ColorSetType::NONE)
+							{
+								gender.second.poseList.back().partsList.emplace_back
+								(
+									characterPart::imgParts
+									{
+										QPixmap(part),
+										QPixmap(part),
+										QFileInfo(part).fileName(),
+										cPart.defaultInitialColor,
+										cPart.defaultInitialColor,
+										nullptr
+									}
+								);
+							}
+						}
+					}
 				}
+
+				for (auto& gender : cPart.genderMap)
+				{
+					if (!gender.second.poseList.empty())
+					{
+						for (auto& pose : gender.second.poseList)
+						{
+							for (auto& p : pose.partsList)
+							{
+								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+									p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
+								else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+									p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
+							}
+						}
+					}
+				}
+
+				cPart.item.get()->setPixmap(cPart.genderMap.at(genderCurrent).poseList[0].partsList[0].imgAltered);
 
 				if (cPart.partHasBtnSwap)
 				{
@@ -863,24 +950,17 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					cPart.btnSwapLeft.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 					cPart.btnSwapLeft.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
 
-					layout.get()->addWidget
-					(
-						cPart.btnSwapLeft.get(),
-						cPart.gridPlaceSwapLeft[0],
-						cPart.gridPlaceSwapLeft[1],
-						cPart.gridAlignSwapLeft
-					);
-
 					connect(cPart.btnSwapLeft.get(), &QPushButton::clicked, this, [&]() {
+						auto& gc = cPart.genderMap.at(genderCurrent);
 						if (cPart.displayedPartI - 1 >= 0)
 						{
 							cPart.displayedPartI--;
-							cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
 						}
 						else
 						{
-							cPart.displayedPartI = cPart.partsList.size() - 1;
-							cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+							cPart.displayedPartI = gc.poseList[poseCurrentI].partsList.size() - 1;
+							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
 						}
 						characterModified = true;
 					});
@@ -896,24 +976,17 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					cPart.btnSwapRight.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 					cPart.btnSwapRight.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
 
-					layout.get()->addWidget
-					(
-						cPart.btnSwapRight.get(),
-						cPart.gridPlaceSwapRight[0],
-						cPart.gridPlaceSwapRight[1],
-						cPart.gridAlignSwapRight
-					);
-
 					connect(cPart.btnSwapRight.get(), &QPushButton::clicked, this, [&]() {
-						if (cPart.displayedPartI + 1 <= cPart.partsList.size() - 1)
+						auto& gc = cPart.genderMap.at(genderCurrent);
+						if (cPart.displayedPartI + 1 <= gc.poseList[poseCurrentI].partsList.size() - 1)
 						{
 							cPart.displayedPartI++;
-							cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
 						}
 						else
 						{
 							cPart.displayedPartI = 0;
-							cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
 						}
 						characterModified = true;
 					});
@@ -931,14 +1004,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					cPart.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 					cPart.btnPicker.get()->setFixedSize(QSize(cPart.btnPickerWidth, cPart.btnPickerHeight));
 
-					layout.get()->addWidget
-					(
-						cPart.btnPicker.get(),
-						cPart.gridPlacePicker[0],
-						cPart.gridPlacePicker[1],
-						cPart.gridAlignPicker
-					);
-
 					cPart.contextMenuColorPicker.get()->addAction(cPart.actionCopyColor.get());
 					cPart.contextMenuColorPicker.get()->addAction(cPart.actionPasteColor.get());
 					cPart.contextMenuColorPicker.get()->addSeparator();
@@ -951,14 +1016,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					});
 
 					connect(cPart.actionCopyColor.get(), &QAction::triggered, this, [&]() {
-						pickerCopiedColor = cPart.partsList[cPart.displayedPartI].colorAltered;
+						auto& gc = cPart.genderMap.at(genderCurrent);
+						pickerCopiedColor = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].colorAltered;
 						pickerUpdatePasteIconColor(pickerCopiedColor);
 					});
 
 					connect(cPart.actionPasteColor.get(), &QAction::triggered, this, [&]() {
 						if (pickerCopiedColor.isValid())
 						{
-							auto& currentPart = cPart.partsList[cPart.displayedPartI];
+							auto& gc = cPart.genderMap.at(genderCurrent);
+							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 							currentPart.colorAltered = pickerCopiedColor;
 							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 								currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
@@ -973,8 +1040,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
 							cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 						{
-							QColor current = cPart.partsList[cPart.displayedPartI].colorAltered;
-							for (auto& p : cPart.partsList)
+							auto& gc = cPart.genderMap.at(genderCurrent);
+							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
+							QColor current = currentPart.colorAltered;
+							for (auto& p : gc.poseList[poseCurrentI].partsList)
 							{
 								p.colorAltered = current;
 								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
@@ -987,7 +1056,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					});
 
 					connect(cPart.btnPicker.get(), &QPushButton::clicked, this, [&]() {
-						auto& currentPart = cPart.partsList[cPart.displayedPartI];
+						auto& gc = cPart.genderMap.at(genderCurrent);
+						auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 						QColor colorNew = QColorDialog::getColor(currentPart.colorAltered, this->parentWidget(), "Choose Color");
 						if (colorNew.isValid())
 						{
@@ -1003,7 +1073,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				}
 
 				cPart.item.get()->setZValue(cPart.displayOrder);
-
 				if (cPart.partHasBtnSwap)
 				{
 					cPart.btnSwapRight.get()->setVisible(false);
@@ -1030,25 +1099,85 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				if (fileSaveModifCheck())
 				{
 					removeCurrentSpeciesFromScene();
+					for (auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
+						gender.second.actionGender.get()->setVisible(false);
 					speciesCurrent = species.first;
+					for (auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
+						gender.second.actionGender.get()->setVisible(true);
+					genderCurrent = speciesMap.at(speciesCurrent).characterPartList[0].genderMap.begin()->first;
+					speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
 					applyCurrentSpeciesToScene();
+					loadDefaultCharacterFromTemplate();
 				}
 			}
 		});
+
+		for (const auto& gender : species.second.characterPartList[0].genderMap)
+		{
+			gender.second.actionGender.get()->setParent(this);
+			gender.second.actionGender.get()->setText(gender.second.genderTypeAssetStr);
+			gender.second.actionGender.get()->setCheckable(true);
+			gender.second.actionGender.get()->setVisible(false);
+
+			actionGenderGroup.get()->addAction(gender.second.actionGender.get());
+			genderMenu.get()->addAction(gender.second.actionGender.get());
+
+			connect(gender.second.actionGender.get(), &QAction::triggered, this, [&]() {
+				if (genderCurrent != gender.first)
+				{
+					if (fileSaveModifCheck())
+					{
+						genderCurrent = gender.first;
+						for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
+						{
+							cPart.item.get()->setPixmap(cPart.genderMap.at(genderCurrent).poseList[0].partsList[0].imgAltered);
+						}
+						loadDefaultCharacterFromTemplate();
+					}
+				}
+			});
+		}
 	}
 
 	speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+
+	for (const auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
+	{
+		gender.second.actionGender.get()->setVisible(true);
+	}
+	speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
 
 	[&](std::vector<characterPart> &characterPartList) {
 		for (const auto& cPart : characterPartList)
 		{
 			if (cPart.partHasBtnSwap)
 			{
+				partSwapGroupLayout.get()->addWidget
+				(
+					cPart.btnSwapLeft.get(),
+					cPart.gridPlaceSwapLeft[0],
+					cPart.gridPlaceSwapLeft[1],
+					cPart.gridAlignSwapLeft
+				);
+				partSwapGroupLayout.get()->addWidget
+				(
+					cPart.btnSwapRight.get(),
+					cPart.gridPlaceSwapRight[0],
+					cPart.gridPlaceSwapRight[1],
+					cPart.gridAlignSwapRight
+				);
 				cPart.btnSwapRight.get()->setVisible(true);
 				cPart.btnSwapLeft.get()->setVisible(true);
 			}
 			if (cPart.partHasBtnPicker)
 			{
+				partPickerGroupLayout.get()->addWidget
+				(
+					cPart.btnPicker.get(),
+					cPart.gridPlacePicker[0],
+					cPart.gridPlacePicker[1],
+					cPart.gridAlignPicker
+				);
 				cPart.btnPicker.get()->setVisible(true);
 			}
 			scene.get()->addItem(cPart.item.get());
@@ -1063,7 +1192,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		textInputSL.inputWidget.get()->setStyleSheet(textInputSL.styleSheet);
 		textInputSL.inputWidget.get()->setPlaceholderText(textInputSL.placeholderText);
 
-		layout.get()->addWidget
+		characterNameInputGroupLayout.get()->addWidget
 		(
 			textInputSL.inputWidget.get(),
 			textInputSL.gridPlace[0],
@@ -1072,7 +1201,79 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		);
 	}
 
-	for (const auto& uiSpacer : uiSpacerList)
+	for (const auto& poseSwap : poseSwapButtonList)
+	{
+		poseSwap.btn.get()->setParent(this);
+		poseSwap.btn.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		poseSwap.btn.get()->setFixedSize(QSize(poseSwap.width, poseSwap.height));
+		poseSwap.btn.get()->setStyleSheet
+		(
+			poseSwap.styleSheetTemplate.arg(poseSwap.icons[0]).arg(poseSwap.icons[1]).arg(poseSwap.icons[2])
+		);
+		poseSwapGroupLayout.get()->addWidget
+		(
+			poseSwap.btn.get(),
+			poseSwap.gridPlace[0],
+			poseSwap.gridPlace[1],
+			poseSwap.gridAlign
+		);
+	}
+
+	connect(poseSwapButtonList[0].btn.get(), &QPushButton::released, this, [=]() {
+		if (poseCurrentI - 1 >= 0)
+		{
+			poseCurrentI--;
+			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
+			{
+				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
+				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				else
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+			}
+		}
+		else
+		{
+			poseCurrentI = speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList.size() - 1;
+			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
+			{
+				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
+				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				else
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+			}
+		}
+	});
+
+	connect(poseSwapButtonList[1].btn.get(), &QPushButton::released, this, [=]() {
+		if (poseCurrentI + 1 <= speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList.size() - 1)
+		{
+			poseCurrentI++;
+			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
+			{
+				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
+				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				else
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+			}
+		}
+		else
+		{
+			poseCurrentI = 0;
+			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
+			{
+				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
+				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				else
+					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+			}
+		}
+	});
+
+	/*for (const auto& uiSpacer : uiSpacerList)
 	{
 		uiSpacer.spacerBtn.get()->setParent(this);
 		uiSpacer.spacerBtn.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -1085,7 +1286,27 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			uiSpacer.gridPlace[1],
 			uiSpacer.gridAlign
 		);
-	}
+	}*/
+
+	partSwapGroupLayout.get()->setMargin(10);
+	partSwapGroup.get()->setLayout(partSwapGroupLayout.get());
+	partSwapGroup.get()->setFlat(true);
+	layout.get()->addWidget(partSwapGroup.get(), 0, 3, Qt::AlignRight);
+
+	partPickerGroupLayout.get()->setMargin(10);
+	partPickerGroup.get()->setLayout(partPickerGroupLayout.get());
+	partPickerGroup.get()->setFlat(true);
+	layout.get()->addWidget(partPickerGroup.get(), 0, 0, Qt::AlignLeft);
+
+	characterNameInputGroupLayout.get()->setMargin(10);
+	characterNameInputGroup.get()->setLayout(characterNameInputGroupLayout.get());
+	characterNameInputGroup.get()->setFlat(true);
+	layout.get()->addWidget(characterNameInputGroup.get(), 1, 0, Qt::AlignLeft);
+
+	poseSwapGroupLayout.get()->setMargin(10);
+	poseSwapGroup.get()->setLayout(poseSwapGroupLayout.get());
+	poseSwapGroup.get()->setFlat(true);
+	layout.get()->addWidget(poseSwapGroup.get(), 2, 0, Qt::AlignLeft);
 
 	// Template load should be last init operation in graphics display,
 	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
@@ -1163,10 +1384,55 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 	return extracted;
 }
 
-QStringList GraphicsDisplay::fileGetAssets(const QString &subPath)
+QString GraphicsDisplay::extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom)
+{
+	QString extracted = "";
+	int posFound = -1;
+
+	if (!strBegin.isEmpty() && !strEnd.isEmpty())
+	{
+		while (strExtractFrom.lastIndexOf(strBegin, posFound, Qt::CaseSensitive) != -1)
+		{
+			int posBegin = strExtractFrom.lastIndexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
+			int posEnd = strExtractFrom.lastIndexOf(strEnd, posBegin, Qt::CaseSensitive);
+			extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
+			posFound--;
+		}
+	}
+	else if (strBegin.isEmpty() && !strEnd.isEmpty())
+	{
+		int posBegin = 0;
+		int posEnd = strExtractFrom.lastIndexOf(strEnd, posBegin, Qt::CaseSensitive);
+		extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
+		posFound = posEnd;
+	}
+	else if (!strBegin.isEmpty() && strEnd.isEmpty())
+	{
+		int posBegin = strExtractFrom.lastIndexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
+		int posEnd = strExtractFrom.length();
+		extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
+		posFound = posEnd;
+	}
+	return extracted;
+}
+
+QStringList GraphicsDisplay::fileGetAssetDirectories(const QString &subPath)
 {
 	QStringList assetPathList;
-	QDirIterator dirIt(appExecutablePath + "/Assets/" + subPath);
+	QDirIterator dirIt(appExecutablePath + "/Assets/" + subPath, QDir::AllDirs | QDir::NoDotAndDotDot);
+	while (dirIt.hasNext())
+	{
+		QString assetPath = dirIt.next();
+		if (QFileInfo(assetPath).isDir())
+			assetPathList.append(assetPath);
+	}
+	return assetPathList;
+}
+
+QStringList GraphicsDisplay::fileGetAssets(const QString &path)
+{
+	QStringList assetPathList;
+	QDirIterator dirIt(path);
 	while (dirIt.hasNext())
 	{
 		QString assetPath = dirIt.next();
@@ -1218,9 +1484,13 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	// Template is built identical to a saved character, so the loading logic can be reused.
 	const QString templatePath =
 		QCoreApplication::applicationDirPath() +
-		"/Assets/CharacterTemplate/" +
+		"/Assets/Species/" +
 		speciesMap.at(speciesCurrent).speciesTypeAssetStr +
-		"/default-character-template.zen2dx"
+		"/" +
+		speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).genderTypeAssetStr +
+		"/" +
+		speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList[0].poseNameAssetStr +
+		"/CharacterTemplate/default-character-template.zen2dx"
 		;
 	if (QFile::exists(templatePath))
 	{
@@ -1239,19 +1509,38 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 		while (!qStream.atEnd())
 		{
 			QString line = qStream.readLine();
-			if (line.contains("Species="))
+			if (line.contains("::Species=") && line.contains("::Gender=") && line.contains("::Pose="))
 			{
-				QString speciesStr = extractSubstringInbetweenQt("=", "", line);
+				QString speciesStr = extractSubstringInbetweenQt("::Species=", "::", line);
+				QString genderStr = extractSubstringInbetweenQt("::Gender=", "::", line);
+				QString poseStr = extractSubstringInbetweenQt("::Pose=", "::", line);
+
 				for (const auto& species : speciesMap)
 				{
 					if (species.second.speciesTypeAssetStr == speciesStr)
 					{
-						if (speciesCurrent != species.first)
+						for (const auto& cPart : species.second.characterPartList)
 						{
-							removeCurrentSpeciesFromScene();
-							speciesCurrent = species.first;
-							applyCurrentSpeciesToScene();
-							speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+							for (const auto& gender : cPart.genderMap)
+							{
+								if (gender.second.genderTypeAssetStr == genderStr)
+								{
+									for (int i = 0; i < gender.second.poseList.size(); i++)
+									{
+										if (gender.second.poseList[i].poseNameAssetStr == poseStr)
+										{
+											removeCurrentSpeciesFromScene();
+											speciesCurrent = species.first;
+											genderCurrent = gender.first;
+											poseCurrentI = i;
+											applyCurrentSpeciesToScene();
+											speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+											break;
+										}
+									}
+									break;
+								}
+							}
 						}
 						break;
 					}
@@ -1266,16 +1555,17 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 						if (pos != -1)
 						{
 							cPart.displayedPartI = pos;
+							auto& gc = cPart.genderMap.at(genderCurrent);
+							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 							if (cPart.colorSetType != ColorSetType::NONE)
 							{
-								auto& currentPart = cPart.partsList[cPart.displayedPartI];
 								currentPart.colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
 								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 									currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
 								else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 									currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
 							}
-							cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+							cPart.item.get()->setPixmap(currentPart.imgAltered);
 						}
 						else
 							partsMissing = true;
@@ -1307,8 +1597,10 @@ void GraphicsDisplay::fileNew()
 	[&](std::vector<characterPart> &characterPartList) {
 		for (auto& cPart : characterPartList)
 		{
+			auto& gc = cPart.genderMap.at(genderCurrent);
+			auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 			cPart.displayedPartI = 0;
-			for (auto& p : cPart.partsList)
+			for (auto& p : gc.poseList[poseCurrentI].partsList)
 			{
 				p.colorAltered = p.colorBase;
 				if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
@@ -1318,7 +1610,7 @@ void GraphicsDisplay::fileNew()
 						p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
 					else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 						p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
-					cPart.item.get()->setPixmap(cPart.partsList[cPart.displayedPartI].imgAltered);
+					cPart.item.get()->setPixmap(currentPart.imgAltered);
 				}
 			}
 		}
@@ -1367,14 +1659,24 @@ bool GraphicsDisplay::fileSave()
 		{
 			QTextStream qStream(&fileWrite);
 
-			qStream << "Species=" + speciesMap.at(speciesCurrent).speciesTypeAssetStr + "\r\n";
+			qStream <<
+				"::"
+				"Species=" + speciesMap.at(speciesCurrent).speciesTypeAssetStr +
+				"::" +
+				"Gender=" + speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).genderTypeAssetStr +
+				"::" +
+				"Pose=" + speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList[poseCurrentI].poseNameAssetStr +
+				"::"
+				"\r\n";
 
 			[&](std::vector<characterPart> &characterPartList) {
 				for (const auto& cPart : characterPartList)
 				{
+					auto& gc = cPart.genderMap.at(genderCurrent);
+					auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 					qStream << cPart.partTypeAssetStr +
-						"=" + cPart.partsList[cPart.displayedPartI].imgFilename +
-						"," + cPart.partsList[cPart.displayedPartI].colorAltered.name() + "\r\n";
+						"=" + currentPart.imgFilename +
+						"," + currentPart.colorAltered.name() + "\r\n";
 				}
 			}(speciesMap.at(speciesCurrent).characterPartList);
 
@@ -1424,9 +1726,10 @@ void GraphicsDisplay::fileExportCharacter()
 
 int GraphicsDisplay::findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename)
 {
-	for (int i = 0; i < cPart.partsList.size(); i++)
+	auto& gc = cPart.genderMap.at(genderCurrent);
+	for (int i = 0; i < gc.poseList[poseCurrentI].partsList.size(); i++)
 	{
-		if (cPart.partsList[i].imgFilename == filename)
+		if (gc.poseList[poseCurrentI].partsList[i].imgFilename == filename)
 		{
 			return i;
 		}
@@ -1450,10 +1753,13 @@ void GraphicsDisplay::removeCurrentSpeciesFromScene()
 			{
 				cPart.btnSwapRight.get()->setVisible(false);
 				cPart.btnSwapLeft.get()->setVisible(false);
+				partSwapGroupLayout.get()->removeWidget(cPart.btnSwapRight.get());
+				partSwapGroupLayout.get()->removeWidget(cPart.btnSwapLeft.get());
 			}
 			if (cPart.partHasBtnPicker)
 			{
 				cPart.btnPicker.get()->setVisible(false);
+				partPickerGroupLayout.get()->removeWidget(cPart.btnPicker.get());
 			}
 
 			// We remove rather than using QGraphicsScene clear() function,
@@ -1465,20 +1771,43 @@ void GraphicsDisplay::removeCurrentSpeciesFromScene()
 
 void GraphicsDisplay::applyCurrentSpeciesToScene()
 {
+	// Note: We make the widgets visible AFTER adding them to layout.
+	// Otherwise, they may be briefly visible outside of the layout
+	// and then get added to it, causing a flickering effect from the adjustment of position.
 	[&](std::vector<characterPart> &characterPartList) {
 		for (const auto& cPart : characterPartList)
 		{
 			if (cPart.partHasBtnSwap)
 			{
+				partSwapGroupLayout.get()->addWidget
+				(
+					cPart.btnSwapLeft.get(),
+					cPart.gridPlaceSwapLeft[0],
+					cPart.gridPlaceSwapLeft[1],
+					cPart.gridAlignSwapLeft
+				);
+				partSwapGroupLayout.get()->addWidget
+				(
+					cPart.btnSwapRight.get(),
+					cPart.gridPlaceSwapRight[0],
+					cPart.gridPlaceSwapRight[1],
+					cPart.gridAlignSwapRight
+				);
 				cPart.btnSwapRight.get()->setVisible(true);
 				cPart.btnSwapLeft.get()->setVisible(true);
 			}
 			if (cPart.partHasBtnPicker)
 			{
+				partPickerGroupLayout.get()->addWidget
+				(
+					cPart.btnPicker.get(),
+					cPart.gridPlacePicker[0],
+					cPart.gridPlacePicker[1],
+					cPart.gridAlignPicker
+				);
 				cPart.btnPicker.get()->setVisible(true);
 			}
 			scene.get()->addItem(cPart.item.get());
 		}
-		loadDefaultCharacterFromTemplate();
 	}(speciesMap.at(speciesCurrent).characterPartList);
 }
