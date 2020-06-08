@@ -46,6 +46,21 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			setBackgroundColor(colorNew);
 	});
 
+
+	// We set up some elements to be initialized with a const value, where feasible.
+	// This is both to protect against accidental modification of variables that shouldn't change,
+	// and to make it easier to tweak values at a glance for customized usage of the program.
+
+	// For example, if you had a species HUMAN and DOG, you'd have different parts to use.
+	// The DOG would have a TAIL and the HUMAN wouldn't. 
+	// So the DOG species can be initialized with TAIL as one of its "parts" without affecting HUMAN,
+	// and without requiring special accommodations in the number or type of parts somewhere in the code.
+	
+	// This means some redundancy will need to be copy/pasted at times. For example, you probably want
+	// the text input boxes for First Name and Last Name to have the same stylesheet.
+	// However, if you want them to have different styles, you can do so without needing to modify
+	// the design of the code to accommodate different styles.
+
 	textInputSingleLineList.emplace_back
 	(
 		textInputSingleLine
@@ -273,9 +288,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 				{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
 				nullptr, // PICKER BTN: Alignment in grid layout
-				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -311,9 +326,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
 				{2, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -349,9 +364,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
 				{1, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -387,9 +402,47 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
 				{3, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{5, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+				75, // SWAP BTN: Width
+				75, // SWAP BTN: Height
+				75, // PICKER BTN: Width
+				75, // PICKER BTN: Height
+			}
+		);
+		characterPartList.emplace_back
+		(
+			characterPart
+			{
+				PartType::MASK,
+				8, // Display order in scene (higher numbers overlap lower numbers)
+				"Mask",
+				"#000000",
+				ColorSetType::FILL_WITH_OUTLINE,
+				true, // SWAP BTN: Flag for whether part is expected to display btn
+				true, // PICKER BTN: Flag for whether part is expected to display btn
+				"QPushButton{border: none; image: url(%1);}"
+				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+				"QPushButton:hover:pressed{border: none; image: url(%3);}",
+				QStringList()
+				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+				QStringList()
+				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+				QStringList()
+				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
+				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+				{4, 0}, // PICKER BTN: Row/Col placement in grid layout
+				nullptr, // PICKER BTN: Alignment in grid layout
+				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -402,7 +455,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			characterPart
 			{
 				PartType::HAIR,
-				8, // Display order in scene (higher numbers overlap lower numbers)
+				9, // Display order in scene (higher numbers overlap lower numbers)
 				"Hair",
 				"#000000",
 				ColorSetType::FILL_WITH_OUTLINE,
@@ -425,9 +478,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
 				{0, 1}, // PICKER BTN: Row/Col placement in grid layout
 				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
 				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
 				75, // SWAP BTN: Width
 				75, // SWAP BTN: Height
@@ -1288,15 +1341,23 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		);
 	}*/
 
-	partSwapGroupLayout.get()->setMargin(10);
+	partSwapGroupLayout.get()->setMargin(20);
 	partSwapGroup.get()->setLayout(partSwapGroupLayout.get());
 	partSwapGroup.get()->setFlat(true);
-	layout.get()->addWidget(partSwapGroup.get(), 0, 3, Qt::AlignRight);
+	layout.get()->addWidget(partSwapScroll.get(), 0, 2, Qt::AlignRight);
+	partSwapScroll.get()->setWidgetResizable(true);
+	partSwapScroll.get()->setWidget(partSwapGroup.get());
+	partSwapScroll.get()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	partSwapScroll.get()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-	partPickerGroupLayout.get()->setMargin(10);
+	partPickerGroupLayout.get()->setMargin(20);
 	partPickerGroup.get()->setLayout(partPickerGroupLayout.get());
 	partPickerGroup.get()->setFlat(true);
-	layout.get()->addWidget(partPickerGroup.get(), 0, 0, Qt::AlignLeft);
+	layout.get()->addWidget(partPickerScroll.get(), 0, 0, Qt::AlignLeft);
+	partPickerScroll.get()->setWidgetResizable(true);
+	partPickerScroll.get()->setWidget(partPickerGroup.get());
+	partPickerScroll.get()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	partPickerScroll.get()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
 	characterNameInputGroupLayout.get()->setMargin(10);
 	characterNameInputGroup.get()->setLayout(characterNameInputGroupLayout.get());

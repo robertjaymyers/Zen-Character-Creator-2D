@@ -31,6 +31,7 @@ This file is part of Zen Character Creator 2D.
 #include <QDateTime>
 #include <QMessageBox>
 #include <QGroupBox>
+#include <QScrollArea>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -49,7 +50,7 @@ enum class TextInputSingleLineType { FIRST_NAME, LAST_NAME, NONE };
 
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
-enum class PartType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, HAIR, NONE };
+enum class PartType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 class GraphicsDisplay : public QGraphicsView
@@ -75,9 +76,11 @@ private:
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
 
+	std::unique_ptr<QScrollArea> partSwapScroll = std::make_unique<QScrollArea>(this);
 	std::unique_ptr<QGroupBox> partSwapGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> partSwapGroupLayout = std::make_unique<QGridLayout>();
 
+	std::unique_ptr<QScrollArea> partPickerScroll = std::make_unique<QScrollArea>(this);
 	std::unique_ptr<QGroupBox> partPickerGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> partPickerGroupLayout = std::make_unique<QGridLayout>();
 
