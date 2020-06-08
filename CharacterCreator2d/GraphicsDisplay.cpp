@@ -942,12 +942,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								(
 									characterPart::imgParts
 									{
-										QPixmap(part),
+										part,
 										QPixmap(part),
 										QFileInfo(part).fileName(),
 										cPart.defaultInitialColor,
 										cPart.defaultInitialColor,
-										QPixmap(part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()))
+										part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName())
 									}
 								);
 							}
@@ -958,7 +958,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								(
 									characterPart::imgParts
 									{
-										QPixmap(part),
+										part,
 										QPixmap(part),
 										QFileInfo(part).fileName(),
 										cPart.defaultInitialColor,

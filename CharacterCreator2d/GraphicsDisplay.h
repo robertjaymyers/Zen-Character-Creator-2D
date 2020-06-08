@@ -140,12 +140,14 @@ private:
 		// over time, depending on the type of composition mode used with QPainter.
 		struct imgParts
 		{
-			const QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
+			const QString imgBase; // Don't modify this after initial loading into it from assets folder contents.
+			//const QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
 			QPixmap imgAltered; // Modify this one for color changes.
 			QString imgFilename;
 			const QColor colorBase; // Don't modify this after initial setting it from parts map
 			QColor colorAltered; // Modify this one for color changes.
-			const QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
+			const QString imgOutline; // Don't modify this after initial loading into it from assets folder contents.
+			//const QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
 		};
 		int displayedPartI = 0;
 
