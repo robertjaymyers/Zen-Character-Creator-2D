@@ -943,11 +943,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 									characterPart::imgParts
 									{
 										part,
-										QPixmap(part),
 										QFileInfo(part).fileName(),
 										cPart.defaultInitialColor,
 										cPart.defaultInitialColor,
-										part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName())
+										part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()),
+										part.replace("/" + QFileInfo(part).fileName(), "/Thumbnail/" + QFileInfo(part).fileName())
 									}
 								);
 							}
@@ -959,11 +959,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 									characterPart::imgParts
 									{
 										part,
-										QPixmap(part),
 										QFileInfo(part).fileName(),
 										cPart.defaultInitialColor,
 										cPart.defaultInitialColor,
-										nullptr
+										nullptr,
+										part.replace("/" + QFileInfo(part).fileName(), "/Thumbnail/" + QFileInfo(part).fileName())
 									}
 								);
 							}
@@ -971,24 +971,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 					}
 				}
 
-				for (auto& gender : cPart.genderMap)
-				{
-					if (!gender.second.poseList.empty())
-					{
-						for (auto& pose : gender.second.poseList)
-						{
-							for (auto& p : pose.partsList)
-							{
-								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-									p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
-								else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-									p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
-							}
-						}
-					}
-				}
-
-				cPart.item.get()->setPixmap(cPart.genderMap.at(genderCurrent).poseList[0].partsList[0].imgAltered);
+				updatePartInScene(cPart, cPart.genderMap.at(genderCurrent).poseList[0].partsList[0]);
 
 				if (cPart.partHasBtnSwap)
 				{
@@ -1008,12 +991,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						if (cPart.displayedPartI - 1 >= 0)
 						{
 							cPart.displayedPartI--;
-							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
 						}
 						else
 						{
 							cPart.displayedPartI = gc.poseList[poseCurrentI].partsList.size() - 1;
-							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
 						}
 						characterModified = true;
 					});
@@ -1034,12 +1017,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						if (cPart.displayedPartI + 1 <= gc.poseList[poseCurrentI].partsList.size() - 1)
 						{
 							cPart.displayedPartI++;
-							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
 						}
 						else
 						{
 							cPart.displayedPartI = 0;
-							cPart.item.get()->setPixmap(gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
 						}
 						characterModified = true;
 					});
@@ -1080,11 +1063,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 							auto& gc = cPart.genderMap.at(genderCurrent);
 							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
 							currentPart.colorAltered = pickerCopiedColor;
-							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-								currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
-							else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-								currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
-							cPart.item.get()->setPixmap(currentPart.imgAltered);
+							updatePartInScene(cPart, currentPart);
 							characterModified = true;
 						}
 					});
@@ -1099,10 +1078,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 							for (auto& p : gc.poseList[poseCurrentI].partsList)
 							{
 								p.colorAltered = current;
-								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-									p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
-								else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-									p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
 								characterModified = true;
 							}
 						}
@@ -1115,11 +1090,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						if (colorNew.isValid())
 						{
 							currentPart.colorAltered = colorNew;
-							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-								currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
-							else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-								currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
-							cPart.item.get()->setPixmap(currentPart.imgAltered);
+							updatePartInScene(cPart, currentPart);
 							characterModified = true;
 						}
 					});
@@ -1183,7 +1154,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						genderCurrent = gender.first;
 						for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
 						{
-							cPart.item.get()->setPixmap(cPart.genderMap.at(genderCurrent).poseList[0].partsList[0].imgAltered);
+							updatePartInScene(cPart, cPart.genderMap.at(genderCurrent).poseList[0].partsList[0]);
 						}
 						loadDefaultCharacterFromTemplate();
 					}
@@ -1280,9 +1251,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
 				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
+				}
 				else
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
+				}
 			}
 		}
 		else
@@ -1292,9 +1267,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
 				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
+				}
 				else
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
+				}
 			}
 		}
 	});
@@ -1307,9 +1286,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
 				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
+				}
 				else
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
+				}
 			}
 		}
 		else
@@ -1319,9 +1302,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
 				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[0].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
+				}
 				else
-					cPart.item.get()->setPixmap(currentPoseList[poseCurrentI].partsList[cPart.displayedPartI].imgAltered);
+				{
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
+				}
 			}
 		}
 	});
@@ -1503,9 +1490,19 @@ QStringList GraphicsDisplay::fileGetAssets(const QString &path)
 	return assetPathList;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color)
+void GraphicsDisplay::updatePartInScene(const characterPart &cPart, const characterPart::imgParts &imgPart)
 {
-	QPixmap newImage = imgSolid;
+	if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+		cPart.item.get()->setPixmap(recolorPixmapSolidWithOutline(imgPart));
+	else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+		cPart.item.get()->setPixmap(recolorPixmapSolid(imgPart));
+	else
+		cPart.item.get()->setPixmap(imgPart.imgBase);
+}
+
+QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &img, const QColor &color)
+{
+	QPixmap newImage = QPixmap(img);
 	QPainter painter;
 	painter.begin(&newImage);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
@@ -1514,15 +1511,26 @@ QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &imgSolid, const QColo
 	return newImage;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color)
+QPixmap GraphicsDisplay::recolorPixmapSolid(const characterPart::imgParts &part)
 {
-	QPixmap newImage = imgSolid;
+	QPixmap newImage = QPixmap(part.imgBase);
 	QPainter painter;
 	painter.begin(&newImage);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), color);
+	painter.fillRect(newImage.rect(), part.colorAltered);
+	painter.end();
+	return newImage;
+}
+
+QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const characterPart::imgParts &part)
+{
+	QPixmap newImage = QPixmap(part.imgBase);
+	QPainter painter;
+	painter.begin(&newImage);
+	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+	painter.fillRect(newImage.rect(), part.colorAltered);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-	painter.drawPixmap(imgOutline.rect(), imgOutline);
+	painter.drawPixmap(QPixmap(part.imgOutline).rect(), QPixmap(part.imgOutline));
 	painter.end();
 	return newImage;
 }
@@ -1618,15 +1626,9 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							cPart.displayedPartI = pos;
 							auto& gc = cPart.genderMap.at(genderCurrent);
 							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-							if (cPart.colorSetType != ColorSetType::NONE)
-							{
-								currentPart.colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
-								if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-									currentPart.imgAltered = recolorPixmapSolidWithOutline(currentPart.imgBase, currentPart.imgOutline, currentPart.colorAltered);
-								else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-									currentPart.imgAltered = recolorPixmapSolid(currentPart.imgBase, currentPart.colorAltered);
-							}
-							cPart.item.get()->setPixmap(currentPart.imgAltered);
+
+							currentPart.colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
+							updatePartInScene(cPart, currentPart);
 						}
 						else
 							partsMissing = true;
@@ -1664,15 +1666,7 @@ void GraphicsDisplay::fileNew()
 			for (auto& p : gc.poseList[poseCurrentI].partsList)
 			{
 				p.colorAltered = p.colorBase;
-				if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
-					cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-				{
-					if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-						p.imgAltered = recolorPixmapSolidWithOutline(p.imgBase, p.imgOutline, p.colorAltered);
-					else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-						p.imgAltered = recolorPixmapSolid(p.imgBase, p.colorAltered);
-					cPart.item.get()->setPixmap(currentPart.imgAltered);
-				}
+				updatePartInScene(cPart, p);
 			}
 		}
 	}(speciesMap.at(speciesCurrent).characterPartList);

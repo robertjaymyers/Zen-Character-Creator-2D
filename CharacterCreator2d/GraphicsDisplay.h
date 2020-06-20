@@ -141,12 +141,11 @@ private:
 		struct imgParts
 		{
 			const QString imgBase; // Don't modify this after initial loading into it from assets folder contents.
-			//const QPixmap imgBase; // Don't modify this after initial loading into it from assets folder contents.
-			QPixmap imgAltered; // Modify this one for color changes.
 			QString imgFilename;
 			const QColor colorBase; // Don't modify this after initial setting it from parts map
 			QColor colorAltered; // Modify this one for color changes.
 			const QString imgOutline; // Don't modify this after initial loading into it from assets folder contents.
+			const QString imgThumbnail; // Don't modify this after initial loading into it from assets folder contents.
 			//const QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
 		};
 		int displayedPartI = 0;
@@ -304,8 +303,10 @@ private:
 	QString extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QStringList fileGetAssetDirectories(const QString &subPath);
 	QStringList fileGetAssets(const QString &path);
-	QPixmap recolorPixmapSolid(const QPixmap &imgSolid, const QColor &color);
-	QPixmap recolorPixmapSolidWithOutline(const QPixmap &imgSolid, const QPixmap &imgOutline, const QColor &color);
+	void updatePartInScene(const characterPart &cPart, const characterPart::imgParts &imgPart);
+	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
+	QPixmap recolorPixmapSolid(const characterPart::imgParts &part);
+	QPixmap recolorPixmapSolidWithOutline(const characterPart::imgParts &part);
 	void pickerUpdatePasteIconColor(const QColor &color);
 	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
