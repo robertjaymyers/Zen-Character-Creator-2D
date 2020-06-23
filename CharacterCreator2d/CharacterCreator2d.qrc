@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/ZenCharacterCreator2D">
-        <file>Resources/button-left-pencil-sketch.png</file>
-        <file>Resources/button-left-pencil-sketch-hover.png</file>
-        <file>Resources/button-left-pencil-sketch-hover-pressed.png</file>
-        <file>Resources/button-right-pencil-sketch.png</file>
-        <file>Resources/button-right-pencil-sketch-hover.png</file>
-        <file>Resources/button-right-pencil-sketch-hover-pressed.png</file>
         <file>Resources/button-pick-skin-color.png</file>
         <file>Resources/button-pick-skin-color-hover.png</file>
         <file>Resources/button-pick-skin-color-hover-pressed.png</file>
@@ -46,5 +40,9 @@
         <file>Resources/btnSwapCharacterPartFeetHover.png</file>
         <file>Resources/btnSwapCharacterPartHair.png</file>
         <file>Resources/btnSwapCharacterPartHairHover.png</file>
+        <file>Resources/btnSwapCharacterPartHead.png</file>
+        <file>Resources/btnSwapCharacterPartHeadHover.png</file>
+        <file>Resources/btnSwapCharacterPartMask.png</file>
+        <file>Resources/btnSwapCharacterPartMaskHover.png</file>
     </qresource>
 </RCC>

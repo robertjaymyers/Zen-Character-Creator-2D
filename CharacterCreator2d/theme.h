@@ -29,12 +29,12 @@ enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 struct assetsData
 {
-	QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
-	QString imgFilename; // We use this for saving/loading by filename of an img part.
-	QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
+	const QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
+	const QString imgFilename; // We use this for saving/loading by filename of an img part.
+	const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
 	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
-	QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
-	QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
+	const QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
+	const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
 };
 
@@ -68,7 +68,7 @@ struct componentDataInit
 
 struct componentData
 {
-	componentDataInit settings;
+	const componentDataInit settings;
 	std::map<QString, assetsData> assetsMap;
 	QString displayedAssetKey;
 	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
@@ -82,28 +82,28 @@ struct componentData
 
 struct poseData
 {
-	QString assetStr;
+	const QString assetStr;
 	std::map<ComponentType, componentData> componentMap;
 	std::unique_ptr<QAction> actionPose = std::make_unique<QAction>();
 };
 
 struct genderData
 {
-	QString assetStr;
+	const QString assetStr;
 	std::map<PoseType, poseData> poseMap;
 	std::unique_ptr<QAction> actionGender = std::make_unique<QAction>();
 };
 
 struct speciesData
 {
-	QString assetStr;
+	const QString assetStr;
 	std::map<GenderType, genderData> genderMap;
 	std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
 };
 
 struct mapInitData
 {
-	QString assetStr;
+	const QString assetStr;
 	const std::map<ComponentType, componentDataInit>& componentMapRef;
 };
 
@@ -267,9 +267,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
 		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
@@ -412,9 +412,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
 		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
@@ -634,9 +634,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
 		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
@@ -779,9 +779,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
 		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
