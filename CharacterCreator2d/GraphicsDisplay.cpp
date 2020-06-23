@@ -26,6 +26,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addMenu(speciesMenu.get());
 	contextMenu.get()->addMenu(genderMenu.get());
+	contextMenu.get()->addMenu(poseMenu.get());
 
 	connect(actionFileNew.get(), &QAction::triggered, this, [=]() {
 		if (fileSaveModifCheck())
@@ -110,791 +111,797 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		}
 	);
 
-	[&](std::vector<characterPart> &characterPartList) {
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BODY,
-				0, // Display order in scene (higher numbers overlap lower numbers)
-				"Body",
-				"#764c39",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
-				{0, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::EYES,
-				1, // Display order in scene (higher numbers overlap lower numbers)
-				"Eyes",
-				"#aaaa7f",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
-				{1, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::LIPS,
-				2, // Display order in scene (higher numbers overlap lower numbers)
-				"Lips",
-				"#555500",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
-				{2, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BLUSH,
-				3, // Display order in scene (higher numbers overlap lower numbers)
-				"Blush",
-				"#555500",
-				ColorSetType::FILL_NO_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
-				{3, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::HEAD,
-				4, // Display order in scene (higher numbers overlap lower numbers)
-				"Head",
-				"#FFFFFF",
-				ColorSetType::NONE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				false, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList(), // Head color changing is controlled by skin color, so we leave this empty
-				{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BOTTOM,
-				5, // Display order in scene (higher numbers overlap lower numbers)
-				"Bottom",
-				"#B5B5B5",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
-				{2, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::CHEST,
-				6, // Display order in scene (higher numbers overlap lower numbers)
-				"Chest",
-				"#B5B5B5",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
-				{1, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::FEET,
-				7, // Display order in scene (higher numbers overlap lower numbers)
-				"Feet",
-				"#000000",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
-				{3, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{5, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::MASK,
-				8, // Display order in scene (higher numbers overlap lower numbers)
-				"Mask",
-				"#000000",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
-				{4, 0}, // PICKER BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::HAIR,
-				9, // Display order in scene (higher numbers overlap lower numbers)
-				"Hair",
-				"#000000",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
-				{0, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-	}(characterPartListHuman);
+	//[&](std::vector<characterPart> &characterPartList) {
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BODY,
+	//			0, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Body",
+	//			"#764c39",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
+	//			{0, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::EYES,
+	//			1, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Eyes",
+	//			"#aaaa7f",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
+	//			{1, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::LIPS,
+	//			2, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Lips",
+	//			"#555500",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
+	//			{2, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BLUSH,
+	//			3, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Blush",
+	//			"#555500",
+	//			ColorSetType::FILL_NO_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
+	//			{3, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::HEAD,
+	//			4, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Head",
+	//			"#FFFFFF",
+	//			ColorSetType::NONE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			false, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList(), // Head color changing is controlled by skin color, so we leave this empty
+	//			{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BOTTOM,
+	//			5, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Bottom",
+	//			"#B5B5B5",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottom.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
+	//			{2, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::CHEST,
+	//			6, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Chest",
+	//			"#B5B5B5",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
+	//			{1, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::FEET,
+	//			7, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Feet",
+	//			"#000000",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeet.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+	//			{3, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{5, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::MASK,
+	//			8, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Mask",
+	//			"#000000",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+	//			{4, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::HAIR,
+	//			9, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Hair",
+	//			"#000000",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+	//			"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHair.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
+	//			{0, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//}(characterPartListHuman);
 
-	[&](std::vector<characterPart> &characterPartList) {
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BODY,
-				0, // Display order in scene (higher numbers overlap lower numbers)
-				"Body",
-				"#764c39",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
-				{0, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::EYES,
-				1, // Display order in scene (higher numbers overlap lower numbers)
-				"Eyes",
-				"#aaaa7f",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
-				{1, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::LIPS,
-				2, // Display order in scene (higher numbers overlap lower numbers)
-				"Lips",
-				"#555500",
-				ColorSetType::FILL_WITH_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
-				{2, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BLUSH,
-				3, // Display order in scene (higher numbers overlap lower numbers)
-				"Blush",
-				"#555500",
-				ColorSetType::FILL_NO_OUTLINE,
-				false, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
-				{3, 0}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::HEAD,
-				4, // Display order in scene (higher numbers overlap lower numbers)
-				"Head",
-				"#FFFFFF",
-				ColorSetType::NONE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				false, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList(), // Head color changing is controlled by skin color, so we leave this empty
-				{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
-				nullptr, // PICKER BTN: Alignment in grid layout
-				{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::BOTTOM,
-				5, // Display order in scene (higher numbers overlap lower numbers)
-				"Bottom",
-				"#B5B5B5",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
-				{2, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::CHEST,
-				6, // Display order in scene (higher numbers overlap lower numbers)
-				"Chest",
-				"#B5B5B5",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
-				{1, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::FEET,
-				7, // Display order in scene (higher numbers overlap lower numbers)
-				"Feet",
-				"#000000",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
-				{3, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-		characterPartList.emplace_back
-		(
-			characterPart
-			{
-				PartType::HAIR,
-				8, // Display order in scene (higher numbers overlap lower numbers)
-				"Hair",
-				"#000000",
-				ColorSetType::FILL_WITH_OUTLINE,
-				true, // SWAP BTN: Flag for whether part is expected to display btn
-				true, // PICKER BTN: Flag for whether part is expected to display btn
-				"QPushButton{border: none; image: url(%1);}"
-				"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-				"QPushButton:hover:pressed{border: none; image: url(%3);}",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-				QStringList()
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
-				<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
-				{0, 1}, // PICKER BTN: Row/Col placement in grid layout
-				Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
-				{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
-				Qt::AlignRight, // PICKER BTN: Alignment in grid layout
-				75, // SWAP BTN: Width
-				75, // SWAP BTN: Height
-				75, // PICKER BTN: Width
-				75, // PICKER BTN: Height
-			}
-		);
-	}(characterPartListElf);
+	//[&](std::vector<characterPart> &characterPartList) {
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BODY,
+	//			0, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Body",
+	//			"#764c39",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
+	//			{0, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::EYES,
+	//			1, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Eyes",
+	//			"#aaaa7f",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
+	//			{1, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::LIPS,
+	//			2, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Lips",
+	//			"#555500",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
+	//			{2, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BLUSH,
+	//			3, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Blush",
+	//			"#555500",
+	//			ColorSetType::FILL_NO_OUTLINE,
+	//			false, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
+	//			{3, 0}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{-1, -1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::HEAD,
+	//			4, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Head",
+	//			"#FFFFFF",
+	//			ColorSetType::NONE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			false, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList(), // Head color changing is controlled by skin color, so we leave this empty
+	//			{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
+	//			nullptr, // PICKER BTN: Alignment in grid layout
+	//			{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{1, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::BOTTOM,
+	//			5, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Bottom",
+	//			"#B5B5B5",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
+	//			{2, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{3, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::CHEST,
+	//			6, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Chest",
+	//			"#B5B5B5",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
+	//			{1, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{2, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{2, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::FEET,
+	//			7, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Feet",
+	//			"#000000",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+	//			{3, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{4, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//	characterPartList.emplace_back
+	//	(
+	//		characterPart
+	//		{
+	//			PartType::HAIR,
+	//			8, // Display order in scene (higher numbers overlap lower numbers)
+	//			"Hair",
+	//			"#000000",
+	//			ColorSetType::FILL_WITH_OUTLINE,
+	//			true, // SWAP BTN: Flag for whether part is expected to display btn
+	//			true, // PICKER BTN: Flag for whether part is expected to display btn
+	//			"QPushButton{border: none; image: url(%1);}"
+	//			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//			"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
+	//			QStringList()
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
+	//			<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
+	//			{0, 1}, // PICKER BTN: Row/Col placement in grid layout
+	//			Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
+	//			{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			{0, 1}, // SWAP RIGHT BTN: Row/Col placement in grid layout
+	//			Qt::AlignRight, // PICKER BTN: Alignment in grid layout
+	//			75, // SWAP BTN: Width
+	//			75, // SWAP BTN: Height
+	//			75, // PICKER BTN: Width
+	//			75, // PICKER BTN: Height
+	//		}
+	//	);
+	//}(characterPartListElf);
 
-	speciesMap.insert(std::pair<SpeciesType, speciesData>
-		(
-			SpeciesType::HUMAN,
-			speciesData
-			{
-				"Human",
-				std::move(characterPartListHuman)
-			}
-	));
+	//speciesMap.insert(std::pair<SpeciesType, speciesData>
+	//	(
+	//		SpeciesType::HUMAN,
+	//		speciesData
+	//		{
+	//			"Human",
+	//			std::move(characterPartListHuman)
+	//		}
+	//));
 
-	speciesMap.insert(std::pair<SpeciesType, speciesData>
-		(
-			SpeciesType::ELF,
-			speciesData
-			{
-				"Elf",
-				std::move(characterPartListElf)
-			}
-	));
+	//speciesMap.insert(std::pair<SpeciesType, speciesData>
+	//	(
+	//		SpeciesType::ELF,
+	//		speciesData
+	//		{
+	//			"Elf",
+	//			std::move(characterPartListElf)
+	//		}
+	//));
 
-	[&](std::vector<characterPart> &characterPartList) {
-		for (auto& cPart : characterPartList)
-		{
-			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
-				(
-					GenderType::FEMALE,
-					characterPart::genderData
-					{
-						"Female"
-					}
-			));
-			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
-				(
-					GenderType::MALE,
-					characterPart::genderData
-					{
-						"Male"
-					}
-			));
-		}
-	}(speciesMap.at(SpeciesType::HUMAN).characterPartList);
+	//[&](std::vector<characterPart> &characterPartList) {
+	//	for (auto& cPart : characterPartList)
+	//	{
+	//		cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+	//			(
+	//				GenderType::FEMALE,
+	//				characterPart::genderData
+	//				{
+	//					"Female"
+	//				}
+	//		));
+	//		cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+	//			(
+	//				GenderType::MALE,
+	//				characterPart::genderData
+	//				{
+	//					"Male"
+	//				}
+	//		));
+	//	}
+	//}(speciesMap.at(SpeciesType::HUMAN).characterPartList);
 
-	[&](std::vector<characterPart> &characterPartList) {
-		for (auto& cPart : characterPartList)
-		{
-			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
-				(
-					GenderType::FEMALE,
-					characterPart::genderData
-					{
-						"Female"
-					}
-			));
-			cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
-				(
-					GenderType::MALE,
-					characterPart::genderData
-					{
-						"Male"
-					}
-			));
-		}
-	}(speciesMap.at(SpeciesType::ELF).characterPartList);
+	//[&](std::vector<characterPart> &characterPartList) {
+	//	for (auto& cPart : characterPartList)
+	//	{
+	//		cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+	//			(
+	//				GenderType::FEMALE,
+	//				characterPart::genderData
+	//				{
+	//					"Female"
+	//				}
+	//		));
+	//		cPart.genderMap.insert(std::pair<GenderType, characterPart::genderData>
+	//			(
+	//				GenderType::MALE,
+	//				characterPart::genderData
+	//				{
+	//					"Male"
+	//				}
+	//		));
+	//	}
+	//}(speciesMap.at(SpeciesType::ELF).characterPartList);
 
 	this->setScene(scene.get());
 	scene.get()->setParent(this->parent());
@@ -904,215 +911,88 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 	layout.get()->setMargin(50);
 
-	for (auto& species : speciesMap)
+	// Nested order is: Species->Gender->Component->Pose->Assets
+
+	// Create nested maps and data structures first.
+	for (const auto& species : speciesTypeMap)
 	{
-		[&](std::vector<characterPart> &characterPartList) {
-			for (auto& cPart : characterPartList)
+		speciesMap.try_emplace(species.first, speciesData{ species.second.assetStr });
+		for (const auto& gender : genderTypeMap)
+		{
+			speciesMap.at(species.first).genderMap.try_emplace(gender.first, genderData{ gender.second });
+			for (const auto& pose : poseTypeMap)
 			{
-				for (auto& gender : cPart.genderMap)
+				speciesMap.at(species.first).genderMap.at(gender.first).poseMap.try_emplace(pose.first, poseData{ pose.second });
+
+				for (const auto& component : species.second.componentMapRef)
 				{
-					QStringList posePathList = fileGetAssetDirectories(
-						"Species/" +
-						species.second.speciesTypeAssetStr + "/" +
-						gender.second.genderTypeAssetStr
+					speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first).componentMap.try_emplace
+					(
+						component.first, componentData{ component.second }
 					);
 
-					for (const auto& posePath : posePathList)
-					{
-						QStringList partsFromFile = fileGetAssets(posePath + "/" + cPart.partTypeAssetStr);
+					QStringList assetPathList = fileGetAssets(
+						QCoreApplication::applicationDirPath() +
+						"/Assets/Species/" +
+						species.second.assetStr + "/" +
+						gender.second + "/" +
+						pose.second + "/" +
+						component.second.assetStr
+					);
 
-						if (!partsFromFile.isEmpty())
+					// Note: We store as filename only (e.g. NOT including full path), 
+					// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
+					for (const auto& assetPath : assetPathList)
+					{
+						if (component.second.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 						{
-							gender.second.poseList.emplace_back
+							QString outlinePath = assetPath;
+							QString thumbnailPath = assetPath;
+							speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+								.componentMap.at(component.first).assetsMap.try_emplace
 							(
-								characterPart::poseData
+								QFileInfo(assetPath).baseName(),
+								assetsData
 								{
-									extractSubstringInbetweenRevFind("/", "", posePath)
+									assetPath,
+									QFileInfo(assetPath).fileName(),
+									component.second.defaultInitialColor,
+									component.second.defaultInitialColor,
+									outlinePath.replace("/" + QFileInfo(assetPath).fileName(), "/Outline/" + QFileInfo(assetPath).fileName()),
+									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
 								}
 							);
 						}
-
-						// Note: We store as filename only (e.g. NOT including full path), 
-						// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
-						for (auto& part : partsFromFile)
+						else if (component.second.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+							component.second.colorSetType == ColorSetType::NONE)
 						{
-							if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-							{
-								gender.second.poseList.back().partsList.emplace_back
-								(
-									characterPart::imgParts
-									{
-										part,
-										QFileInfo(part).fileName(),
-										cPart.defaultInitialColor,
-										cPart.defaultInitialColor,
-										part.replace("/" + QFileInfo(part).fileName(), "/Outline/" + QFileInfo(part).fileName()),
-										part.replace("/" + QFileInfo(part).fileName(), "/Thumbnail/" + QFileInfo(part).fileName())
-									}
-								);
-							}
-							else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
-								cPart.colorSetType == ColorSetType::NONE)
-							{
-								gender.second.poseList.back().partsList.emplace_back
-								(
-									characterPart::imgParts
-									{
-										part,
-										QFileInfo(part).fileName(),
-										cPart.defaultInitialColor,
-										cPart.defaultInitialColor,
-										nullptr,
-										part.replace("/" + QFileInfo(part).fileName(), "/Thumbnail/" + QFileInfo(part).fileName())
-									}
-								);
-							}
+							QString thumbnailPath = assetPath;
+							speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+								.componentMap.at(component.first).assetsMap.try_emplace
+							(
+								QFileInfo(assetPath).baseName(),
+								assetsData
+								{
+									assetPath,
+									QFileInfo(assetPath).fileName(),
+									component.second.defaultInitialColor,
+									component.second.defaultInitialColor,
+									"",
+									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
+								}
+							);
 						}
 					}
 				}
-
-				updatePartInScene(cPart, cPart.genderMap.at(genderCurrent).poseList[0].partsList[0]);
-
-				if (cPart.partHasBtnSwap)
-				{
-					cPart.btnSwapLeft.get()->setStyleSheet
-					(
-						cPart.btnStyleSheetTemplate
-						.arg(cPart.btnSwapLeftIcons[0])
-						.arg(cPart.btnSwapLeftIcons[1])
-						.arg(cPart.btnSwapLeftIcons[2])
-					);
-					cPart.btnSwapLeft.get()->setParent(this);
-					cPart.btnSwapLeft.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-					cPart.btnSwapLeft.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
-
-					connect(cPart.btnSwapLeft.get(), &QPushButton::clicked, this, [&]() {
-						auto& gc = cPart.genderMap.at(genderCurrent);
-						if (cPart.displayedPartI - 1 >= 0)
-						{
-							cPart.displayedPartI--;
-							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
-						}
-						else
-						{
-							cPart.displayedPartI = gc.poseList[poseCurrentI].partsList.size() - 1;
-							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
-						}
-						characterModified = true;
-					});
-
-					cPart.btnSwapRight.get()->setStyleSheet
-					(
-						cPart.btnStyleSheetTemplate
-						.arg(cPart.btnSwapRightIcons[0])
-						.arg(cPart.btnSwapRightIcons[1])
-						.arg(cPart.btnSwapRightIcons[2])
-					);
-					cPart.btnSwapRight.get()->setParent(this);
-					cPart.btnSwapRight.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-					cPart.btnSwapRight.get()->setFixedSize(QSize(cPart.btnSwapWidth, cPart.btnSwapHeight));
-
-					connect(cPart.btnSwapRight.get(), &QPushButton::clicked, this, [&]() {
-						auto& gc = cPart.genderMap.at(genderCurrent);
-						if (cPart.displayedPartI + 1 <= gc.poseList[poseCurrentI].partsList.size() - 1)
-						{
-							cPart.displayedPartI++;
-							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
-						}
-						else
-						{
-							cPart.displayedPartI = 0;
-							updatePartInScene(cPart, gc.poseList[poseCurrentI].partsList[cPart.displayedPartI]);
-						}
-						characterModified = true;
-					});
-				}
-				if (cPart.partHasBtnPicker)
-				{
-					cPart.btnPicker.get()->setStyleSheet
-					(
-						cPart.btnStyleSheetTemplate
-						.arg(cPart.btnPickerIcons[0])
-						.arg(cPart.btnPickerIcons[1])
-						.arg(cPart.btnPickerIcons[2])
-					);
-					cPart.btnPicker.get()->setParent(this);
-					cPart.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-					cPart.btnPicker.get()->setFixedSize(QSize(cPart.btnPickerWidth, cPart.btnPickerHeight));
-
-					cPart.contextMenuColorPicker.get()->addAction(cPart.actionCopyColor.get());
-					cPart.contextMenuColorPicker.get()->addAction(cPart.actionPasteColor.get());
-					cPart.contextMenuColorPicker.get()->addSeparator();
-					cPart.contextMenuColorPicker.get()->addAction(cPart.actionApplyColorToAllInSet.get());
-
-					cPart.btnPicker.get()->setContextMenuPolicy(Qt::CustomContextMenu);
-					connect(cPart.btnPicker.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
-						QPoint globalPos = cPart.btnPicker.get()->mapToGlobal(point);
-						cPart.contextMenuColorPicker.get()->exec(globalPos);
-					});
-
-					connect(cPart.actionCopyColor.get(), &QAction::triggered, this, [&]() {
-						auto& gc = cPart.genderMap.at(genderCurrent);
-						pickerCopiedColor = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI].colorAltered;
-						pickerUpdatePasteIconColor(pickerCopiedColor);
-					});
-
-					connect(cPart.actionPasteColor.get(), &QAction::triggered, this, [&]() {
-						if (pickerCopiedColor.isValid())
-						{
-							auto& gc = cPart.genderMap.at(genderCurrent);
-							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-							currentPart.colorAltered = pickerCopiedColor;
-							updatePartInScene(cPart, currentPart);
-							characterModified = true;
-						}
-					});
-
-					connect(cPart.actionApplyColorToAllInSet.get(), &QAction::triggered, this, [&]() {
-						if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
-							cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-						{
-							auto& gc = cPart.genderMap.at(genderCurrent);
-							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-							QColor current = currentPart.colorAltered;
-							for (auto& p : gc.poseList[poseCurrentI].partsList)
-							{
-								p.colorAltered = current;
-								characterModified = true;
-							}
-						}
-					});
-
-					connect(cPart.btnPicker.get(), &QPushButton::clicked, this, [&]() {
-						auto& gc = cPart.genderMap.at(genderCurrent);
-						auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-						QColor colorNew = QColorDialog::getColor(currentPart.colorAltered, this->parentWidget(), "Choose Color");
-						if (colorNew.isValid())
-						{
-							currentPart.colorAltered = colorNew;
-							updatePartInScene(cPart, currentPart);
-							characterModified = true;
-						}
-					});
-				}
-
-				cPart.item.get()->setZValue(cPart.displayOrder);
-				if (cPart.partHasBtnSwap)
-				{
-					cPart.btnSwapRight.get()->setVisible(false);
-					cPart.btnSwapLeft.get()->setVisible(false);
-				}
-				if (cPart.partHasBtnPicker)
-				{
-					cPart.btnPicker.get()->setVisible(false);
-				}
-
-				cPart.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
 			}
-		}(species.second.characterPartList);
+		}
+	}
 
+	// Now we can start traversing through the nested maps and applying initial settings.
+	for (auto& species : speciesMap)
+	{
 		species.second.actionSpecies.get()->setParent(this);
-		species.second.actionSpecies.get()->setText(species.second.speciesTypeAssetStr);
+		species.second.actionSpecies.get()->setText(species.second.assetStr);
 		species.second.actionSpecies.get()->setCheckable(true);
 		actionSpeciesGroup.get()->addAction(species.second.actionSpecies.get());
 		speciesMenu.get()->addAction(species.second.actionSpecies.get());
@@ -1123,23 +1003,23 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				if (fileSaveModifCheck())
 				{
 					removeCurrentSpeciesFromScene();
-					for (auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
+					for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
 						gender.second.actionGender.get()->setVisible(false);
 					speciesCurrent = species.first;
-					for (auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
+					for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
 						gender.second.actionGender.get()->setVisible(true);
-					genderCurrent = speciesMap.at(speciesCurrent).characterPartList[0].genderMap.begin()->first;
-					speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
+					genderCurrent = speciesMap.at(speciesCurrent).genderMap.begin()->first;
+					speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
 					applyCurrentSpeciesToScene();
 					loadDefaultCharacterFromTemplate();
 				}
 			}
 		});
 
-		for (const auto& gender : species.second.characterPartList[0].genderMap)
+		for (auto& gender : species.second.genderMap)
 		{
 			gender.second.actionGender.get()->setParent(this);
-			gender.second.actionGender.get()->setText(gender.second.genderTypeAssetStr);
+			gender.second.actionGender.get()->setText(gender.second.assetStr);
 			gender.second.actionGender.get()->setCheckable(true);
 			gender.second.actionGender.get()->setVisible(false);
 
@@ -1151,62 +1031,267 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 				{
 					if (fileSaveModifCheck())
 					{
+						removeCurrentSpeciesFromScene();
 						genderCurrent = gender.first;
-						for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
-						{
-							updatePartInScene(cPart, cPart.genderMap.at(genderCurrent).poseList[0].partsList[0]);
-						}
+						poseCurrent = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.begin()->first;
+						//for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+						//	updatePartInScene(component.second, component.second.assetsMap.begin()->second);
+						applyCurrentSpeciesToScene();
 						loadDefaultCharacterFromTemplate();
 					}
 				}
 			});
+
+			for (auto& pose : gender.second.poseMap)
+			{
+				pose.second.actionPose.get()->setParent(this);
+				pose.second.actionPose.get()->setText(pose.second.assetStr);
+				pose.second.actionPose.get()->setCheckable(true);
+				pose.second.actionPose.get()->setVisible(false);
+
+				actionPoseGroup.get()->addAction(pose.second.actionPose.get());
+				poseMenu.get()->addAction(pose.second.actionPose.get());
+
+				connect(pose.second.actionPose.get(), &QAction::triggered, this, [&]() {
+					if (poseCurrent != pose.first)
+					{
+						if (fileSaveModifCheck())
+						{
+							removeCurrentSpeciesFromScene();
+							poseCurrent = pose.first;
+							//for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+							//	updatePartInScene(component.second, component.second.assetsMap.begin()->second);
+							applyCurrentSpeciesToScene();
+							loadDefaultCharacterFromTemplate();
+						}
+					}
+				});
+
+				for (auto& component : pose.second.componentMap)
+				{
+					if (component.second.settings.partHasBtnSwap)
+					{
+						component.second.btnSwapComponent.get()->setStyleSheet
+						(
+							component.second.settings.btnStyleSheetTemplate
+							.arg(component.second.settings.btnSwapLeftIcons[0])
+							.arg(component.second.settings.btnSwapLeftIcons[1])
+							.arg(component.second.settings.btnSwapLeftIcons[2])
+						);
+						component.second.btnSwapComponent.get()->setParent(this);
+						component.second.btnSwapComponent.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+						component.second.btnSwapComponent.get()->setFixedSize
+						(
+							QSize
+							(
+								component.second.settings.btnSwapWidth,
+								component.second.settings.btnSwapHeight
+							)
+						);
+						component.second.btnSwapComponent.get()->setVisible(false);
+
+						connect(component.second.btnSwapComponent.get(), &QPushButton::clicked, this, [&]() {
+							species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
+								componentMap.at(componentCurrent).btnSwapComponent.get()->setEnabled(true);
+
+							for (auto& asset : species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
+								componentMap.at(componentCurrent).assetsMap)
+							{
+								asset.second.btnSwapAsset.get()->setEnabled(true);
+								asset.second.btnSwapAsset.get()->setVisible(false);
+							}
+
+							component.second.btnSwapComponent.get()->setEnabled(false);
+
+							for (auto& asset : component.second.assetsMap)
+							{
+								asset.second.btnSwapAsset.get()->setEnabled(true);
+								asset.second.btnSwapAsset.get()->setVisible(true);
+							}
+
+							partSwapScroll.get()->verticalScrollBar()->setValue(0);
+							partSwapScroll.get()->horizontalScrollBar()->setValue(0);
+
+							componentCurrent = component.first;
+
+							species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
+								componentMap.at(componentCurrent).assetsMap.at(component.second.displayedAssetKey)
+								.btnSwapAsset.get()->setEnabled(false);
+						});
+
+
+						for (auto& asset : component.second.assetsMap)
+						{
+							asset.second.btnSwapAsset.get()->setStyleSheet
+							(
+								component.second.settings.btnStyleSheetTemplate
+								.arg(asset.second.imgThumbnailPath)
+								.arg(asset.second.imgThumbnailPath)
+								.arg(asset.second.imgThumbnailPath)
+							);
+							asset.second.btnSwapAsset.get()->setParent(this);
+							asset.second.btnSwapAsset.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+							asset.second.btnSwapAsset.get()->setFixedSize
+							(
+								QSize
+								(
+									component.second.settings.btnSwapWidth,
+									component.second.settings.btnSwapHeight
+								)
+							);
+							asset.second.btnSwapAsset.get()->setVisible(false);
+
+							connect(asset.second.btnSwapAsset.get(), &QPushButton::clicked, this, [&]() {
+								component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
+								qDebug() << component.second.displayedAssetKey;
+								component.second.displayedAssetKey = asset.first;
+								qDebug() << component.second.displayedAssetKey;
+								asset.second.btnSwapAsset.get()->setEnabled(false);
+								updatePartInScene(component.second, asset.second);
+								characterModified = true;
+							});
+						}
+					}
+					if (component.second.settings.partHasBtnPicker)
+					{
+						component.second.btnPicker.get()->setStyleSheet
+						(
+							component.second.settings.btnStyleSheetTemplate
+							.arg(component.second.settings.btnPickerIcons[0])
+							.arg(component.second.settings.btnPickerIcons[1])
+							.arg(component.second.settings.btnPickerIcons[2])
+						);
+						component.second.btnPicker.get()->setParent(this);
+						component.second.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+						component.second.btnPicker.get()->setFixedSize
+						(
+							QSize
+							(
+								component.second.settings.btnPickerWidth,
+								component.second.settings.btnPickerHeight
+							)
+						);
+						component.second.btnPicker.get()->setVisible(false);
+
+						component.second.contextMenuColorPicker.get()->addAction(component.second.actionCopyColor.get());
+						component.second.contextMenuColorPicker.get()->addAction(component.second.actionPasteColor.get());
+						component.second.contextMenuColorPicker.get()->addSeparator();
+						component.second.contextMenuColorPicker.get()->addAction(component.second.actionApplyColorToAllInSet.get());
+
+						component.second.btnPicker.get()->setContextMenuPolicy(Qt::CustomContextMenu);
+						connect(component.second.btnPicker.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
+							QPoint globalPos = component.second.btnPicker.get()->mapToGlobal(point);
+							component.second.contextMenuColorPicker.get()->exec(globalPos);
+						});
+
+						connect(component.second.actionCopyColor.get(), &QAction::triggered, this, [&]() {
+							pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
+							pickerUpdatePasteIconColor(pickerCopiedColor);
+						});
+
+						connect(component.second.actionPasteColor.get(), &QAction::triggered, this, [&]() {
+							if (pickerCopiedColor.isValid())
+							{
+								auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
+								currentAsset.colorAltered = pickerCopiedColor;
+								updatePartInScene(component.second, currentAsset);
+								characterModified = true;
+							}
+						});
+
+						connect(component.second.actionApplyColorToAllInSet.get(), &QAction::triggered, this, [&]() {
+							if (component.second.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+								component.second.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+							{
+								QColor currentColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
+								for (auto& asset : component.second.assetsMap)
+								{
+									asset.second.colorAltered = currentColor;
+									characterModified = true;
+								}
+							}
+						});
+
+						connect(component.second.btnPicker.get(), &QPushButton::clicked, this, [&]() {
+							auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
+							QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
+							if (colorNew.isValid())
+							{
+								currentAsset.colorAltered = colorNew;
+								updatePartInScene(component.second, currentAsset);
+								characterModified = true;
+							}
+						});
+					}
+
+					component.second.item.get()->setZValue(component.second.settings.displayOrderZ);
+					component.second.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
+				}
+			}
 		}
 	}
+
+	// Now apply settings for the current species/gender/pose/components/assets
+	// (since we're just starting the program, the "current" is the default)
 
 	speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
+	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).actionPose.get()->setChecked(true);
 
-	for (const auto& gender : speciesMap.at(speciesCurrent).characterPartList[0].genderMap)
-	{
+	for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
 		gender.second.actionGender.get()->setVisible(true);
-	}
-	speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
-
-	[&](std::vector<characterPart> &characterPartList) {
-		for (const auto& cPart : characterPartList)
+	for (auto& pose : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap)
+			pose.second.actionPose.get()->setVisible(true);
+	
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		if (component.second.settings.partHasBtnSwap)
 		{
-			if (cPart.partHasBtnSwap)
+			partSwapGroupLayout.get()->addWidget
+			(
+				component.second.btnSwapComponent.get(),
+				component.second.settings.gridPlaceSwapLeft[0],
+				component.second.settings.gridPlaceSwapLeft[1],
+				component.second.settings.gridAlignSwapLeft
+			);
+			component.second.btnSwapComponent.get()->setVisible(true);
+			int count = 0;
+			for (auto& asset : component.second.assetsMap)
 			{
 				partSwapGroupLayout.get()->addWidget
 				(
-					cPart.btnSwapLeft.get(),
-					cPart.gridPlaceSwapLeft[0],
-					cPart.gridPlaceSwapLeft[1],
-					cPart.gridAlignSwapLeft
+					asset.second.btnSwapAsset.get(),
+					count,
+					1,
+					component.second.settings.gridAlignSwapRight
 				);
-				partSwapGroupLayout.get()->addWidget
-				(
-					cPart.btnSwapRight.get(),
-					cPart.gridPlaceSwapRight[0],
-					cPart.gridPlaceSwapRight[1],
-					cPart.gridAlignSwapRight
-				);
-				cPart.btnSwapRight.get()->setVisible(true);
-				cPart.btnSwapLeft.get()->setVisible(true);
 			}
-			if (cPart.partHasBtnPicker)
+
+			if (componentCurrent == ComponentType::NONE && component.first != ComponentType::NONE)
 			{
-				partPickerGroupLayout.get()->addWidget
-				(
-					cPart.btnPicker.get(),
-					cPart.gridPlacePicker[0],
-					cPart.gridPlacePicker[1],
-					cPart.gridAlignPicker
-				);
-				cPart.btnPicker.get()->setVisible(true);
+				componentCurrent = component.first;
+				for (auto& asset : component.second.assetsMap)
+				{
+					asset.second.btnSwapAsset.get()->setEnabled(true);
+					asset.second.btnSwapAsset.get()->setVisible(true);
+				}
 			}
-			scene.get()->addItem(cPart.item.get());
 		}
-	}(speciesMap.at(speciesCurrent).characterPartList);
+		if (component.second.settings.partHasBtnPicker)
+		{
+			partPickerGroupLayout.get()->addWidget
+			(
+				component.second.btnPicker.get(),
+				component.second.settings.gridPlacePicker[0],
+				component.second.settings.gridPlacePicker[1],
+				component.second.settings.gridAlignPicker
+			);
+			component.second.btnPicker.get()->setVisible(true);
+		}
+		scene.get()->addItem(component.second.item.get());
+	}
+
+	// Now set up the rest of the UI.
 
 	pickerUpdatePasteIconColor(pickerCopiedColor);
 
@@ -1225,7 +1310,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		);
 	}
 
-	for (const auto& poseSwap : poseSwapButtonList)
+	/*for (const auto& poseSwap : poseSwapButtonList)
 	{
 		poseSwap.btn.get()->setParent(this);
 		poseSwap.btn.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -1244,20 +1329,24 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	}
 
 	connect(poseSwapButtonList[0].btn.get(), &QPushButton::released, this, [=]() {
+		for (auto& cPartExternal : speciesMap.at(speciesCurrent).characterPartList)
+		{
+			for (auto& imgPart : cPartExternal.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
+			{
+				imgPart.second.btnSwapTo.get()->setVisible(false);
+				partSwapGroupLayout.get()->removeWidget(imgPart.second.btnSwapTo.get());
+			}
+		}
 		if (poseCurrentI - 1 >= 0)
 		{
 			poseCurrentI--;
 			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
-				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
-				}
+				if (currentPoseList[poseCurrentI].partsMap.count(cPart.displayedPartKey) > 0)
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.at(cPart.displayedPartKey));
 				else
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
-				}
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.begin()->second);
 			}
 		}
 		else
@@ -1266,33 +1355,62 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
-				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
-				}
+				if (currentPoseList[poseCurrentI].partsMap.count(cPart.displayedPartKey) > 0)
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.at(cPart.displayedPartKey));
 				else
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.begin()->second);
+			}
+		}
+		for (auto& cPartExternal : speciesMap.at(speciesCurrent).characterPartList)
+		{
+			cPartExternal.btnSwapCharacterPart.get()->setEnabled(true);
+			int count = 0;
+			for (auto& imgPart : cPartExternal.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
+			{
+				partSwapGroupLayout.get()->addWidget
+				(
+					imgPart.second.btnSwapTo.get(),
+					count,
+					1,
+					cPartExternal.gridAlignSwapRight
+				);
+				count++;
+			}
+		}
+		for (int i = 0; i < speciesMap.at(speciesCurrent).characterPartList.size(); i++)
+		{
+			if (speciesMap.at(speciesCurrent).characterPartList[i].partHasBtnSwap)
+			{
+				auto& cPart = speciesMap.at(speciesCurrent).characterPartList[i];
+				for (auto& imgPart : cPart.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
 				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
+					imgPart.second.btnSwapTo.get()->setEnabled(true);
+					imgPart.second.btnSwapTo.get()->setVisible(true);
 				}
+				break;
 			}
 		}
 	});
 
 	connect(poseSwapButtonList[1].btn.get(), &QPushButton::released, this, [=]() {
+		for (auto& cPartExternal : speciesMap.at(speciesCurrent).characterPartList)
+		{
+			for (auto& imgPart : cPartExternal.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
+			{
+				imgPart.second.btnSwapTo.get()->setVisible(false);
+				partSwapGroupLayout.get()->removeWidget(imgPart.second.btnSwapTo.get());
+			}
+		}
 		if (poseCurrentI + 1 <= speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList.size() - 1)
 		{
 			poseCurrentI++;
 			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
-				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
-				}
+				if (currentPoseList[poseCurrentI].partsMap.count(cPart.displayedPartKey) > 0)
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.at(cPart.displayedPartKey));
 				else
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
-				}
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.begin()->second);
 			}
 		}
 		else
@@ -1301,17 +1419,42 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 			for (auto& cPart : speciesMap.at(speciesCurrent).characterPartList)
 			{
 				auto& currentPoseList = cPart.genderMap.at(genderCurrent).poseList;
-				if (cPart.displayedPartI > currentPoseList[poseCurrentI].partsList.size() - 1)
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[0]);
-				}
+				if (currentPoseList[poseCurrentI].partsMap.count(cPart.displayedPartKey) > 0)
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.at(cPart.displayedPartKey));
 				else
-				{
-					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsList[cPart.displayedPartI]);
-				}
+					updatePartInScene(cPart, currentPoseList[poseCurrentI].partsMap.begin()->second);
 			}
 		}
-	});
+		for (auto& cPartExternal : speciesMap.at(speciesCurrent).characterPartList)
+		{
+			cPartExternal.btnSwapCharacterPart.get()->setEnabled(true);
+			int count = 0;
+			for (auto& imgPart : cPartExternal.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
+			{
+				partSwapGroupLayout.get()->addWidget
+				(
+					imgPart.second.btnSwapTo.get(),
+					count,
+					1,
+					cPartExternal.gridAlignSwapRight
+				);
+				count++;
+			}
+		}
+		for (int i = 0; i < speciesMap.at(speciesCurrent).characterPartList.size(); i++)
+		{
+			if (speciesMap.at(speciesCurrent).characterPartList[i].partHasBtnSwap)
+			{
+				auto& cPart = speciesMap.at(speciesCurrent).characterPartList[i];
+				for (auto& imgPart : cPart.genderMap.at(genderCurrent).poseList[poseCurrentI].partsMap)
+				{
+					imgPart.second.btnSwapTo.get()->setEnabled(true);
+					imgPart.second.btnSwapTo.get()->setVisible(true);
+				}
+				break;
+			}
+		}
+	});*/
 
 	/*for (const auto& uiSpacer : uiSpacerList)
 	{
@@ -1351,10 +1494,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	characterNameInputGroup.get()->setFlat(true);
 	layout.get()->addWidget(characterNameInputGroup.get(), 1, 0, Qt::AlignLeft);
 
-	poseSwapGroupLayout.get()->setMargin(10);
+	/*poseSwapGroupLayout.get()->setMargin(10);
 	poseSwapGroup.get()->setLayout(poseSwapGroupLayout.get());
 	poseSwapGroup.get()->setFlat(true);
-	layout.get()->addWidget(poseSwapGroup.get(), 2, 0, Qt::AlignLeft);
+	layout.get()->addWidget(poseSwapGroup.get(), 2, 0, Qt::AlignLeft);*/
 
 	// Template load should be last init operation in graphics display,
 	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
@@ -1490,14 +1633,14 @@ QStringList GraphicsDisplay::fileGetAssets(const QString &path)
 	return assetPathList;
 }
 
-void GraphicsDisplay::updatePartInScene(const characterPart &cPart, const characterPart::imgParts &imgPart)
+void GraphicsDisplay::updatePartInScene(const componentData &component, const assetsData &asset)
 {
-	if (cPart.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-		cPart.item.get()->setPixmap(recolorPixmapSolidWithOutline(imgPart));
-	else if (cPart.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-		cPart.item.get()->setPixmap(recolorPixmapSolid(imgPart));
+	if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+		component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset));
+	else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+		component.item.get()->setPixmap(recolorPixmapSolid(asset));
 	else
-		cPart.item.get()->setPixmap(imgPart.imgBase);
+		component.item.get()->setPixmap(asset.imgBasePath);
 }
 
 QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &img, const QColor &color)
@@ -1511,39 +1654,37 @@ QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &img, const QColor &co
 	return newImage;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolid(const characterPart::imgParts &part)
+QPixmap GraphicsDisplay::recolorPixmapSolid(const assetsData &asset)
 {
-	QPixmap newImage = QPixmap(part.imgBase);
+	QPixmap newImage = QPixmap(asset.imgBasePath);
 	QPainter painter;
 	painter.begin(&newImage);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), part.colorAltered);
+	painter.fillRect(newImage.rect(), asset.colorAltered);
 	painter.end();
 	return newImage;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const characterPart::imgParts &part)
+QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset)
 {
-	QPixmap newImage = QPixmap(part.imgBase);
+	QPixmap newImage = QPixmap(asset.imgBasePath);
 	QPainter painter;
 	painter.begin(&newImage);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), part.colorAltered);
+	painter.fillRect(newImage.rect(), asset.colorAltered);
 	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-	painter.drawPixmap(QPixmap(part.imgOutline).rect(), QPixmap(part.imgOutline));
+	painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
 	painter.end();
 	return newImage;
 }
 
 void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
 {
-	[&](std::vector<characterPart> &characterPartList) {
-		for (auto& cPart : characterPartList)
-		{
-			QPixmap newIcon = recolorPixmapSolid(cPart.actionPasteColor->icon().pixmap(QSize(20, 20)), color);
-			cPart.actionPasteColor->setIcon(newIcon);
-		}
-	}(speciesMap.at(speciesCurrent).characterPartList);
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		QPixmap newIcon = recolorPixmapSolid(component.second.actionPasteColor->icon().pixmap(QSize(20, 20)), color);
+		component.second.actionPasteColor->setIcon(newIcon);
+	}
 }
 
 void GraphicsDisplay::loadDefaultCharacterFromTemplate()
@@ -1554,11 +1695,11 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	const QString templatePath =
 		QCoreApplication::applicationDirPath() +
 		"/Assets/Species/" +
-		speciesMap.at(speciesCurrent).speciesTypeAssetStr +
+		speciesMap.at(speciesCurrent).assetStr +
 		"/" +
-		speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).genderTypeAssetStr +
+		speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).assetStr +
 		"/" +
-		speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList[0].poseNameAssetStr +
+		speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).assetStr +
 		"/CharacterTemplate/default-character-template.zen2dx"
 		;
 	if (QFile::exists(templatePath))
@@ -1584,58 +1725,55 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 				QString genderStr = extractSubstringInbetweenQt("::Gender=", "::", line);
 				QString poseStr = extractSubstringInbetweenQt("::Pose=", "::", line);
 
-				for (const auto& species : speciesMap)
+				for (auto& species : speciesMap)
 				{
-					if (species.second.speciesTypeAssetStr == speciesStr)
+					if (species.second.assetStr == speciesStr)
 					{
-						for (const auto& cPart : species.second.characterPartList)
+						for (auto& gender : species.second.genderMap)
 						{
-							for (const auto& gender : cPart.genderMap)
+							if (gender.second.assetStr == genderStr)
 							{
-								if (gender.second.genderTypeAssetStr == genderStr)
+								for (auto& pose : gender.second.poseMap)
 								{
-									for (int i = 0; i < gender.second.poseList.size(); i++)
+									if (pose.second.assetStr == poseStr)
 									{
-										if (gender.second.poseList[i].poseNameAssetStr == poseStr)
-										{
-											removeCurrentSpeciesFromScene();
-											speciesCurrent = species.first;
-											genderCurrent = gender.first;
-											poseCurrentI = i;
-											applyCurrentSpeciesToScene();
-											speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
-											break;
-										}
+										removeCurrentSpeciesFromScene();
+										speciesCurrent = species.first;
+										genderCurrent = gender.first;
+										poseCurrent = pose.first;
+										applyCurrentSpeciesToScene();
+										speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+										break;
 									}
-									break;
 								}
+								break;
 							}
 						}
 						break;
 					}
 				}
 			}
-			[&](std::vector<characterPart> &characterPartList) {
-				for (auto& cPart : characterPartList)
+			for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+			{
+				if (line.contains(component.second.settings.assetStr + "="))
 				{
-					if (line.contains(cPart.partTypeAssetStr + "="))
+					QString key = QFileInfo(extractSubstringInbetweenQt("=", ",", line)).baseName();
+					if (component.second.assetsMap.count(key) > 0)
 					{
-						int pos = findPosOfFilenameInPartsList(cPart, extractSubstringInbetweenQt("=", ",", line));
-						if (pos != -1)
+						component.second.displayedAssetKey = key;
+						component.second.assetsMap.at(key).colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
+						updatePartInScene(component.second, component.second.assetsMap.at(key));
+						if (component.first == componentCurrent)
 						{
-							cPart.displayedPartI = pos;
-							auto& gc = cPart.genderMap.at(genderCurrent);
-							auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-
-							currentPart.colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
-							updatePartInScene(cPart, currentPart);
+							component.second.btnSwapComponent.get()->setEnabled(false);
+							component.second.assetsMap.at(key).btnSwapAsset.get()->setEnabled(false);
 						}
-						else
-							partsMissing = true;
-						break;
 					}
+					else
+						partsMissing = true;
+					break;
 				}
-			}(speciesMap.at(speciesCurrent).characterPartList);
+			}
 			if (line.contains("backgroundColor="))
 			{
 				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", "", line)));
@@ -1657,19 +1795,12 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 
 void GraphicsDisplay::fileNew()
 {
-	[&](std::vector<characterPart> &characterPartList) {
-		for (auto& cPart : characterPartList)
-		{
-			auto& gc = cPart.genderMap.at(genderCurrent);
-			auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-			cPart.displayedPartI = 0;
-			for (auto& p : gc.poseList[poseCurrentI].partsList)
-			{
-				p.colorAltered = p.colorBase;
-				updatePartInScene(cPart, p);
-			}
-		}
-	}(speciesMap.at(speciesCurrent).characterPartList);
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		component.second.displayedAssetKey = component.second.assetsMap.begin()->first;
+		for (auto& asset : component.second.assetsMap)
+			asset.second.colorAltered = asset.second.colorDefault;
+	}
 	backgroundColor = backgroundColorDefault;
 	setBackgroundColor(backgroundColor);
 	for (auto& textInputSL : textInputSingleLineList)
@@ -1716,24 +1847,21 @@ bool GraphicsDisplay::fileSave()
 
 			qStream <<
 				"::"
-				"Species=" + speciesMap.at(speciesCurrent).speciesTypeAssetStr +
+				"Species=" + speciesMap.at(speciesCurrent).assetStr +
 				"::" +
-				"Gender=" + speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).genderTypeAssetStr +
+				"Gender=" + speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).assetStr +
 				"::" +
-				"Pose=" + speciesMap.at(speciesCurrent).characterPartList[0].genderMap.at(genderCurrent).poseList[poseCurrentI].poseNameAssetStr +
+				"Pose=" + speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).assetStr +
 				"::"
 				"\r\n";
 
-			[&](std::vector<characterPart> &characterPartList) {
-				for (const auto& cPart : characterPartList)
-				{
-					auto& gc = cPart.genderMap.at(genderCurrent);
-					auto& currentPart = gc.poseList[poseCurrentI].partsList[cPart.displayedPartI];
-					qStream << cPart.partTypeAssetStr +
-						"=" + currentPart.imgFilename +
-						"," + currentPart.colorAltered.name() + "\r\n";
-				}
-			}(speciesMap.at(speciesCurrent).characterPartList);
+			for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+			{
+				auto& currentPart = component.second.assetsMap.at(component.second.displayedAssetKey);
+				qStream << component.second.settings.assetStr +
+					"=" + currentPart.imgFilename +
+					"," + currentPart.colorAltered.name() + "\r\n";
+			}
 
 			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
 
@@ -1779,18 +1907,18 @@ void GraphicsDisplay::fileExportCharacter()
 	}
 }
 
-int GraphicsDisplay::findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename)
-{
-	auto& gc = cPart.genderMap.at(genderCurrent);
-	for (int i = 0; i < gc.poseList[poseCurrentI].partsList.size(); i++)
-	{
-		if (gc.poseList[poseCurrentI].partsList[i].imgFilename == filename)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
+//int GraphicsDisplay::findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename)
+//{
+//	auto& gc = cPart.genderMap.at(genderCurrent);
+//	for (int i = 0; i < gc.poseList[poseCurrentI].partsList.size(); i++)
+//	{
+//		if (gc.poseList[poseCurrentI].partsList[i].imgFilename == filename)
+//		{
+//			return i;
+//		}
+//	}
+//	return -1;
+//}
 
 void GraphicsDisplay::setBackgroundColor(const QColor &color)
 {
@@ -1801,27 +1929,29 @@ void GraphicsDisplay::setBackgroundColor(const QColor &color)
 
 void GraphicsDisplay::removeCurrentSpeciesFromScene()
 {
-	[&](std::vector<characterPart> &characterPartList) {
-		for (const auto& cPart : characterPartList)
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		if (component.second.settings.partHasBtnSwap)
 		{
-			if (cPart.partHasBtnSwap)
+			component.second.btnSwapComponent.get()->setVisible(false);
+			partSwapGroupLayout.get()->removeWidget(component.second.btnSwapComponent.get());
+			for (auto& asset : component.second.assetsMap)
 			{
-				cPart.btnSwapRight.get()->setVisible(false);
-				cPart.btnSwapLeft.get()->setVisible(false);
-				partSwapGroupLayout.get()->removeWidget(cPart.btnSwapRight.get());
-				partSwapGroupLayout.get()->removeWidget(cPart.btnSwapLeft.get());
+				asset.second.btnSwapAsset.get()->setVisible(false);
+				partSwapGroupLayout.get()->removeWidget(asset.second.btnSwapAsset.get());
 			}
-			if (cPart.partHasBtnPicker)
-			{
-				cPart.btnPicker.get()->setVisible(false);
-				partPickerGroupLayout.get()->removeWidget(cPart.btnPicker.get());
-			}
-
-			// We remove rather than using QGraphicsScene clear() function,
-			// to avoid deleting the items (they need to be reusable).
-			scene.get()->removeItem(cPart.item.get());
 		}
-	}(speciesMap.at(speciesCurrent).characterPartList);
+		if (component.second.settings.partHasBtnPicker)
+		{
+			component.second.btnPicker.get()->setVisible(false);
+			partPickerGroupLayout.get()->removeWidget(component.second.btnPicker.get());
+		}
+
+		// We remove rather than using QGraphicsScene clear() function,
+		// to avoid deleting the items (they need to be reusable).
+		scene.get()->removeItem(component.second.item.get());
+	}
+	componentCurrent = ComponentType::NONE;
 }
 
 void GraphicsDisplay::applyCurrentSpeciesToScene()
@@ -1829,40 +1959,52 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 	// Note: We make the widgets visible AFTER adding them to layout.
 	// Otherwise, they may be briefly visible outside of the layout
 	// and then get added to it, causing a flickering effect from the adjustment of position.
-	[&](std::vector<characterPart> &characterPartList) {
-		for (const auto& cPart : characterPartList)
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		if (component.second.settings.partHasBtnSwap)
 		{
-			if (cPart.partHasBtnSwap)
+			partSwapGroupLayout.get()->addWidget
+			(
+				component.second.btnSwapComponent.get(),
+				component.second.settings.gridPlaceSwapLeft[0],
+				component.second.settings.gridPlaceSwapLeft[1],
+				component.second.settings.gridAlignSwapLeft
+			);
+			int count = 0;
+			for (auto& asset : component.second.assetsMap)
 			{
 				partSwapGroupLayout.get()->addWidget
 				(
-					cPart.btnSwapLeft.get(),
-					cPart.gridPlaceSwapLeft[0],
-					cPart.gridPlaceSwapLeft[1],
-					cPart.gridAlignSwapLeft
+					asset.second.btnSwapAsset.get(),
+					count,
+					1,
+					component.second.settings.gridAlignSwapRight
 				);
-				partSwapGroupLayout.get()->addWidget
-				(
-					cPart.btnSwapRight.get(),
-					cPart.gridPlaceSwapRight[0],
-					cPart.gridPlaceSwapRight[1],
-					cPart.gridAlignSwapRight
-				);
-				cPart.btnSwapRight.get()->setVisible(true);
-				cPart.btnSwapLeft.get()->setVisible(true);
+				count++;
 			}
-			if (cPart.partHasBtnPicker)
+			component.second.btnSwapComponent.get()->setVisible(true);
+
+			if (componentCurrent == ComponentType::NONE && component.first != ComponentType::NONE)
 			{
-				partPickerGroupLayout.get()->addWidget
-				(
-					cPart.btnPicker.get(),
-					cPart.gridPlacePicker[0],
-					cPart.gridPlacePicker[1],
-					cPart.gridAlignPicker
-				);
-				cPart.btnPicker.get()->setVisible(true);
+				componentCurrent = component.first;
+				for (auto& asset : component.second.assetsMap)
+				{
+					asset.second.btnSwapAsset.get()->setEnabled(true);
+					asset.second.btnSwapAsset.get()->setVisible(true);
+				}
 			}
-			scene.get()->addItem(cPart.item.get());
 		}
-	}(speciesMap.at(speciesCurrent).characterPartList);
+		if (component.second.settings.partHasBtnPicker)
+		{
+			partPickerGroupLayout.get()->addWidget
+			(
+				component.second.btnPicker.get(),
+				component.second.settings.gridPlacePicker[0],
+				component.second.settings.gridPlacePicker[1],
+				component.second.settings.gridAlignPicker
+			);
+			component.second.btnPicker.get()->setVisible(true);
+		}
+		scene.get()->addItem(component.second.item.get());
+	}
 }

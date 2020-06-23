@@ -38,5 +38,13 @@
         <file>Resources/button-pose-swap-right-hover.png</file>
         <file>Resources/button-pose-swap-right-hover-pressed.png</file>
         <file>Resources/button-pose-swap-right-normal.png</file>
+        <file>Resources/btnSwapCharacterPartChest.png</file>
+        <file>Resources/btnSwapCharacterPartChestHover.png</file>
+        <file>Resources/btnSwapCharacterPartBottom.png</file>
+        <file>Resources/btnSwapCharacterPartBottomHover.png</file>
+        <file>Resources/btnSwapCharacterPartFeet.png</file>
+        <file>Resources/btnSwapCharacterPartFeetHover.png</file>
+        <file>Resources/btnSwapCharacterPartHair.png</file>
+        <file>Resources/btnSwapCharacterPartHairHover.png</file>
     </qresource>
 </RCC>

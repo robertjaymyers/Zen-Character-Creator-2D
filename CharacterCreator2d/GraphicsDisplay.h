@@ -13,6 +13,7 @@ This file is part of Zen Character Creator 2D.
 */
 
 #pragma once
+#include "theme.h"
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGridLayout>
@@ -32,9 +33,11 @@ This file is part of Zen Character Creator 2D.
 #include <QMessageBox>
 #include <QGroupBox>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <map>
 
 struct uiBtnInvisibleSpacer
 {
@@ -48,10 +51,10 @@ struct uiBtnInvisibleSpacer
 
 enum class TextInputSingleLineType { FIRST_NAME, LAST_NAME, NONE };
 
-enum class SpeciesType { HUMAN, ELF };
-enum class GenderType { FEMALE, MALE };
-enum class PartType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
-enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
+//enum class SpeciesType { HUMAN, ELF };
+//enum class GenderType { FEMALE, MALE };
+//enum class PartType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
+//enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 class GraphicsDisplay : public QGraphicsView
 {
@@ -87,8 +90,8 @@ private:
 	std::unique_ptr<QGroupBox> characterNameInputGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> characterNameInputGroupLayout = std::make_unique<QGridLayout>();
 
-	std::unique_ptr<QGroupBox> poseSwapGroup = std::make_unique<QGroupBox>(this);
-	std::unique_ptr<QGridLayout> poseSwapGroupLayout = std::make_unique<QGridLayout>();
+	/*std::unique_ptr<QGroupBox> poseSwapGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QGridLayout> poseSwapGroupLayout = std::make_unique<QGridLayout>();*/
 
 	const std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
 	const std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
@@ -100,95 +103,145 @@ private:
 	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
 	std::unique_ptr<QMenu> genderMenu = std::make_unique<QMenu>("Gender", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionGenderGroup = std::make_unique<QActionGroup>(this);
+	std::unique_ptr<QMenu> poseMenu = std::make_unique<QMenu>("Pose", contextMenu.get());
+	std::unique_ptr<QActionGroup> actionPoseGroup = std::make_unique<QActionGroup>(this);
 
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
-	struct characterPart
-	{
-		const PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
+	//struct characterPart
+	//{
+	//	const PartType partTypeUnique = PartType::NONE; // There should only be one part with each type.
 
-		// Since we're working with 2D elements that can overlap, we use a display order
-		// to ensure that the elements get added to the scene to overlap in the way we want.
-		// With Qt's QGraphicsScene class, we can set the Z value of an item to determine
-		// what it's on top of (per Qt documentation: higher Z values overlap lower Z values).
-		// For example, we give HAIR a higher value than CHEST so that long hair goes over shirts.
-		const int displayOrder;
+	//	// Since we're working with 2D elements that can overlap, we use a display order
+	//	// to ensure that the elements get added to the scene to overlap in the way we want.
+	//	// With Qt's QGraphicsScene class, we can set the Z value of an item to determine
+	//	// what it's on top of (per Qt documentation: higher Z values overlap lower Z values).
+	//	// For example, we give HAIR a higher value than CHEST so that long hair goes over shirts.
+	//	const int displayOrder;
 
-		const QString partTypeAssetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
-		const QColor defaultInitialColor;
-		const ColorSetType colorSetType = ColorSetType::NONE;
-		const bool partHasBtnSwap;
-		const bool partHasBtnPicker;
-		const QString btnStyleSheetTemplate;
-		const QStringList btnSwapLeftIcons;
-		const QStringList btnSwapRightIcons;
-		const QStringList btnPickerIcons;
-		const std::vector<int> gridPlacePicker;
-		const Qt::Alignment gridAlignPicker;
-		const std::vector<int> gridPlaceSwapLeft;
-		const Qt::Alignment gridAlignSwapLeft;
-		const std::vector<int> gridPlaceSwapRight;
-		const Qt::Alignment gridAlignSwapRight;
-		const int btnSwapWidth;
-		const int btnSwapHeight;
-		const int btnPickerWidth;
-		const int btnPickerHeight;
+	//	const QString assetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
+	//	const QColor defaultInitialColor;
+	//	const ColorSetType colorSetType = ColorSetType::NONE;
+	//	const bool partHasBtnSwap;
+	//	const bool partHasBtnPicker;
+	//	const QString btnStyleSheetTemplate;
+	//	const QStringList btnSwapLeftIcons;
+	//	const QStringList btnSwapRightIcons;
+	//	const QStringList btnPickerIcons;
+	//	const std::vector<int> gridPlacePicker;
+	//	const Qt::Alignment gridAlignPicker;
+	//	const std::vector<int> gridPlaceSwapLeft;
+	//	const Qt::Alignment gridAlignSwapLeft;
+	//	const std::vector<int> gridPlaceSwapRight;
+	//	const Qt::Alignment gridAlignSwapRight;
+	//	const int btnSwapWidth;
+	//	const int btnSwapHeight;
+	//	const int btnPickerWidth;
+	//	const int btnPickerHeight;
 
-		// We store both base img and altered img, so that we can display altered img,
-		// and apply color changes to base img, to get consistent results when altering color.
-		// Otherwise, we'd be applying changes to a modified img, which can result in inconsistent color changes
-		// over time, depending on the type of composition mode used with QPainter.
-		struct imgParts
-		{
-			const QString imgBase; // Don't modify this after initial loading into it from assets folder contents.
-			QString imgFilename;
-			const QColor colorBase; // Don't modify this after initial setting it from parts map
-			QColor colorAltered; // Modify this one for color changes.
-			const QString imgOutline; // Don't modify this after initial loading into it from assets folder contents.
-			const QString imgThumbnail; // Don't modify this after initial loading into it from assets folder contents.
-			//const QPixmap imgOutline; // Don't modify this after initial loading into it from assets folder contents.
-		};
-		int displayedPartI = 0;
+	//	struct imgPart
+	//	{
+	//		const QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
+	//		const QString imgFilename; // We use this for saving/loading by filename of an img part.
+	//		const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
+	//		QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
+	//		const QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
+	//		const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
+	//		std::unique_ptr<QPushButton> btnSwapTo = std::make_unique<QPushButton>(nullptr);
+	//	};
+	//	QString displayedPartKey;
+	//	//int displayedPartI = 0;
 
-		struct poseData
-		{
-			const QString poseNameAssetStr;
-			std::vector<imgParts> partsList;
-		};
+	//	struct poseData
+	//	{
+	//		const QString assetStr;
+	//		std::map<QString, imgPart> partsMap;
+	//		//std::vector<imgPart> partsList;
+	//	};
 
-		struct genderData
-		{
-			const QString genderTypeAssetStr;
-			std::vector<poseData> poseList;
-			std::unique_ptr<QAction> actionGender = std::make_unique<QAction>();
-		};
+	//	struct genderData
+	//	{
+	//		const QString assetStr;
+	//		std::vector<poseData> poseList;
+	//		std::unique_ptr<QAction> actionGender = std::make_unique<QAction>();
+	//	};
 
-		std::map<GenderType, genderData> genderMap;
+	//	std::map<GenderType, genderData> genderMap;
 
-		std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
-		std::unique_ptr<QPushButton> btnSwapLeft = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QPushButton> btnSwapRight = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
-		std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
-		std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
-		std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
-		std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
-	};
+	//	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
+	//	std::unique_ptr<QPushButton> btnSwapCharacterPart = std::make_unique<QPushButton>(nullptr);
+	//	std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
+	//	std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
+	//	std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
+	//	std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
+	//	std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
+	//};
 
-	std::vector<characterPart> characterPartListHuman;
-	std::vector<characterPart> characterPartListElf;
+	//std::vector<characterPart> characterPartListHuman;
+	//std::vector<characterPart> characterPartListElf;
 
-	struct speciesData
-	{
-		const QString speciesTypeAssetStr;
-		std::vector<characterPart> characterPartList;
-		std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
-	};
+	//struct speciesData
+	//{
+	//	const QString assetStr;
+	//	std::vector<characterPart> characterPartList;
+	//	std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
+	//};
+
+	// MAKING NEW NESTED DESIGN
+
+	//struct assetsData
+	//{
+	//	QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
+	//	QString imgFilename; // We use this for saving/loading by filename of an img part.
+	//	QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
+	//	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
+	//	QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
+	//	QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
+	//	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
+	//};
+
+	//struct componentData
+	//{
+	//	componentDataInit settings;
+	//	std::map<QString, assetsData> assetsMap;
+	//	QString displayedAssetKey;
+	//	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
+	//	std::unique_ptr<QPushButton> btnSwapComponent = std::make_unique<QPushButton>(nullptr);
+	//	std::unique_ptr<QPushButton> btnPicker = std::make_unique<QPushButton>(nullptr);
+	//	std::unique_ptr<QMenu> contextMenuColorPicker = std::make_unique<QMenu>();
+	//	std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
+	//	std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
+	//	std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
+	//};
+
+	//struct poseData
+	//{
+	//	QString assetStr;
+	//	std::map<ComponentType, componentData> componentMap;
+	//	std::unique_ptr<QAction> actionPose = std::make_unique<QAction>();
+	//};
+
+	//struct genderData
+	//{
+	//	QString assetStr;
+	//	std::map<PoseType, poseData> poseMap;
+	//	std::unique_ptr<QAction> actionGender = std::make_unique<QAction>();
+	//};
+
+	//struct speciesData
+	//{
+	//	QString assetStr;
+	//	std::map<GenderType, genderData> genderMap;
+	//	std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
+	//};
+
+	// ---------------------------
 
 	std::map<SpeciesType, speciesData> speciesMap;
 	SpeciesType speciesCurrent = SpeciesType::HUMAN;
 	GenderType genderCurrent = GenderType::FEMALE;
-	int poseCurrentI = 0;
+	PoseType poseCurrent = PoseType::FRONT_FACING;
+	ComponentType componentCurrent = ComponentType::NONE;
 
 	struct textInputSingleLine
 	{
@@ -203,46 +256,46 @@ private:
 
 	std::vector<textInputSingleLine> textInputSingleLineList;
 
-	struct poseSwapButton
-	{
-		const QString styleSheetTemplate;
-		const QStringList icons;
-		const std::vector<int> gridPlace;
-		const Qt::Alignment gridAlign;
-		const int width;
-		const int height;
-		std::unique_ptr<QPushButton> btn = std::make_unique<QPushButton>(nullptr);
-	};
+	//struct poseSwapButton
+	//{
+	//	const QString styleSheetTemplate;
+	//	const QStringList icons;
+	//	const std::vector<int> gridPlace;
+	//	const Qt::Alignment gridAlign;
+	//	const int width;
+	//	const int height;
+	//	std::unique_ptr<QPushButton> btn = std::make_unique<QPushButton>(nullptr);
+	//};
 
-	const poseSwapButton poseSwapButtonList[2] =
-	{
-		{
-			"QPushButton{border: none; image: url(%1);}"
-			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-			"QPushButton:hover:pressed{border: none; image: url(%3);}",
-			QStringList()
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-normal.png"
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover.png"
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover-pressed.png",
-			{0, 0}, // Row/Col placement in grid layout
-			Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
-			50,
-			50
-		},
-		{
-			"QPushButton{border: none; image: url(%1);}"
-			"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-			"QPushButton:hover:pressed{border: none; image: url(%3);}",
-			QStringList()
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-normal.png"
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover.png"
-			<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover-pressed.png",
-			{0, 1}, // Row/Col placement in grid layout
-			Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
-			50,
-			50
-		}
-	};
+	//const poseSwapButton poseSwapButtonList[2] =
+	//{
+	//	{
+	//		"QPushButton{border: none; image: url(%1);}"
+	//		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//		QStringList()
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-normal.png"
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover.png"
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-left-hover-pressed.png",
+	//		{0, 0}, // Row/Col placement in grid layout
+	//		Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
+	//		50,
+	//		50
+	//	},
+	//	{
+	//		"QPushButton{border: none; image: url(%1);}"
+	//		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
+	//		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+	//		QStringList()
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-normal.png"
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover.png"
+	//		<< ":/ZenCharacterCreator2D/Resources/button-pose-swap-right-hover-pressed.png",
+	//		{0, 1}, // Row/Col placement in grid layout
+	//		Qt::AlignLeft | Qt::AlignBottom, // Alignment in grid layout
+	//		50,
+	//		50
+	//	}
+	//};
 
 	const uiBtnInvisibleSpacer uiSpacerList[4] =
 	{
@@ -303,10 +356,10 @@ private:
 	QString extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QStringList fileGetAssetDirectories(const QString &subPath);
 	QStringList fileGetAssets(const QString &path);
-	void updatePartInScene(const characterPart &cPart, const characterPart::imgParts &imgPart);
+	void updatePartInScene(const componentData &component, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
-	QPixmap recolorPixmapSolid(const characterPart::imgParts &part);
-	QPixmap recolorPixmapSolidWithOutline(const characterPart::imgParts &part);
+	QPixmap recolorPixmapSolid(const assetsData &asset);
+	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset);
 	void pickerUpdatePasteIconColor(const QColor &color);
 	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
@@ -314,7 +367,7 @@ private:
 	void fileOpen();
 	bool fileSave();
 	void fileExportCharacter();
-	int findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename);
+	//int findPosOfFilenameInPartsList(const characterPart &cPart, const QString &filename);
 	void setBackgroundColor(const QColor &color);
 	void removeCurrentSpeciesFromScene();
 	void applyCurrentSpeciesToScene();
