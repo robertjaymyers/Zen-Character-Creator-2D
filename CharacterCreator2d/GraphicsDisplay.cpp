@@ -819,6 +819,15 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							component.second.btnSwapComponent.get()->setEnabled(false);
 							component.second.assetsMap.at(key).btnSwapAsset.get()->setEnabled(false);
 						}
+
+						if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+						{
+							QColor colorToApply = component.second.assetsMap.at(key).colorAltered;
+							for (auto& asset : component.second.assetsMap)
+							{
+								asset.second.colorAltered = colorToApply;
+							}
+						}
 					}
 					else
 						partsMissing = true;
