@@ -761,6 +761,14 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 
 void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 {
+	auto& componentCurrentObj = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap
+		.at(poseCurrent).componentMap.at(componentCurrent);
+
+	componentCurrentObj.btnSwapComponent.get()->setEnabled(true);
+
+	if (!componentCurrentObj.displayedAssetKey.isEmpty())
+		componentCurrentObj.assetsMap.at(componentCurrentObj.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
+
 	QString fileContents;
 	QFile fileRead(filePath);
 	if (fileRead.open(QIODevice::ReadOnly))
