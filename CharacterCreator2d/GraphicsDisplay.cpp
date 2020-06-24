@@ -387,6 +387,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								currentAsset.colorAltered = pickerCopiedColor;
 								updatePartInScene(component.second, currentAsset);
 								characterModified = true;
+								if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+								{
+									for (auto& asset : component.second.assetsMap)
+									{
+										asset.second.colorAltered = pickerCopiedColor;
+									}
+								}
 							}
 						});
 
