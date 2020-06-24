@@ -287,7 +287,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
-		{2, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{7, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -320,7 +320,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
-		{1, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{6, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -353,7 +353,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
-		{3, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{8, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -419,7 +419,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
-		{0, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{5, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -614,7 +614,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
-		{2, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{7, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -647,7 +647,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
-		{1, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{6, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -680,7 +680,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
-		{3, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{8, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout
@@ -746,7 +746,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
-		{0, 1}, // PICKER BTN: Row/Col placement in grid layout
+		{5, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // PICKER BTN: Alignment in grid layout

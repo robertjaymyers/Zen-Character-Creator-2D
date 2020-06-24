@@ -98,6 +98,11 @@ private:
 	std::unique_ptr<QMenu> poseMenu = std::make_unique<QMenu>("Pose", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionPoseGroup = std::make_unique<QActionGroup>(this);
 
+	std::unique_ptr<QMenu> colorChangeSettingsMenu = std::make_unique<QMenu>("Color Change Settings", contextMenu.get());
+	std::unique_ptr<QActionGroup> actioColorChangeSettingsGroup = std::make_unique<QActionGroup>(this);
+	std::unique_ptr<QAction> actionColorChangeSettingsApplyToAllOnPicker = std::make_unique<QAction>("Apply Color Change To All In Set");
+	std::unique_ptr<QAction> actionColorChangeSettingsDontApplyToAllOnPicker = std::make_unique<QAction>("Apply Color Change To Current Item Only");
+
 	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
 	std::map<SpeciesType, speciesData> speciesMap;

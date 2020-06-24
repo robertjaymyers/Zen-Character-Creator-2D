@@ -27,6 +27,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addMenu(speciesMenu.get());
 	contextMenu.get()->addMenu(genderMenu.get());
 	contextMenu.get()->addMenu(poseMenu.get());
+	contextMenu.get()->addSeparator();
+	contextMenu.get()->addMenu(colorChangeSettingsMenu.get());
 
 	connect(actionFileNew.get(), &QAction::triggered, this, [=]() {
 		if (fileSaveModifCheck())
@@ -409,6 +411,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								currentAsset.colorAltered = colorNew;
 								updatePartInScene(component.second, currentAsset);
 								characterModified = true;
+								if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+								{
+									for (auto& asset : component.second.assetsMap)
+									{
+										asset.second.colorAltered = colorNew;
+									}
+								}
 							}
 						});
 					}
@@ -521,6 +530,18 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	characterNameInputGroup.get()->setLayout(characterNameInputGroupLayout.get());
 	characterNameInputGroup.get()->setFlat(true);
 	layout.get()->addWidget(characterNameInputGroup.get(), 1, 0, Qt::AlignLeft);
+
+	actionColorChangeSettingsApplyToAllOnPicker.get()->setParent(this);
+	actionColorChangeSettingsApplyToAllOnPicker.get()->setCheckable(true);
+	actionColorChangeSettingsDontApplyToAllOnPicker.get()->setParent(this);
+	actionColorChangeSettingsDontApplyToAllOnPicker.get()->setCheckable(true);
+	actionColorChangeSettingsApplyToAllOnPicker.get()->setChecked(true);
+
+	actioColorChangeSettingsGroup.get()->addAction(actionColorChangeSettingsApplyToAllOnPicker.get());
+	actioColorChangeSettingsGroup.get()->addAction(actionColorChangeSettingsDontApplyToAllOnPicker.get());
+
+	colorChangeSettingsMenu.get()->addAction(actionColorChangeSettingsApplyToAllOnPicker.get());
+	colorChangeSettingsMenu.get()->addAction(actionColorChangeSettingsDontApplyToAllOnPicker.get());
 
 	// Template load should be last init operation in graphics display,
 	// because it requires assets/parts to be ready (it acts identically to loading a saved character).
