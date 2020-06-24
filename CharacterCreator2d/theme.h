@@ -51,8 +51,7 @@ struct componentDataInit
 	const bool partHasBtnSwap;
 	const bool partHasBtnPicker;
 	const QString btnStyleSheetTemplate;
-	const QStringList btnSwapLeftIcons;
-	const QStringList btnSwapRightIcons;
+	const QStringList btnSwapIcons;
 	const QStringList btnPickerIcons;
 	const std::vector<int> gridPlacePicker;
 	const Qt::Alignment gridAlignPicker;
@@ -126,13 +125,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBody.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBodyHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBodyHover.png",
 		{0, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -162,13 +157,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyes.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png",
 		{1, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -198,13 +189,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLips.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png",
 		{2, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -234,13 +221,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlush.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlushHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlushHover.png",
 		{3, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -270,10 +253,6 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
 		nullptr, // PICKER BTN: Alignment in grid layout
@@ -305,13 +284,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
 		{2, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -342,13 +317,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
 		{1, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -379,13 +350,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
 		{3, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -416,13 +383,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMask.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png",
 		{4, 0}, // PICKER BTN: Row/Col placement in grid layout
 		nullptr, // PICKER BTN: Alignment in grid layout
 		{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -453,13 +416,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHair.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
 		{0, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -493,13 +452,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-skin-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBody.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBodyHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBodyHover.png",
 		{0, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -529,13 +484,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-eye-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyes.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png",
 		{1, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -565,13 +516,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-lip-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLips.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png",
 		{2, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -601,13 +548,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-blush-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlush.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlushHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBlushHover.png",
 		{3, 0}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{-1, -1}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -637,10 +580,6 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICKER BTN: Row/Col placement in grid layout
 		nullptr, // PICKER BTN: Alignment in grid layout
@@ -672,13 +611,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-bottom-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
 		{2, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{4, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -709,13 +644,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-chest-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
 		{1, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{3, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -746,13 +677,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
 		{3, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{5, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -783,13 +710,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-feet-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMask.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png",
 		{4, 0}, // PICKER BTN: Row/Col placement in grid layout
 		nullptr, // PICKER BTN: Alignment in grid layout
 		{0, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout
@@ -820,13 +743,9 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-right-pencil-sketch-hover-pressed.png",
-		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-pick-hair-color-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHair.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
 		{0, 1}, // PICKER BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICKER BTN: Alignment in grid layout
 		{1, 0}, // SWAP LEFT BTN: Row/Col placement in grid layout

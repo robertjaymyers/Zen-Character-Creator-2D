@@ -263,9 +263,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						component.second.btnSwapComponent.get()->setStyleSheet
 						(
 							component.second.settings.btnStyleSheetTemplate
-							.arg(component.second.settings.btnSwapLeftIcons[0])
-							.arg(component.second.settings.btnSwapLeftIcons[1])
-							.arg(component.second.settings.btnSwapLeftIcons[2])
+							.arg(component.second.settings.btnSwapIcons[0])
+							.arg(component.second.settings.btnSwapIcons[1])
+							.arg(component.second.settings.btnSwapIcons[2])
 						);
 						component.second.btnSwapComponent.get()->setParent(this);
 						component.second.btnSwapComponent.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

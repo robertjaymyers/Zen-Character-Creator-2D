@@ -1,37 +1,7 @@
 <RCC>
     <qresource prefix="/ZenCharacterCreator2D">
-        <file>Resources/button-pick-skin-color.png</file>
-        <file>Resources/button-pick-skin-color-hover.png</file>
-        <file>Resources/button-pick-skin-color-hover-pressed.png</file>
-        <file>Resources/button-pick-eye-color.png</file>
-        <file>Resources/button-pick-eye-color-hover.png</file>
-        <file>Resources/button-pick-eye-color-hover-pressed.png</file>
-        <file>Resources/button-pick-lip-color.png</file>
-        <file>Resources/button-pick-lip-color-hover.png</file>
-        <file>Resources/button-pick-lip-color-hover-pressed.png</file>
-        <file>Resources/button-pick-blush-color.png</file>
-        <file>Resources/button-pick-blush-color-hover.png</file>
-        <file>Resources/button-pick-blush-color-hover-pressed.png</file>
-        <file>Resources/button-pick-hair-color.png</file>
-        <file>Resources/button-pick-hair-color-hover.png</file>
-        <file>Resources/button-pick-hair-color-hover-pressed.png</file>
-        <file>Resources/button-pick-chest-color-hover.png</file>
-        <file>Resources/button-pick-chest-color-hover-pressed.png</file>
-        <file>Resources/button-pick-bottom-color.png</file>
-        <file>Resources/button-pick-bottom-color-hover.png</file>
-        <file>Resources/button-pick-bottom-color-hover-pressed.png</file>
-        <file>Resources/button-pick-feet-color.png</file>
-        <file>Resources/button-pick-feet-color-hover.png</file>
-        <file>Resources/button-pick-feet-color-hover-pressed.png</file>
         <file>Resources/picker-spacer-transparent-background.png</file>
-        <file>Resources/button-pick-chest-color.png</file>
         <file>Resources/clipboardColorIcon.png</file>
-        <file>Resources/button-pose-swap-left-hover.png</file>
-        <file>Resources/button-pose-swap-left-hover-pressed.png</file>
-        <file>Resources/button-pose-swap-left-normal.png</file>
-        <file>Resources/button-pose-swap-right-hover.png</file>
-        <file>Resources/button-pose-swap-right-hover-pressed.png</file>
-        <file>Resources/button-pose-swap-right-normal.png</file>
         <file>Resources/btnSwapCharacterPartChest.png</file>
         <file>Resources/btnSwapCharacterPartChestHover.png</file>
         <file>Resources/btnSwapCharacterPartBottom.png</file>
@@ -44,5 +14,25 @@
         <file>Resources/btnSwapCharacterPartHeadHover.png</file>
         <file>Resources/btnSwapCharacterPartMask.png</file>
         <file>Resources/btnSwapCharacterPartMaskHover.png</file>
+        <file>Resources/btnPickerChest.png</file>
+        <file>Resources/btnPickerChestHover.png</file>
+        <file>Resources/btnPickerBottom.png</file>
+        <file>Resources/btnPickerBottomHover.png</file>
+        <file>Resources/btnPickerFeet.png</file>
+        <file>Resources/btnPickerFeetHover.png</file>
+        <file>Resources/btnPickerHair.png</file>
+        <file>Resources/btnPickerHairHover.png</file>
+        <file>Resources/btnPickerMask.png</file>
+        <file>Resources/btnPickerMaskHover.png</file>
+        <file>Resources/btnPickerBlush.png</file>
+        <file>Resources/btnPickerBlushHover.png</file>
+        <file>Resources/btnPickerBody.png</file>
+        <file>Resources/btnPickerBodyHover.png</file>
+        <file>Resources/btnPickerEyes.png</file>
+        <file>Resources/btnPickerEyesHover.png</file>
+        <file>Resources/btnPickerLips.png</file>
+        <file>Resources/btnPickerLipsHover.png</file>
+        <file>Resources/ProgramIcon.ico</file>
+        <file>Resources/splashLoadScreenStatic.png</file>
     </qresource>
 </RCC>

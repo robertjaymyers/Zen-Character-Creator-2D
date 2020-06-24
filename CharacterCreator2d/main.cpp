@@ -14,12 +14,20 @@ This file is part of Zen Character Creator 2D.
 
 #include "CharacterCreator2d.h"
 #include <QtWidgets/QApplication>
+#include <QSplashScreen>
 
 int main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
-	CharacterCreator2d w;
-	w.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
-	w.show();
-	return a.exec();
+	QApplication app(argc, argv);
+	app.setWindowIcon(QIcon(":/ZenCharacterCreator2D/Resources/ProgramIcon.ico"));
+	
+	QSplashScreen loadScreen(QPixmap(":/ZenCharacterCreator2D/Resources/splashLoadScreenStatic.png"));
+	loadScreen.show();
+	app.processEvents();
+
+	CharacterCreator2d window;
+	window.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+	window.show();
+	loadScreen.finish(&window);
+	return app.exec();
 }
