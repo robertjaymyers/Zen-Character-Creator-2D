@@ -20,7 +20,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
 	contextMenu.get()->addAction(actionFileSave.get());
-	contextMenu.get()->addAction(actionFileExport.get());
+	contextMenu.get()->addAction(actionFileRender.get());
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addAction(actionSetBackgroundColor.get());
 	contextMenu.get()->addSeparator();
@@ -42,7 +42,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		if (fileSave())
 			characterModified = false;
 	});
-	connect(actionFileExport.get(), &QAction::triggered, this, &GraphicsDisplay::fileExportCharacter);
+	connect(actionFileRender.get(), &QAction::triggered, this, &GraphicsDisplay::fileRenderCharacter);
 	connect(actionSetBackgroundColor.get(), &QAction::triggered, this, [=]() {
 		QColor colorNew = QColorDialog::getColor(backgroundColor, this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
@@ -929,10 +929,10 @@ bool GraphicsDisplay::fileSave()
 	return false;
 }
 
-void GraphicsDisplay::fileExportCharacter()
+void GraphicsDisplay::fileRenderCharacter()
 {
 	QString proposedExportName;
-	proposedExportName += fileDirLastExported + "/";
+	proposedExportName += fileDirLastRendered + "/";
 	for (const auto& textInputSL : textInputSingleLineList)
 	{
 		if (textInputSL.inputType == TextInputSingleLineType::FIRST_NAME)
@@ -954,7 +954,7 @@ void GraphicsDisplay::fileExportCharacter()
 		QPainter painter(&composite);
 		scene->render(&painter);
 		composite.save(&fileWrite, "PNG");
-		fileDirLastExported = QFileInfo(selectedFile).path();
+		fileDirLastRendered = QFileInfo(selectedFile).path();
 	}
 }
 

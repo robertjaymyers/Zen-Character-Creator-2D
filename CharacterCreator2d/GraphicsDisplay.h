@@ -65,7 +65,7 @@ protected:
 private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
-	QString fileDirLastExported = QCoreApplication::applicationDirPath() + "/Exports";
+	QString fileDirLastRendered = QCoreApplication::applicationDirPath() + "/Renders";
 	bool characterModified = false;
 	QString styleSheetEditable = "border: none; background-color: %1";
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
@@ -89,7 +89,7 @@ private:
 	const std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
 	const std::unique_ptr<QAction> actionFileOpen = std::make_unique<QAction>("Open Character");
 	const std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
-	const std::unique_ptr<QAction> actionFileExport = std::make_unique<QAction>("Export Character");
+	const std::unique_ptr<QAction> actionFileRender = std::make_unique<QAction>("Render Character");
 	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
 	std::unique_ptr<QMenu> speciesMenu = std::make_unique<QMenu>("Species", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
@@ -193,7 +193,7 @@ private:
 	void fileNew();
 	void fileOpen();
 	bool fileSave();
-	void fileExportCharacter();
+	void fileRenderCharacter();
 	void setBackgroundColor(const QColor &color);
 	void removeCurrentSpeciesFromScene();
 	void applyCurrentSpeciesToScene();
