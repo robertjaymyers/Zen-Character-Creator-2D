@@ -34,5 +34,6 @@
         <file>Resources/btnPickerLipsHover.png</file>
         <file>Resources/ProgramIcon.ico</file>
         <file>Resources/splashLoadScreenStatic.png</file>
+        <file>Resources/error.png</file>
     </qresource>
 </RCC>

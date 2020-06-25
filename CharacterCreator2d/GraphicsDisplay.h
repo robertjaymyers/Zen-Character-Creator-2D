@@ -28,6 +28,7 @@ This file is part of Zen Character Creator 2D.
 #include <QColorDialog>
 #include <QPainter>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QLineEdit>
 #include <QDateTime>
 #include <QMessageBox>
@@ -38,6 +39,9 @@ This file is part of Zen Character Creator 2D.
 #include <algorithm>
 #include <iterator>
 #include <map>
+
+// Setting for painting recolored image as whole, or as multicolored parts.
+enum class PaintType { SINGLE, COMBINED };
 
 struct uiBtnInvisibleSpacer
 {
@@ -179,14 +183,18 @@ private:
 	QColor pickerCopiedColor = QColor("#000000");
 	const QPixmap pickerPasteColorIcon = QPixmap(":/ZenCharacterCreator2D/Resources/clipboardColorIcon.png");
 
+	const QPixmap imgError = QPixmap(":/ZenCharacterCreator2D/Resources/error.png");
+
+	// private functions:
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QString extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
+	QStringList extractSubstringInbetweenLoopList(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QStringList fileGetAssetDirectories(const QString &subPath);
 	QStringList fileGetAssets(const QString &path);
 	void updatePartInScene(const componentData &component, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
-	QPixmap recolorPixmapSolid(const assetsData &asset);
-	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset);
+	QPixmap recolorPixmapSolid(const assetsData &asset, const PaintType &paintType);
+	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset, const PaintType &paintType);
 	void pickerUpdatePasteIconColor(const QColor &color);
 	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);

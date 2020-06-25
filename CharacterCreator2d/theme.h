@@ -27,6 +27,20 @@ enum class PoseType { FRONT_FACING };
 enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
+
+// With subcolors, we allow assets to be split up into different "fill" image parts that can be recolored individually.
+// Any assets that are NOT split up are ignored by subcolor code and recolored as normal.
+// Folder structure and placement of images in them determines whether an asset is split up, which means there are no
+// built-in limits to the number of "fill" parts for a specific image. It is worth considering in design, though, that
+// too many parts may be a pain for the user to recolor.
+struct subColorData
+{
+	const QString imgPath;
+	const QString imgFilename; // We use this for saving/loading by filename of an img part.
+	const QColor colorDefault;
+	QColor colorAltered;
+};
+
 struct assetsData
 {
 	const QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
@@ -36,6 +50,8 @@ struct assetsData
 	const QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
 	const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
+	std::map<QString, subColorData> subColorsMap;
+	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.
 };
 
 struct componentDataInit
@@ -370,7 +386,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{
 		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
-		"#000000",
+		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
 		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICKER BTN: Flag for whether part is expected to display btn
@@ -697,7 +713,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{
 		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
-		"#000000",
+		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
 		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICKER BTN: Flag for whether part is expected to display btn

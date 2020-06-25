@@ -157,6 +157,33 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
 								}
 							);
+
+							QString multicolorPath = assetPath;
+							multicolorPath.replace("/" + QFileInfo(assetPath).fileName(), "/Multicolor/" + QFileInfo(assetPath).baseName());
+							if (QDir(multicolorPath).exists())
+							{
+								QStringList multicolorPathList = fileGetAssets(multicolorPath);
+								if (multicolorPathList.isEmpty())
+									continue;
+								for (const auto& colorPath : multicolorPathList)
+								{
+									auto& currentAssetsMap = speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+										.componentMap.at(component.first).assetsMap;
+									currentAssetsMap.at(QFileInfo(assetPath).baseName()).subColorsMap.try_emplace
+									(
+										QFileInfo(colorPath).baseName(),
+										subColorData
+										{
+											colorPath,
+											QFileInfo(colorPath).fileName(),
+											component.second.defaultInitialColor,
+											component.second.defaultInitialColor,
+										}
+									);
+									currentAssetsMap.at(QFileInfo(assetPath).baseName()).subColorsKeyList.append
+									(QFileInfo(colorPath).baseName());
+								}
+							}
 						}
 						else if (component.second.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
 							component.second.colorSetType == ColorSetType::NONE)
@@ -334,9 +361,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 							connect(asset.second.btnSwapAsset.get(), &QPushButton::clicked, this, [&]() {
 								component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
-								qDebug() << component.second.displayedAssetKey;
 								component.second.displayedAssetKey = asset.first;
-								qDebug() << component.second.displayedAssetKey;
 								asset.second.btnSwapAsset.get()->setEnabled(false);
 								updatePartInScene(component.second, asset.second);
 								characterModified = true;
@@ -376,7 +401,27 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 						});
 
 						connect(component.second.actionCopyColor.get(), &QAction::triggered, this, [&]() {
-							pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
+							if (component.second.assetsMap.at(component.second.displayedAssetKey).subColorsMap.empty())
+								pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
+							else
+							{
+								bool ok;
+								QString pickedKey = QInputDialog::getItem(
+									this->parentWidget(),
+									"Pick Part To Copy Color From",
+									tr("Part Name:"),
+									component.second.assetsMap.at(component.second.displayedAssetKey).subColorsKeyList,
+									0,
+									false,
+									&ok,
+									Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+								if (ok && !pickedKey.isEmpty())
+								{
+									pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey)
+										.subColorsMap.at(pickedKey).colorAltered;
+								}
+							}
 							pickerUpdatePasteIconColor(pickerCopiedColor);
 						});
 
@@ -384,16 +429,37 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 							if (pickerCopiedColor.isValid())
 							{
 								auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
-								currentAsset.colorAltered = pickerCopiedColor;
-								updatePartInScene(component.second, currentAsset);
-								characterModified = true;
-								if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+								if (currentAsset.subColorsMap.empty())
 								{
-									for (auto& asset : component.second.assetsMap)
+									currentAsset.colorAltered = pickerCopiedColor;
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 									{
-										asset.second.colorAltered = pickerCopiedColor;
+										for (auto& asset : component.second.assetsMap)
+										{
+											asset.second.colorAltered = pickerCopiedColor;
+										}
 									}
 								}
+								else
+								{
+									bool ok;
+									QString pickedKey = QInputDialog::getItem(
+										this->parentWidget(),
+										"Pick Part To Paste Color To",
+										tr("Part Name:"),
+										currentAsset.subColorsKeyList,
+										0,
+										false,
+										&ok,
+										Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+									if (ok && !pickedKey.isEmpty())
+									{
+										currentAsset.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
+									}
+								}
+								updatePartInScene(component.second, currentAsset);
+								characterModified = true;
 							}
 						});
 
@@ -401,28 +467,85 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 							if (component.second.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
 								component.second.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 							{
-								QColor currentColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
-								for (auto& asset : component.second.assetsMap)
+								auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
+								QColor currentColor;
+								if (currentAsset.subColorsMap.empty())
+									currentColor = currentAsset.colorAltered;
+								else
 								{
-									asset.second.colorAltered = currentColor;
-									characterModified = true;
+									bool ok;
+									QString pickedKey = QInputDialog::getItem(
+										this->parentWidget(),
+										"Pick Part To Apply Color From",
+										tr("Part Name:"),
+										currentAsset.subColorsKeyList,
+										0,
+										false,
+										&ok,
+										Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+									if (ok && !pickedKey.isEmpty())
+									{
+										currentColor = currentAsset.subColorsMap.at(pickedKey).colorAltered;
+										for (auto& subColor : currentAsset.subColorsMap)
+											subColor.second.colorAltered = currentColor;
+										updatePartInScene(component.second, currentAsset);
+									}
 								}
+								for (auto& asset : component.second.assetsMap)
+									asset.second.colorAltered = currentColor;
+								characterModified = true;
 							}
 						});
 
 						connect(component.second.btnPicker.get(), &QPushButton::clicked, this, [&]() {
 							auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
-							QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
-							if (colorNew.isValid())
+							if (!currentAsset.subColorsMap.empty())
 							{
-								currentAsset.colorAltered = colorNew;
-								updatePartInScene(component.second, currentAsset);
-								characterModified = true;
-								if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+								bool ok;
+								QString pickedKey = QInputDialog::getItem(
+									this->parentWidget(),
+									"Pick Part To Recolor",
+									tr("Part Name:"),
+									currentAsset.subColorsKeyList,
+									0,
+									false,
+									&ok,
+									Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+								if (ok && !pickedKey.isEmpty())
 								{
-									for (auto& asset : component.second.assetsMap)
+									auto& pickedColorObj = currentAsset.subColorsMap.at(pickedKey);
+									QColor colorNew = QColorDialog::getColor(pickedColorObj.colorAltered, this->parentWidget(), "Choose Color");
+									if (colorNew.isValid())
 									{
-										asset.second.colorAltered = colorNew;
+										pickedColorObj.colorAltered = colorNew;
+										updatePartInScene(component.second, currentAsset);
+										characterModified = true;
+										if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+										{
+											for (auto& asset : component.second.assetsMap)
+											{
+												asset.second.colorAltered = colorNew;
+											}
+										}
+									}
+								}
+							}
+							else
+							{
+								QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
+								if (colorNew.isValid())
+								{
+									currentAsset.colorAltered = colorNew;
+									updatePartInScene(component.second, currentAsset);
+									characterModified = true;
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+									{
+										for (auto& asset : component.second.assetsMap)
+										{
+											asset.second.colorAltered = colorNew;
+										}
 									}
 								}
 							}
@@ -601,13 +724,10 @@ QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, con
 
 	if (!strBegin.isEmpty() && !strEnd.isEmpty())
 	{
-		while (strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) != -1)
-		{
-			int posBegin = strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
-			int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
-			extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
-			posFound = posEnd;
-		}
+		int posBegin = strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
+		int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
+		extracted += strExtractFrom.mid(posBegin, posEnd - posBegin);
+		posFound = posEnd;
 	}
 	else if (strBegin.isEmpty() && !strEnd.isEmpty())
 	{
@@ -658,6 +778,38 @@ QString GraphicsDisplay::extractSubstringInbetweenRevFind(const QString strBegin
 	return extracted;
 }
 
+QStringList GraphicsDisplay::extractSubstringInbetweenLoopList(const QString strBegin, const QString strEnd, const QString &strExtractFrom)
+{
+	QStringList extracted;
+	int posFound = 0;
+
+	if (!strBegin.isEmpty() && !strEnd.isEmpty())
+	{
+		while (strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) != -1)
+		{
+			int posBegin = strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
+			int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
+			extracted.append(strExtractFrom.mid(posBegin, posEnd - posBegin));
+			posFound = posEnd;
+		}
+	}
+	else if (strBegin.isEmpty() && !strEnd.isEmpty())
+	{
+		int posBegin = 0;
+		int posEnd = strExtractFrom.indexOf(strEnd, posBegin, Qt::CaseSensitive);
+		extracted.append(strExtractFrom.mid(posBegin, posEnd - posBegin));
+		posFound = posEnd;
+	}
+	else if (!strBegin.isEmpty() && strEnd.isEmpty())
+	{
+		int posBegin = strExtractFrom.indexOf(strBegin, posFound, Qt::CaseSensitive) + strBegin.length();
+		int posEnd = strExtractFrom.length();
+		extracted.append(strExtractFrom.mid(posBegin, posEnd - posBegin));
+		posFound = posEnd;
+	}
+	return extracted;
+}
+
 QStringList GraphicsDisplay::fileGetAssetDirectories(const QString &subPath)
 {
 	QStringList assetPathList;
@@ -686,12 +838,24 @@ QStringList GraphicsDisplay::fileGetAssets(const QString &path)
 
 void GraphicsDisplay::updatePartInScene(const componentData &component, const assetsData &asset)
 {
-	if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-		component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset));
-	else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-		component.item.get()->setPixmap(recolorPixmapSolid(asset));
+	if (asset.subColorsMap.empty())
+	{
+		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+			component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset, PaintType::SINGLE));
+		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+			component.item.get()->setPixmap(recolorPixmapSolid(asset, PaintType::SINGLE));
+		else
+			component.item.get()->setPixmap(asset.imgBasePath);
+	}
 	else
-		component.item.get()->setPixmap(asset.imgBasePath);
+	{
+		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+			component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset, PaintType::COMBINED));
+		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+			component.item.get()->setPixmap(recolorPixmapSolid(asset, PaintType::COMBINED));
+		else
+			component.item.get()->setPixmap(asset.imgBasePath);
+	}
 }
 
 QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &img, const QColor &color)
@@ -705,28 +869,98 @@ QPixmap GraphicsDisplay::recolorPixmapSolid(const QPixmap &img, const QColor &co
 	return newImage;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolid(const assetsData &asset)
+QPixmap GraphicsDisplay::recolorPixmapSolid(const assetsData &asset, const PaintType &paintType)
 {
-	QPixmap newImage = QPixmap(asset.imgBasePath);
-	QPainter painter;
-	painter.begin(&newImage);
-	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), asset.colorAltered);
-	painter.end();
-	return newImage;
+	if (paintType == PaintType::SINGLE)
+	{
+		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+		painter.fillRect(newImage.rect(), asset.colorAltered);
+		painter.end();
+		return newImage;
+	}
+	else if (paintType == PaintType::COMBINED)
+	{
+		std::vector<QPixmap> recoloredParts;
+		for (const auto& subColor : asset.subColorsMap)
+		{
+			QPixmap recoloredImg = QPixmap(subColor.second.imgPath);
+			QPainter painter;
+			painter.begin(&recoloredImg);
+			painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+			painter.fillRect
+			(
+				QPixmap(subColor.second.imgPath).rect(),
+				subColor.second.colorAltered
+			);
+			painter.end();
+			recoloredParts.emplace_back(recoloredImg);
+		}
+		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		painter.fillRect(newImage.rect(), Qt::transparent);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		for (const auto& part : recoloredParts)
+		{
+			painter.drawPixmap(part.rect(), part);
+		}
+		painter.end();
+		return newImage;
+	}
+	return imgError;
 }
 
-QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset)
+QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, const PaintType &paintType)
 {
-	QPixmap newImage = QPixmap(asset.imgBasePath);
-	QPainter painter;
-	painter.begin(&newImage);
-	painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-	painter.fillRect(newImage.rect(), asset.colorAltered);
-	painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-	painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
-	painter.end();
-	return newImage;
+	if (paintType == PaintType::SINGLE)
+	{
+		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+		painter.fillRect(newImage.rect(), asset.colorAltered);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
+		painter.end();
+		return newImage;
+	}
+	else if (paintType == PaintType::COMBINED)
+	{
+		std::vector<QPixmap> recoloredParts;
+		for (const auto& subColor : asset.subColorsMap)
+		{
+			QPixmap recoloredImg = QPixmap(subColor.second.imgPath);
+			QPainter painter;
+			painter.begin(&recoloredImg);
+			painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+			painter.fillRect
+			(
+				QPixmap(subColor.second.imgPath).rect(),
+				subColor.second.colorAltered
+			);
+			painter.end();
+			recoloredParts.emplace_back(recoloredImg);
+		}
+		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		painter.fillRect(newImage.rect(), Qt::transparent);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		for (const auto& part : recoloredParts)
+		{
+			painter.drawPixmap(part.rect(), part);
+		}
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
+		painter.end();
+		return newImage;
+	}
+	return imgError;
 }
 
 void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
@@ -816,29 +1050,67 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			{
 				if (line.contains(component.second.settings.assetStr + "="))
 				{
-					QString key = QFileInfo(extractSubstringInbetweenQt("=", ",", line)).baseName();
-					if (component.second.assetsMap.count(key) > 0)
+					if (line.contains(component.second.settings.assetStr + "=[Single]"))
 					{
-						component.second.displayedAssetKey = key;
-						component.second.assetsMap.at(key).colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
-						updatePartInScene(component.second, component.second.assetsMap.at(key));
-						if (component.first == componentCurrent)
+						QString assetKey = QFileInfo(extractSubstringInbetweenQt("=[Single]", ",", line)).baseName();
+						if (component.second.assetsMap.count(assetKey) > 0)
 						{
-							component.second.btnSwapComponent.get()->setEnabled(false);
-							component.second.assetsMap.at(key).btnSwapAsset.get()->setEnabled(false);
-						}
-
-						if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-						{
-							QColor colorToApply = component.second.assetsMap.at(key).colorAltered;
-							for (auto& asset : component.second.assetsMap)
+							component.second.displayedAssetKey = assetKey;
+							component.second.assetsMap.at(assetKey).colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
+							updatePartInScene(component.second, component.second.assetsMap.at(assetKey));
+							if (component.first == componentCurrent)
 							{
-								asset.second.colorAltered = colorToApply;
+								component.second.btnSwapComponent.get()->setEnabled(false);
+								component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
+							}
+
+							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+							{
+								QColor colorToApply = component.second.assetsMap.at(assetKey).colorAltered;
+								for (auto& asset : component.second.assetsMap)
+								{
+									asset.second.colorAltered = colorToApply;
+								}
 							}
 						}
+						else
+							partsMissing = true;
 					}
-					else
-						partsMissing = true;
+					else if (line.contains(component.second.settings.assetStr + "=[Combined]"))
+					{
+						QString assetKey = QFileInfo(extractSubstringInbetweenQt("=[Combined]", ",", line)).baseName();
+						if (component.second.assetsMap.count(assetKey) > 0)
+						{
+							component.second.displayedAssetKey = assetKey;
+							component.second.assetsMap.at(assetKey).colorAltered = QColor(extractSubstringInbetweenQt(",", "[Parts]", line));
+							if (component.first == componentCurrent)
+							{
+								component.second.btnSwapComponent.get()->setEnabled(false);
+								component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
+							}
+
+							QString subPartsStr = extractSubstringInbetweenQt("[Parts]=", "", line);
+							QStringList subPartsStrList = extractSubstringInbetweenLoopList("[", "]", subPartsStr);
+							std::map<QString, QString> subPartsStrMap;
+							for (const auto& partsStr : subPartsStrList)
+							{
+								subPartsStrMap.try_emplace
+								(
+									extractSubstringInbetweenQt("[", ",", partsStr),
+									extractSubstringInbetweenQt(",", "]", partsStr)
+								);
+							}
+							for (auto& subColor : component.second.assetsMap.at(assetKey).subColorsMap)
+							{
+								subColor.second.colorAltered = QColor(
+									subPartsStrMap.at(subColor.second.imgFilename)
+								);
+							}
+							updatePartInScene(component.second, component.second.assetsMap.at(assetKey));
+						}
+						else
+							partsMissing = true;
+					}
 					break;
 				}
 			}
@@ -926,9 +1198,32 @@ bool GraphicsDisplay::fileSave()
 			for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
 			{
 				auto& currentPart = component.second.assetsMap.at(component.second.displayedAssetKey);
-				qStream << component.second.settings.assetStr +
-					"=" + currentPart.imgFilename +
-					"," + currentPart.colorAltered.name() + "\r\n";
+				if (currentPart.subColorsMap.empty())
+				{
+					qStream << component.second.settings.assetStr +
+						"=[Single]" + currentPart.imgFilename +
+						"," + currentPart.colorAltered.name() + "\r\n";
+				}
+				else
+				{
+					qStream << component.second.settings.assetStr +
+						"=[Combined]" + currentPart.imgFilename +
+						"," + currentPart.colorAltered.name();
+
+					qStream << "[Parts]=";
+					for (const auto& subColor : currentPart.subColorsMap)
+					{
+						qStream <<
+							"[" +
+							subColor.second.imgFilename +
+							"," +
+							subColor.second.colorAltered.name() +
+							"]"
+							;
+					}
+
+					qStream << "\r\n";
+				}
 			}
 
 			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
