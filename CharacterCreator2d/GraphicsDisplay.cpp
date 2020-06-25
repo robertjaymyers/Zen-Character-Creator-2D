@@ -405,12 +405,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
 							else
 							{
+								QStringList dropdownList = component.second.assetsMap.at(component.second.displayedAssetKey).subColorsKeyList;
+								dropdownList.prepend(component.second.displayedAssetKey);
 								bool ok;
 								QString pickedKey = QInputDialog::getItem(
 									this->parentWidget(),
 									"Pick Part To Copy Color From",
 									tr("Part Name:"),
-									component.second.assetsMap.at(component.second.displayedAssetKey).subColorsKeyList,
+									dropdownList,
 									0,
 									false,
 									&ok,
@@ -418,8 +420,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 								if (ok && !pickedKey.isEmpty())
 								{
-									pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey)
-										.subColorsMap.at(pickedKey).colorAltered;
+									if (pickedKey == component.second.displayedAssetKey)
+										pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
+									else
+										pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey)
+											.subColorsMap.at(pickedKey).colorAltered;
 								}
 							}
 							pickerUpdatePasteIconColor(pickerCopiedColor);
@@ -442,12 +447,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 								}
 								else
 								{
+									QStringList dropdownList = currentAsset.subColorsKeyList;
+									dropdownList.prepend(component.second.displayedAssetKey);
 									bool ok;
 									QString pickedKey = QInputDialog::getItem(
 										this->parentWidget(),
 										"Pick Part To Paste Color To",
 										tr("Part Name:"),
-										currentAsset.subColorsKeyList,
+										dropdownList,
 										0,
 										false,
 										&ok,
@@ -455,7 +462,21 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 									if (ok && !pickedKey.isEmpty())
 									{
-										currentAsset.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
+										if (pickedKey == component.second.displayedAssetKey)
+										{
+											currentAsset.colorAltered = pickerCopiedColor;
+											for (auto& subColor : currentAsset.subColorsMap)
+												subColor.second.colorAltered = pickerCopiedColor;
+											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+											{
+												for (auto& asset : component.second.assetsMap)
+												{
+													asset.second.colorAltered = pickerCopiedColor;
+												}
+											}
+										}
+										else
+											currentAsset.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
 									}
 								}
 								updatePartInScene(component.second, currentAsset);
@@ -473,12 +494,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 									currentColor = currentAsset.colorAltered;
 								else
 								{
+									QStringList dropdownList = currentAsset.subColorsKeyList;
+									dropdownList.prepend(component.second.displayedAssetKey);
 									bool ok;
 									QString pickedKey = QInputDialog::getItem(
 										this->parentWidget(),
 										"Pick Part To Apply Color From",
 										tr("Part Name:"),
-										currentAsset.subColorsKeyList,
+										dropdownList,
 										0,
 										false,
 										&ok,
@@ -486,7 +509,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 									if (ok && !pickedKey.isEmpty())
 									{
-										currentColor = currentAsset.subColorsMap.at(pickedKey).colorAltered;
+										if (pickedKey == component.second.displayedAssetKey)
+											currentColor = currentAsset.colorAltered;
+										else
+											currentColor = currentAsset.subColorsMap.at(pickedKey).colorAltered;
 										for (auto& subColor : currentAsset.subColorsMap)
 											subColor.second.colorAltered = currentColor;
 										updatePartInScene(component.second, currentAsset);
@@ -502,12 +528,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 							auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
 							if (!currentAsset.subColorsMap.empty())
 							{
+								QStringList dropdownList = currentAsset.subColorsKeyList;
+								dropdownList.prepend(component.second.displayedAssetKey);
 								bool ok;
 								QString pickedKey = QInputDialog::getItem(
 									this->parentWidget(),
 									"Pick Part To Recolor",
 									tr("Part Name:"),
-									currentAsset.subColorsKeyList,
+									dropdownList,
 									0,
 									false,
 									&ok,
@@ -515,18 +543,40 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 
 								if (ok && !pickedKey.isEmpty())
 								{
-									auto& pickedColorObj = currentAsset.subColorsMap.at(pickedKey);
-									QColor colorNew = QColorDialog::getColor(pickedColorObj.colorAltered, this->parentWidget(), "Choose Color");
-									if (colorNew.isValid())
+									if (pickedKey == component.second.displayedAssetKey)
 									{
-										pickedColorObj.colorAltered = colorNew;
-										updatePartInScene(component.second, currentAsset);
-										characterModified = true;
-										if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+										QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
+										if (colorNew.isValid())
 										{
-											for (auto& asset : component.second.assetsMap)
+											currentAsset.colorAltered = colorNew;
+											for (auto& subColor : currentAsset.subColorsMap)
+												subColor.second.colorAltered = colorNew;
+											updatePartInScene(component.second, currentAsset);
+											characterModified = true;
+											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 											{
-												asset.second.colorAltered = colorNew;
+												for (auto& asset : component.second.assetsMap)
+												{
+													asset.second.colorAltered = colorNew;
+												}
+											}
+										}
+									}
+									else
+									{
+										auto& pickedColorObj = currentAsset.subColorsMap.at(pickedKey);
+										QColor colorNew = QColorDialog::getColor(pickedColorObj.colorAltered, this->parentWidget(), "Choose Color");
+										if (colorNew.isValid())
+										{
+											pickedColorObj.colorAltered = colorNew;
+											updatePartInScene(component.second, currentAsset);
+											characterModified = true;
+											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+											{
+												for (auto& asset : component.second.assetsMap)
+												{
+													asset.second.colorAltered = colorNew;
+												}
 											}
 										}
 									}
