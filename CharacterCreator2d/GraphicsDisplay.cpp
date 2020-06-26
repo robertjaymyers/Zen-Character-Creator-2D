@@ -1057,7 +1057,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 	QFile fileRead(filePath);
 	if (fileRead.open(QIODevice::ReadOnly))
 	{
-		bool partsMissing = false;
+		QString missingParts;
 		QTextStream qStream(&fileRead);
 		while (!qStream.atEnd())
 		{
@@ -1124,7 +1124,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							}
 						}
 						else
-							partsMissing = true;
+							missingParts.append(" | " + assetKey);
 					}
 					else if (line.contains(component.second.settings.assetStr + "=[Combined]"))
 					{
@@ -1159,7 +1159,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							updatePartInScene(component.second, component.second.assetsMap.at(assetKey));
 						}
 						else
-							partsMissing = true;
+							missingParts.append(" | " + assetKey);
 					}
 					break;
 				}
@@ -1178,8 +1178,15 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 		}
 		fileRead.close();
 		characterModified = false;
-		if (partsMissing)
-			QMessageBox::information(this->parentWidget(), tr("Parts Missing"), tr("One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail."));
+		if (!missingParts.isEmpty())
+		{
+			QMessageBox::information
+			(
+				this->parentWidget(), 
+				tr("Parts Missing"), 
+				"One or more parts was not found when trying to load from file reference.\r\nSave file only saves references to assets, so if they are moved or deleted, loading may fail.\r\nParts not found are:\r\n" + missingParts
+			);
+		}
 	}
 }
 
