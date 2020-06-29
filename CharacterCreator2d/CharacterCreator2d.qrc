@@ -35,5 +35,6 @@
         <file>Resources/ProgramIcon.ico</file>
         <file>Resources/splashLoadScreenStatic.png</file>
         <file>Resources/error.png</file>
+        <file>Resources/invisible.png</file>
     </qresource>
 </RCC>

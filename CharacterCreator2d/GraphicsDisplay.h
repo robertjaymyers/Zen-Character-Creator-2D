@@ -60,7 +60,7 @@ class GraphicsDisplay : public QGraphicsView
 	Q_OBJECT
 
 public:
-	GraphicsDisplay(QWidget *parent = nullptr);
+	GraphicsDisplay(QWidget *parent = nullptr, int width = 800, int height = 600);
 	bool fileSaveModifCheck();
 
 protected:
@@ -70,13 +70,18 @@ private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastRendered = QCoreApplication::applicationDirPath() + "/Renders";
+	QString fileDirLastOpenedImage = QCoreApplication::applicationDirPath();
 	bool characterModified = false;
-	QString styleSheetEditable = "border: none; background-color: %1";
+	QString styleSheetEditable = "border: none; background-color: %1;";
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
 	QColor backgroundColor = backgroundColorDefault;
 
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
+
+	const QString backgroundImageDefault = ":/ZenCharacterCreator2D/Resources/invisible.png";
+	QString backgroundImage = backgroundImageDefault;
+	std::unique_ptr<QGraphicsPixmapItem> backgroundImageItem = std::make_unique<QGraphicsPixmapItem>(nullptr);
 
 	std::unique_ptr<QScrollArea> partSwapScroll = std::make_unique<QScrollArea>(this);
 	std::unique_ptr<QGroupBox> partSwapGroup = std::make_unique<QGroupBox>(this);
@@ -95,6 +100,7 @@ private:
 	const std::unique_ptr<QAction> actionFileSave = std::make_unique<QAction>("Save Character");
 	const std::unique_ptr<QAction> actionFileRender = std::make_unique<QAction>("Render Character");
 	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
+	const std::unique_ptr<QAction> actionSetBackgroundImage = std::make_unique<QAction>("Set Background Image");
 	std::unique_ptr<QMenu> speciesMenu = std::make_unique<QMenu>("Species", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
 	std::unique_ptr<QMenu> genderMenu = std::make_unique<QMenu>("Gender", contextMenu.get());
@@ -203,6 +209,7 @@ private:
 	bool fileSave();
 	void fileRenderCharacter();
 	void setBackgroundColor(const QColor &color);
+	void setBackgroundImage(const QString &imgPath);
 	void removeCurrentSpeciesFromScene();
 	void applyCurrentSpeciesToScene();
 };

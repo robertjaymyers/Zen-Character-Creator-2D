@@ -29,5 +29,5 @@ public:
 private:
 	Ui::CharacterCreator2dClass ui;
 
-	std::unique_ptr<GraphicsDisplay> display = std::make_unique<GraphicsDisplay>();
+	std::unique_ptr<GraphicsDisplay> display;
 };

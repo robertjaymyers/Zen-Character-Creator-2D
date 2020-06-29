@@ -59,6 +59,7 @@ struct componentDataInit
 	// Since we're working with 2D elements that can overlap, we use a display order
 	// to ensure that the elements get added to the scene to overlap in the way we want.
 	// For example, we give HAIR a higher value than CHEST so that long hair goes on top of shirts.
+	// Note: 0 is reserved for background image, so it will go under everything else.
 	const int displayOrderZ;
 
 	const QString assetStr; // The corresponding asset folder path string for this unique part (ex: "Head").
@@ -127,7 +128,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ComponentType::BODY,
 	componentDataInit
 	{
-		0, // Display order in scene (higher numbers overlap lower numbers)
+		1, // Display order in scene (higher numbers overlap lower numbers)
 		"Body",
 		"#764c39",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -159,7 +160,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ComponentType::EYES,
 	componentDataInit
 	{
-		1, // Display order in scene (higher numbers overlap lower numbers)
+		2, // Display order in scene (higher numbers overlap lower numbers)
 		"Eyes",
 		"#aaaa7f",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -191,7 +192,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ComponentType::LIPS,
 	componentDataInit
 	{
-		2, // Display order in scene (higher numbers overlap lower numbers)
+		3, // Display order in scene (higher numbers overlap lower numbers)
 		"Lips",
 		"#555500",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -223,7 +224,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::BLUSH,
 	componentDataInit
 	{
-		3, // Display order in scene (higher numbers overlap lower numbers)
+		4, // Display order in scene (higher numbers overlap lower numbers)
 		"Blush",
 		"#555500",
 		ColorSetType::FILL_NO_OUTLINE,
@@ -255,7 +256,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::HEAD,
 	componentDataInit
 	{
-		4, // Display order in scene (higher numbers overlap lower numbers)
+		5, // Display order in scene (higher numbers overlap lower numbers)
 		"Head",
 		"#FFFFFF",
 		ColorSetType::NONE,
@@ -285,7 +286,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::BOTTOM,
 	componentDataInit
 	{
-		5, // Display order in scene (higher numbers overlap lower numbers)
+		6, // Display order in scene (higher numbers overlap lower numbers)
 		"Bottom",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -318,7 +319,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::CHEST,
 	componentDataInit
 	{
-		6, // Display order in scene (higher numbers overlap lower numbers)
+		7, // Display order in scene (higher numbers overlap lower numbers)
 		"Chest",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -351,7 +352,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::FEET,
 	componentDataInit
 	{
-		7, // Display order in scene (higher numbers overlap lower numbers)
+		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -384,7 +385,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::MASK,
 	componentDataInit
 	{
-		8, // Display order in scene (higher numbers overlap lower numbers)
+		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -417,7 +418,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	{ ComponentType::HAIR,
 	componentDataInit
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -454,7 +455,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ComponentType::BODY,
 	componentDataInit
 	{
-		0, // Display order in scene (higher numbers overlap lower numbers)
+		1, // Display order in scene (higher numbers overlap lower numbers)
 		"Body",
 		"#764c39",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -486,7 +487,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ComponentType::EYES,
 	componentDataInit
 	{
-		1, // Display order in scene (higher numbers overlap lower numbers)
+		2, // Display order in scene (higher numbers overlap lower numbers)
 		"Eyes",
 		"#aaaa7f",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -518,7 +519,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ComponentType::LIPS,
 	componentDataInit
 	{
-		2, // Display order in scene (higher numbers overlap lower numbers)
+		3, // Display order in scene (higher numbers overlap lower numbers)
 		"Lips",
 		"#555500",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -550,7 +551,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::BLUSH,
 	componentDataInit
 	{
-		3, // Display order in scene (higher numbers overlap lower numbers)
+		4, // Display order in scene (higher numbers overlap lower numbers)
 		"Blush",
 		"#555500",
 		ColorSetType::FILL_NO_OUTLINE,
@@ -582,7 +583,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::HEAD,
 	componentDataInit
 	{
-		4, // Display order in scene (higher numbers overlap lower numbers)
+		5, // Display order in scene (higher numbers overlap lower numbers)
 		"Head",
 		"#FFFFFF",
 		ColorSetType::NONE,
@@ -612,7 +613,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::BOTTOM,
 	componentDataInit
 	{
-		5, // Display order in scene (higher numbers overlap lower numbers)
+		6, // Display order in scene (higher numbers overlap lower numbers)
 		"Bottom",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -645,7 +646,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::CHEST,
 	componentDataInit
 	{
-		6, // Display order in scene (higher numbers overlap lower numbers)
+		7, // Display order in scene (higher numbers overlap lower numbers)
 		"Chest",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -678,7 +679,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::FEET,
 	componentDataInit
 	{
-		7, // Display order in scene (higher numbers overlap lower numbers)
+		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -711,7 +712,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::MASK,
 	componentDataInit
 	{
-		8, // Display order in scene (higher numbers overlap lower numbers)
+		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -744,7 +745,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	{ ComponentType::HAIR,
 	componentDataInit
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,

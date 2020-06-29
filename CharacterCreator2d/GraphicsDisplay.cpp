@@ -14,15 +14,18 @@ This file is part of Zen Character Creator 2D.
 
 #include "GraphicsDisplay.h"
 
-GraphicsDisplay::GraphicsDisplay(QWidget* parent)
+GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	: QGraphicsView(parent)
 {
+	this->setFixedSize(QSize(width, height));
+
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
 	contextMenu.get()->addAction(actionFileSave.get());
 	contextMenu.get()->addAction(actionFileRender.get());
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addAction(actionSetBackgroundColor.get());
+	contextMenu.get()->addAction(actionSetBackgroundImage.get());
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addMenu(speciesMenu.get());
 	contextMenu.get()->addMenu(genderMenu.get());
@@ -47,6 +50,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 		QColor colorNew = QColorDialog::getColor(backgroundColor, this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
 			setBackgroundColor(colorNew);
+	});
+	connect(actionSetBackgroundImage.get(), &QAction::triggered, this, [=]() {
+		QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), fileDirLastOpenedImage, tr("IMG Files (*.png *.gif *.jpg *.bmp)"));
+		if (!filePath.isEmpty())
+		{
+			setBackgroundImage(filePath);
+			fileDirLastOpenedImage = filePath;
+		}
 	});
 
 	textInputSingleLineList.emplace_back
@@ -101,7 +112,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent)
 	this->setScene(scene.get());
 	scene.get()->setParent(this->parent());
 
-	this->setStyleSheet(styleSheetEditable.arg(backgroundColorDefault.name()));
+	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
+	scene.get()->addItem(backgroundImageItem.get());
+	backgroundImageItem.get()->setPixmap(backgroundImage);
+	backgroundImageItem.get()->setPos(0, 0);
 	this->setLayout(layout.get());
 
 	layout.get()->setMargin(50);
@@ -891,20 +905,69 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 	if (asset.subColorsMap.empty())
 	{
 		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-			component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset, PaintType::SINGLE));
+		{
+			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::SINGLE);
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2, 
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-			component.item.get()->setPixmap(recolorPixmapSolid(asset, PaintType::SINGLE));
+		{
+			QPixmap newPix = recolorPixmapSolid(asset, PaintType::SINGLE);
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos(this->width() - newPix.width(), this->height() - newPix.height());
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2,
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 		else
-			component.item.get()->setPixmap(asset.imgBasePath);
+		{
+			QPixmap newPix = asset.imgBasePath;
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2,
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 	}
 	else
 	{
 		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-			component.item.get()->setPixmap(recolorPixmapSolidWithOutline(asset, PaintType::COMBINED));
+		{
+			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::COMBINED);
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2,
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
-			component.item.get()->setPixmap(recolorPixmapSolid(asset, PaintType::COMBINED));
+		{
+			QPixmap newPix = recolorPixmapSolid(asset, PaintType::COMBINED);
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2,
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 		else
-			component.item.get()->setPixmap(asset.imgBasePath);
+		{
+			QPixmap newPix = asset.imgBasePath;
+			component.item.get()->setPixmap(newPix);
+			component.item.get()->setPos
+			(
+				abs(this->width() - newPix.width()) / 2,
+				abs(this->height() - newPix.height()) / 2
+			);
+		}
 	}
 }
 
@@ -1168,6 +1231,10 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			{
 				setBackgroundColor(QColor(extractSubstringInbetweenQt("=", "", line)));
 			}
+			else if (line.contains("backgroundImage="))
+			{
+				setBackgroundImage(extractSubstringInbetweenQt("=", "", line));
+			}
 			for (auto& textInputSL : textInputSingleLineList)
 			{
 				if (line.contains(textInputSL.inputTypeStr + "="))
@@ -1199,7 +1266,9 @@ void GraphicsDisplay::fileNew()
 			asset.second.colorAltered = asset.second.colorDefault;
 	}
 	backgroundColor = backgroundColorDefault;
+	backgroundImage = backgroundImageDefault;
 	setBackgroundColor(backgroundColor);
+	setBackgroundImage(backgroundImage);
 	for (auto& textInputSL : textInputSingleLineList)
 	{
 		textInputSL.inputWidget.get()->setText("");
@@ -1284,6 +1353,7 @@ bool GraphicsDisplay::fileSave()
 			}
 
 			qStream << "backgroundColor=" + backgroundColor.name() + "\r\n";
+			qStream << "backgroundImage=" + backgroundImage + "\r\n";
 
 			for (const auto& textInputSL : textInputSingleLineList)
 			{
@@ -1331,6 +1401,17 @@ void GraphicsDisplay::setBackgroundColor(const QColor &color)
 {
 	backgroundColor = color;
 	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
+	characterModified = true;
+}
+
+void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
+{
+	backgroundImage = imgPath;
+	backgroundImageItem.get()->setPixmap
+	(
+		QPixmap(backgroundImage).scaled(QSize(this->width(), this->height()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)
+	);
+	backgroundImageItem.get()->setPos(0, 0);
 	characterModified = true;
 }
 
