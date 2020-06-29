@@ -21,6 +21,7 @@ This file is part of Zen Character Creator 2D.
 #include <QMenu>
 #include <QAction>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QGraphicsPixmapItem>
 #include <QDirIterator>
 #include <QPushButton>
@@ -74,7 +75,7 @@ private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
 	QString fileDirLastRendered = QCoreApplication::applicationDirPath() + "/Renders";
-	QString fileDirLastOpenedImage = QCoreApplication::applicationDirPath();
+	QString fileDirLastOpenedImage = QCoreApplication::applicationDirPath() + "/Backgrounds";
 	bool characterModified = false;
 	QString styleSheetEditable = "border: none; background-color: %1;";
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
@@ -131,6 +132,7 @@ private:
 	const std::unique_ptr<QAction> actionFileRender = std::make_unique<QAction>("Render Character");
 	const std::unique_ptr<QAction> actionSetBackgroundColor = std::make_unique<QAction>("Set Background Color");
 	const std::unique_ptr<QAction> actionSetBackgroundImage = std::make_unique<QAction>("Set Background Image");
+	const std::unique_ptr<QAction> actionClearBackgroundImage = std::make_unique<QAction>("Clear Background Image");
 	std::unique_ptr<QMenu> speciesMenu = std::make_unique<QMenu>("Species", contextMenu.get());
 	std::unique_ptr<QActionGroup> actionSpeciesGroup = std::make_unique<QActionGroup>(this);
 	std::unique_ptr<QMenu> genderMenu = std::make_unique<QMenu>("Gender", contextMenu.get());

@@ -26,6 +26,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addAction(actionSetBackgroundColor.get());
 	contextMenu.get()->addAction(actionSetBackgroundImage.get());
+	contextMenu.get()->addAction(actionClearBackgroundImage.get());
 	contextMenu.get()->addSeparator();
 	contextMenu.get()->addMenu(speciesMenu.get());
 	contextMenu.get()->addMenu(genderMenu.get());
@@ -58,6 +59,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			setBackgroundImage(filePath);
 			fileDirLastOpenedImage = filePath;
 		}
+	});
+	connect(actionClearBackgroundImage.get(), &QAction::triggered, this, [=]() {
+		setBackgroundImage(backgroundImageDefault);
 	});
 
 	textInputSingleLineList.emplace_back
