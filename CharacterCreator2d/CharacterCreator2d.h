@@ -32,4 +32,10 @@ private:
 
 	std::unique_ptr<QGridLayout> baseLayout = std::make_unique<QGridLayout>();
 	std::unique_ptr<GraphicsDisplay> display;
+
+	enum class PreFullscreenWindowState { NORMAL, MAXIMIZED };
+	PreFullscreenWindowState preFullscreenWindowState = PreFullscreenWindowState::NORMAL;
+
+	void enterFullscreen();
+	void exitFullscreen();
 };

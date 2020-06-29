@@ -725,6 +725,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	characterNameInputGroup.get()->setFlat(true);
 	layout.get()->addWidget(characterNameInputGroup.get(), 1, 0, Qt::AlignLeft);
 
+	fullscreenBtn.get()->setText("Fullscreen");
+	fullscreenBtn.get()->setStyleSheet(fullscreenBtnStyle);
+	layout.get()->addWidget(fullscreenBtn.get(), 1, 2, Qt::AlignRight);
+
 	actionColorChangeSettingsApplyToAllOnPicker.get()->setParent(this);
 	actionColorChangeSettingsApplyToAllOnPicker.get()->setCheckable(true);
 	actionColorChangeSettingsDontApplyToAllOnPicker.get()->setParent(this);

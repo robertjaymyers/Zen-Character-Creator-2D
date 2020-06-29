@@ -35,6 +35,7 @@ This file is part of Zen Character Creator 2D.
 #include <QGroupBox>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QShortcut>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -62,6 +63,8 @@ class GraphicsDisplay : public QGraphicsView
 public:
 	GraphicsDisplay(QWidget *parent = nullptr, int width = 800, int height = 600);
 	bool fileSaveModifCheck();
+	std::unique_ptr<QShortcut> fullscreenShortcutExit = std::make_unique<QShortcut>(QKeySequence(tr("ESC", "Exit Fullscreen")), this);
+	std::unique_ptr<QPushButton> fullscreenBtn = std::make_unique<QPushButton>(this);
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
@@ -94,6 +97,32 @@ private:
 
 	std::unique_ptr<QGroupBox> characterNameInputGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> characterNameInputGroupLayout = std::make_unique<QGridLayout>();
+
+	const QString fullscreenBtnStyle = 
+	{
+		"QPushButton"
+		"{"
+			"color: #000000;"
+			"background-color: #FFFFFF;"
+			"border-width: 1px;"
+			"border-style: solid;"
+			"border-color: #000000;"
+			"border-radius: 4px;"
+			"font-size: 12px;"
+			"padding: 5px;"
+		"}"
+		"QPushButton:hover"
+		"{"
+			"color: #000000;"
+			"background-color: #E5884E;"
+			"border-width: 1px;"
+			"border-style: solid;"
+			"border-color: #000000;"
+			"border-radius: 4px;"
+			"font-size: 12px;"
+			"padding: 5px;"
+		"}"
+	};
 
 	const std::unique_ptr<QMenu> contextMenu = std::make_unique<QMenu>();
 	const std::unique_ptr<QAction> actionFileNew = std::make_unique<QAction>("New Character");
@@ -134,58 +163,6 @@ private:
 	};
 
 	std::vector<textInputSingleLine> textInputSingleLineList;
-
-	const uiBtnInvisibleSpacer uiSpacerList[4] =
-	{
-		{
-			75,
-			75,
-			"QPushButton"
-			"{"
-				"background-color: rgba(255, 255, 255, 0);"
-				"border: none;"
-				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
-			"}",
-			{0, 2},
-			Qt::AlignLeft | Qt::AlignTop
-		},
-		{
-			75,
-			75,
-			"QPushButton"
-			"{"
-				"background-color: rgba(255, 255, 255, 0);"
-				"border: none;"
-				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
-			"}",
-			{1, 2},
-			Qt::AlignLeft | Qt::AlignTop
-		},
-		{
-			75,
-			75,
-			"QPushButton"
-			"{"
-				"background-color: rgba(255, 255, 255, 0);"
-				"border: none;"
-				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
-			"}",
-			{2, 2},
-			Qt::AlignLeft | Qt::AlignTop
-		},
-		{
-			75,
-			75,
-			"QPushButton"
-			"{"
-				"background-color: rgba(255, 255, 255, 0);"
-				"border: none;"
-				"image: url(:/ZenCharacterCreator2D/Resources/picker-spacer-transparent-background.png);"
-			"}",
-			{3, 2},
-			Qt::AlignLeft | Qt::AlignTop
-		}
-	};
 
 	QColor pickerCopiedColor = QColor("#000000");
 	const QPixmap pickerPasteColorIcon = QPixmap(":/ZenCharacterCreator2D/Resources/clipboardColorIcon.png");

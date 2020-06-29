@@ -41,6 +41,23 @@ CharacterCreator2d::CharacterCreator2d(QWidget *parent)
 
 	baseLayout.get()->addWidget(display.get(), 0, 0);
 
+	connect(display.get()->fullscreenShortcutExit.get(), &QShortcut::activated, this, [=]() {
+		if (this->isFullScreen())
+		{
+			exitFullscreen();
+		}
+	});
+	connect(display.get()->fullscreenBtn.get(), &QPushButton::clicked, this, [=]() {
+		if (this->isFullScreen())
+		{
+			exitFullscreen();
+		}
+		else
+		{
+			enterFullscreen();
+		}
+	});
+
 	display.get()->show();
 }
 
@@ -56,4 +73,23 @@ void CharacterCreator2d::closeEvent(QCloseEvent *event)
 	{
 		event->ignore();
 	}
+}
+
+// private:
+
+void CharacterCreator2d::enterFullscreen()
+{
+	if (windowState() == Qt::WindowMaximized)
+		preFullscreenWindowState = PreFullscreenWindowState::MAXIMIZED;
+	else
+		preFullscreenWindowState = PreFullscreenWindowState::NORMAL;
+	this->showFullScreen();
+}
+
+void CharacterCreator2d::exitFullscreen()
+{
+	if (preFullscreenWindowState == PreFullscreenWindowState::MAXIMIZED)
+		this->showMaximized();
+	else if (preFullscreenWindowState == PreFullscreenWindowState::NORMAL)
+		this->showNormal();
 }
