@@ -17,7 +17,7 @@ This file is part of Zen Character Creator 2D.
 GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	: QGraphicsView(parent)
 {
-	this->setFixedSize(QSize(width, height));
+	this->setMinimumSize(QSize(width, height));
 
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
@@ -779,6 +779,15 @@ void GraphicsDisplay::contextMenuEvent(QContextMenuEvent *event)
 	contextMenu.get()->exec(event->globalPos());
 }
 
+void GraphicsDisplay::resizeEvent(QResizeEvent *event)
+{
+	setBackgroundImage(backgroundImage);
+	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	{
+		updatePartInScene(component.second, component.second.assetsMap.at(component.second.displayedAssetKey));
+	}
+}
+
 // private:
 
 QString GraphicsDisplay::extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom)
@@ -910,8 +919,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2, 
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
@@ -921,8 +930,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPos(this->width() - newPix.width(), this->height() - newPix.height());
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2,
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 		else
@@ -931,8 +940,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2,
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 	}
@@ -944,8 +953,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2,
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
@@ -954,8 +963,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2,
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 		else
@@ -964,8 +973,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
-				abs(this->width() - newPix.width()) / 2,
-				abs(this->height() - newPix.height()) / 2
+				(this->size().width() - newPix.width()) / 2,
+				(this->size().height() - newPix.height()) / 2
 			);
 		}
 	}
@@ -1409,7 +1418,7 @@ void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
 	backgroundImage = imgPath;
 	backgroundImageItem.get()->setPixmap
 	(
-		QPixmap(backgroundImage).scaled(QSize(this->width(), this->height()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)
+		QPixmap(backgroundImage).scaled(QSize(this->size().width(), this->size().height()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)
 	);
 	backgroundImageItem.get()->setPos(0, 0);
 	characterModified = true;

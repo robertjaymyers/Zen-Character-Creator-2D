@@ -65,6 +65,7 @@ public:
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
+	void resizeEvent(QResizeEvent *event);
 
 private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";

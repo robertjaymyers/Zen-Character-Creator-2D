@@ -34,7 +34,13 @@ CharacterCreator2d::CharacterCreator2d(QWidget *parent)
 {
 	ui.setupUi(this);
 
+	ui.centralWidget->setLayout(baseLayout.get());
+	baseLayout.get()->setMargin(0);
+
 	display = std::make_unique<GraphicsDisplay>(this, this->width(), this->height());
+
+	baseLayout.get()->addWidget(display.get(), 0, 0);
+
 	display.get()->show();
 }
 

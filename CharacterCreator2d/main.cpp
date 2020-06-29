@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 	app.processEvents();
 
 	CharacterCreator2d window;
-	window.setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
 	window.show();
 	loadScreen.finish(&window);
 	return app.exec();

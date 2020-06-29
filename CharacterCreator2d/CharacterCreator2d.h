@@ -15,6 +15,7 @@ This file is part of Zen Character Creator 2D.
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QGridLayout>
 #include "ui_CharacterCreator2d.h"
 #include "GraphicsDisplay.h"
 
@@ -29,5 +30,6 @@ public:
 private:
 	Ui::CharacterCreator2dClass ui;
 
+	std::unique_ptr<QGridLayout> baseLayout = std::make_unique<QGridLayout>();
 	std::unique_ptr<GraphicsDisplay> display;
 };
