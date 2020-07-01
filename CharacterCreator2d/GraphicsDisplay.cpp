@@ -175,6 +175,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
 								}
 							);
+							qDebug() << assetPath;
 
 							QString multicolorPath = assetPath;
 							multicolorPath.replace("/" + QFileInfo(assetPath).fileName(), "/Multicolor/" + QFileInfo(assetPath).baseName());
@@ -386,36 +387,36 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							});
 						}
 					}
-					if (component.second.settings.partHasBtnPicker)
+					if (component.second.settings.partHasBtnPickColor)
 					{
-						component.second.btnPicker.get()->setStyleSheet
+						component.second.btnPickColor.get()->setStyleSheet
 						(
 							component.second.settings.btnStyleSheetTemplate
-							.arg(component.second.settings.btnPickerIcons[0])
-							.arg(component.second.settings.btnPickerIcons[1])
-							.arg(component.second.settings.btnPickerIcons[2])
+							.arg(component.second.settings.btnPickColorIcons[0])
+							.arg(component.second.settings.btnPickColorIcons[1])
+							.arg(component.second.settings.btnPickColorIcons[2])
 						);
-						component.second.btnPicker.get()->setParent(this);
-						component.second.btnPicker.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-						component.second.btnPicker.get()->setFixedSize
+						component.second.btnPickColor.get()->setParent(this);
+						component.second.btnPickColor.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+						component.second.btnPickColor.get()->setFixedSize
 						(
 							QSize
 							(
-								component.second.settings.btnPickerWidth,
-								component.second.settings.btnPickerHeight
+								component.second.settings.btnPickColorWidth,
+								component.second.settings.btnPickColorHeight
 							)
 						);
-						component.second.btnPicker.get()->setVisible(false);
+						component.second.btnPickColor.get()->setVisible(false);
 
-						component.second.contextMenuColorPicker.get()->addAction(component.second.actionCopyColor.get());
-						component.second.contextMenuColorPicker.get()->addAction(component.second.actionPasteColor.get());
-						component.second.contextMenuColorPicker.get()->addSeparator();
-						component.second.contextMenuColorPicker.get()->addAction(component.second.actionApplyColorToAllInSet.get());
+						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionCopyColor.get());
+						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionPasteColor.get());
+						component.second.contextMenuForBtnPickColor.get()->addSeparator();
+						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionApplyColorToAllInSet.get());
 
-						component.second.btnPicker.get()->setContextMenuPolicy(Qt::CustomContextMenu);
-						connect(component.second.btnPicker.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
-							QPoint globalPos = component.second.btnPicker.get()->mapToGlobal(point);
-							component.second.contextMenuColorPicker.get()->exec(globalPos);
+						component.second.btnPickColor.get()->setContextMenuPolicy(Qt::CustomContextMenu);
+						connect(component.second.btnPickColor.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
+							QPoint globalPos = component.second.btnPickColor.get()->mapToGlobal(point);
+							component.second.contextMenuForBtnPickColor.get()->exec(globalPos);
 						});
 
 						connect(component.second.actionCopyColor.get(), &QAction::triggered, this, [&]() {
@@ -542,7 +543,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							}
 						});
 
-						connect(component.second.btnPicker.get(), &QPushButton::clicked, this, [&]() {
+						connect(component.second.btnPickColor.get(), &QPushButton::clicked, this, [&]() {
 							auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
 							if (!currentAsset.subColorsMap.empty())
 							{
@@ -646,20 +647,20 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			partSwapGroupLayout.get()->addWidget
 			(
 				component.second.btnSwapComponent.get(),
-				component.second.settings.gridPlaceSwapLeft[0],
-				component.second.settings.gridPlaceSwapLeft[1],
-				component.second.settings.gridAlignSwapLeft
+				component.second.settings.gridPlaceSwapComponent[0],
+				component.second.settings.gridPlaceSwapComponent[1],
+				component.second.settings.gridAlignSwapComponent
 			);
 			component.second.btnSwapComponent.get()->setVisible(true);
-			int count = 0;
+			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
 			for (auto& asset : component.second.assetsMap)
 			{
 				partSwapGroupLayout.get()->addWidget
 				(
 					asset.second.btnSwapAsset.get(),
 					count,
-					1,
-					component.second.settings.gridAlignSwapRight
+					component.second.settings.gridPlaceSwapAssetOrigin[1],
+					component.second.settings.gridAlignSwapAsset
 				);
 			}
 
@@ -673,16 +674,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				}
 			}
 		}
-		if (component.second.settings.partHasBtnPicker)
+		if (component.second.settings.partHasBtnPickColor)
 		{
 			partPickerGroupLayout.get()->addWidget
 			(
-				component.second.btnPicker.get(),
-				component.second.settings.gridPlacePicker[0],
-				component.second.settings.gridPlacePicker[1],
-				component.second.settings.gridAlignPicker
+				component.second.btnPickColor.get(),
+				component.second.settings.gridPlacePickColor[0],
+				component.second.settings.gridPlacePickColor[1],
+				component.second.settings.gridAlignPickColor
 			);
-			component.second.btnPicker.get()->setVisible(true);
+			component.second.btnPickColor.get()->setVisible(true);
 		}
 		scene.get()->addItem(component.second.item.get());
 	}
@@ -1446,10 +1447,10 @@ void GraphicsDisplay::removeCurrentSpeciesFromScene()
 				partSwapGroupLayout.get()->removeWidget(asset.second.btnSwapAsset.get());
 			}
 		}
-		if (component.second.settings.partHasBtnPicker)
+		if (component.second.settings.partHasBtnPickColor)
 		{
-			component.second.btnPicker.get()->setVisible(false);
-			partPickerGroupLayout.get()->removeWidget(component.second.btnPicker.get());
+			component.second.btnPickColor.get()->setVisible(false);
+			partPickerGroupLayout.get()->removeWidget(component.second.btnPickColor.get());
 		}
 
 		// We remove rather than using QGraphicsScene clear() function,
@@ -1471,19 +1472,19 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 			partSwapGroupLayout.get()->addWidget
 			(
 				component.second.btnSwapComponent.get(),
-				component.second.settings.gridPlaceSwapLeft[0],
-				component.second.settings.gridPlaceSwapLeft[1],
-				component.second.settings.gridAlignSwapLeft
+				component.second.settings.gridPlaceSwapComponent[0],
+				component.second.settings.gridPlaceSwapComponent[1],
+				component.second.settings.gridAlignSwapComponent
 			);
-			int count = 0;
+			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
 			for (auto& asset : component.second.assetsMap)
 			{
 				partSwapGroupLayout.get()->addWidget
 				(
 					asset.second.btnSwapAsset.get(),
 					count,
-					1,
-					component.second.settings.gridAlignSwapRight
+					component.second.settings.gridPlaceSwapAssetOrigin[1],
+					component.second.settings.gridAlignSwapAsset
 				);
 				count++;
 			}
@@ -1499,16 +1500,16 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 				}
 			}
 		}
-		if (component.second.settings.partHasBtnPicker)
+		if (component.second.settings.partHasBtnPickColor)
 		{
 			partPickerGroupLayout.get()->addWidget
 			(
-				component.second.btnPicker.get(),
-				component.second.settings.gridPlacePicker[0],
-				component.second.settings.gridPlacePicker[1],
-				component.second.settings.gridAlignPicker
+				component.second.btnPickColor.get(),
+				component.second.settings.gridPlacePickColor[0],
+				component.second.settings.gridPlacePickColor[1],
+				component.second.settings.gridAlignPickColor
 			);
-			component.second.btnPicker.get()->setVisible(true);
+			component.second.btnPickColor.get()->setVisible(true);
 		}
 		scene.get()->addItem(component.second.item.get());
 	}

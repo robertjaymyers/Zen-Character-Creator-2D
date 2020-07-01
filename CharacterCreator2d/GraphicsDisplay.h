@@ -21,7 +21,6 @@ This file is part of Zen Character Creator 2D.
 #include <QMenu>
 #include <QAction>
 #include <QCoreApplication>
-#include <QApplication>
 #include <QGraphicsPixmapItem>
 #include <QDirIterator>
 #include <QPushButton>

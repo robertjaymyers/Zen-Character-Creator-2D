@@ -36,5 +36,9 @@
         <file>Resources/splashLoadScreenStatic.png</file>
         <file>Resources/error.png</file>
         <file>Resources/invisible.png</file>
+        <file>Resources/btnPickerNeck.png</file>
+        <file>Resources/btnPickerNeckHover.png</file>
+        <file>Resources/btnSwapCharacterPartNeck.png</file>
+        <file>Resources/btnSwapCharacterPartNeckHover.png</file>
     </qresource>
 </RCC>
