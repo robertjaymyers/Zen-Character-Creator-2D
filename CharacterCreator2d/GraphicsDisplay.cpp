@@ -144,7 +144,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						component.first, componentData{ component.second }
 					);
 
-					QStringList assetPathList = fileGetAssets(
+					QStringList assetFolderPathList = fileGetAssetDirectoriesOnStartup(
 						QCoreApplication::applicationDirPath() +
 						"/Assets/Species/" +
 						species.second.assetStr + "/" +
@@ -155,73 +155,50 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 					// Note: We store as filename only (e.g. NOT including full path), 
 					// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
-					for (const auto& assetPath : assetPathList)
+					for (const auto& assetFolderPath : assetFolderPathList)
 					{
-						if (component.second.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-						{
-							QString outlinePath = assetPath;
-							QString thumbnailPath = assetPath;
-							speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
-								.componentMap.at(component.first).assetsMap.try_emplace
+						QString outlinePath = assetFolderPath;
+						QString thumbnailPath = assetFolderPath;
+						speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+							.componentMap.at(component.first).assetsMap.try_emplace
 							(
-								QFileInfo(assetPath).baseName(),
+								QDir(assetFolderPath).dirName(),
 								assetsData
 								{
-									assetPath,
-									QFileInfo(assetPath).fileName(),
+									QDir(assetFolderPath).dirName(),
+									getPathIfExists(assetFolderPath, AssetImgType::FILL),
+									getPathIfExists(assetFolderPath, AssetImgType::OUTLINE),
+									getPathIfExists(assetFolderPath, AssetImgType::THUMBNAIL),
 									component.second.defaultInitialColor,
 									component.second.defaultInitialColor,
-									outlinePath.replace("/" + QFileInfo(assetPath).fileName(), "/Outline/" + QFileInfo(assetPath).fileName()),
-									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
 								}
-							);
-							qDebug() << assetPath;
+						);
+						//qDebug() << assetFolderPath;
 
-							QString multicolorPath = assetPath;
-							multicolorPath.replace("/" + QFileInfo(assetPath).fileName(), "/Multicolor/" + QFileInfo(assetPath).baseName());
-							if (QDir(multicolorPath).exists())
-							{
-								QStringList multicolorPathList = fileGetAssets(multicolorPath);
-								if (multicolorPathList.isEmpty())
-									continue;
-								for (const auto& colorPath : multicolorPathList)
-								{
-									auto& currentAssetsMap = speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
-										.componentMap.at(component.first).assetsMap;
-									currentAssetsMap.at(QFileInfo(assetPath).baseName()).subColorsMap.try_emplace
-									(
-										QFileInfo(colorPath).baseName(),
-										subColorData
-										{
-											colorPath,
-											QFileInfo(colorPath).fileName(),
-											component.second.defaultInitialColor,
-											component.second.defaultInitialColor,
-										}
-									);
-									currentAssetsMap.at(QFileInfo(assetPath).baseName()).subColorsKeyList.append
-									(QFileInfo(colorPath).baseName());
-								}
-							}
-						}
-						else if (component.second.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
-							component.second.colorSetType == ColorSetType::NONE)
+						QString multicolorPath = assetFolderPath + "/multicolor";
+						if (QDir(multicolorPath).exists())
 						{
-							QString thumbnailPath = assetPath;
-							speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
-								.componentMap.at(component.first).assetsMap.try_emplace
-							(
-								QFileInfo(assetPath).baseName(),
-								assetsData
-								{
-									assetPath,
-									QFileInfo(assetPath).fileName(),
-									component.second.defaultInitialColor,
-									component.second.defaultInitialColor,
-									"",
-									thumbnailPath.replace("/" + QFileInfo(assetPath).fileName(), "/Thumbnail/" + QFileInfo(assetPath).fileName())
-								}
-							);
+							QStringList multicolorPathList = fileGetAssets(multicolorPath);
+							if (multicolorPathList.isEmpty())
+								continue;
+							for (const auto& colorPath : multicolorPathList)
+							{
+								auto& currentAssetsMap = speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+									.componentMap.at(component.first).assetsMap;
+								currentAssetsMap.at(QDir(assetFolderPath).dirName()).subColorsMap.try_emplace
+								(
+									QFileInfo(colorPath).baseName(),
+									subColorData
+									{
+										colorPath,
+										QFileInfo(colorPath).fileName(),
+										component.second.defaultInitialColor,
+										component.second.defaultInitialColor,
+									}
+								);
+								currentAssetsMap.at(QDir(assetFolderPath).dirName()).subColorsKeyList.append
+								(QFileInfo(colorPath).baseName());
+							}
 						}
 					}
 				}
@@ -652,16 +629,33 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				component.second.settings.gridAlignSwapComponent
 			);
 			component.second.btnSwapComponent.get()->setVisible(true);
+
 			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
+			if (component.second.assetsMap.count("none") > 0)
+				count++;
 			for (auto& asset : component.second.assetsMap)
 			{
-				partSwapGroupLayout.get()->addWidget
-				(
-					asset.second.btnSwapAsset.get(),
-					count,
-					component.second.settings.gridPlaceSwapAssetOrigin[1],
-					component.second.settings.gridAlignSwapAsset
-				);
+				if (asset.first == "none")
+				{
+					partSwapGroupLayout.get()->addWidget
+					(
+						asset.second.btnSwapAsset.get(),
+						component.second.settings.gridPlaceSwapAssetOrigin[0],
+						component.second.settings.gridPlaceSwapAssetOrigin[1],
+						component.second.settings.gridAlignSwapAsset
+					);
+				}
+				else
+				{
+					partSwapGroupLayout.get()->addWidget
+					(
+						asset.second.btnSwapAsset.get(),
+						count,
+						component.second.settings.gridPlaceSwapAssetOrigin[1],
+						component.second.settings.gridAlignSwapAsset
+					);
+					count++;
+				}
 			}
 
 			if (componentCurrent == ComponentType::NONE && component.first != ComponentType::NONE)
@@ -892,10 +886,10 @@ QStringList GraphicsDisplay::extractSubstringInbetweenLoopList(const QString str
 	return extracted;
 }
 
-QStringList GraphicsDisplay::fileGetAssetDirectories(const QString &subPath)
+QStringList GraphicsDisplay::fileGetAssetDirectoriesOnStartup(const QString &path)
 {
 	QStringList assetPathList;
-	QDirIterator dirIt(appExecutablePath + "/Assets/" + subPath, QDir::AllDirs | QDir::NoDotAndDotDot);
+	QDirIterator dirIt(path, QDir::AllDirs | QDir::NoDotAndDotDot);
 	while (dirIt.hasNext())
 	{
 		QString assetPath = dirIt.next();
@@ -916,6 +910,18 @@ QStringList GraphicsDisplay::fileGetAssets(const QString &path)
 			assetPathList.append(assetPath);
 	}
 	return assetPathList;
+}
+
+QString GraphicsDisplay::getPathIfExists(const QString &assetFolderPath, const AssetImgType &assetImgType)
+{
+	QString imgPath = assetFolderPath + "/" + QDir(assetFolderPath).dirName();
+	for (const auto& naming : assetImgTypeMap.at(assetImgType))
+	{
+		QString namePath = imgPath + naming + imgExtensionStandard;
+		if (QFile(namePath).exists())
+			return namePath;
+	}
+	return imgErrorPath;
 }
 
 void GraphicsDisplay::updatePartInScene(const componentData &component, const assetsData &asset)
@@ -945,7 +951,7 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 		}
 		else
 		{
-			QPixmap newPix = asset.imgBasePath;
+			QPixmap newPix = asset.imgOutlinePath;
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
@@ -978,7 +984,7 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 		}
 		else
 		{
-			QPixmap newPix = asset.imgBasePath;
+			QPixmap newPix = asset.imgOutlinePath;
 			component.item.get()->setPixmap(newPix);
 			component.item.get()->setPos
 			(
@@ -1004,7 +1010,7 @@ QPixmap GraphicsDisplay::recolorPixmapSolid(const assetsData &asset, const Paint
 {
 	if (paintType == PaintType::SINGLE)
 	{
-		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPixmap newImage = QPixmap(asset.imgFillPath);
 		QPainter painter;
 		painter.begin(&newImage);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
@@ -1029,7 +1035,7 @@ QPixmap GraphicsDisplay::recolorPixmapSolid(const assetsData &asset, const Paint
 			painter.end();
 			recoloredParts.emplace_back(recoloredImg);
 		}
-		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPixmap newImage = QPixmap(asset.imgFillPath);
 		QPainter painter;
 		painter.begin(&newImage);
 		painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -1049,7 +1055,7 @@ QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, 
 {
 	if (paintType == PaintType::SINGLE)
 	{
-		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPixmap newImage = QPixmap(asset.imgFillPath);
 		QPainter painter;
 		painter.begin(&newImage);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
@@ -1076,7 +1082,7 @@ QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, 
 			painter.end();
 			recoloredParts.emplace_back(recoloredImg);
 		}
-		QPixmap newImage = QPixmap(asset.imgBasePath);
+		QPixmap newImage = QPixmap(asset.imgFillPath);
 		QPainter painter;
 		painter.begin(&newImage);
 		painter.setCompositionMode(QPainter::CompositionMode_Source);
@@ -1183,7 +1189,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 				{
 					if (line.contains(component.second.settings.assetStr + "=[Single]"))
 					{
-						QString assetKey = QFileInfo(extractSubstringInbetweenQt("=[Single]", ",", line)).baseName();
+						QString assetKey = extractSubstringInbetweenQt("=[Single]", ",", line);
 						if (component.second.assetsMap.count(assetKey) > 0)
 						{
 							component.second.displayedAssetKey = assetKey;
@@ -1209,7 +1215,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 					}
 					else if (line.contains(component.second.settings.assetStr + "=[Combined]"))
 					{
-						QString assetKey = QFileInfo(extractSubstringInbetweenQt("=[Combined]", ",", line)).baseName();
+						QString assetKey = extractSubstringInbetweenQt("=[Combined]", ",", line);
 						if (component.second.assetsMap.count(assetKey) > 0)
 						{
 							component.second.displayedAssetKey = assetKey;
@@ -1477,16 +1483,31 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 				component.second.settings.gridAlignSwapComponent
 			);
 			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
+			if (component.second.assetsMap.count("none") > 0)
+				count++;
 			for (auto& asset : component.second.assetsMap)
 			{
-				partSwapGroupLayout.get()->addWidget
-				(
-					asset.second.btnSwapAsset.get(),
-					count,
-					component.second.settings.gridPlaceSwapAssetOrigin[1],
-					component.second.settings.gridAlignSwapAsset
-				);
-				count++;
+				if (asset.first == "none")
+				{
+					partSwapGroupLayout.get()->addWidget
+					(
+						asset.second.btnSwapAsset.get(),
+						component.second.settings.gridPlaceSwapAssetOrigin[0],
+						component.second.settings.gridPlaceSwapAssetOrigin[1],
+						component.second.settings.gridAlignSwapAsset
+					);
+				}
+				else
+				{
+					partSwapGroupLayout.get()->addWidget
+					(
+						asset.second.btnSwapAsset.get(),
+						count,
+						component.second.settings.gridPlaceSwapAssetOrigin[1],
+						component.second.settings.gridAlignSwapAsset
+					);
+					count++;
+				}
 			}
 			component.second.btnSwapComponent.get()->setVisible(true);
 

@@ -43,12 +43,12 @@ struct subColorData
 
 struct assetsData
 {
-	const QString imgBasePath; // Can be a fill img or outline, depending on whether asset is meant to be colorable.
 	const QString imgFilename; // We use this for saving/loading by filename of an img part.
+	const QString imgFillPath; // This is the part that is affected by color changes.
+	const QString imgOutlinePath; // Outline for related fill img. Assets with no color change use Outline only (no fill).
+	const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
 	const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
 	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
-	const QString imgOutlinePath; // Outline for related fill img (fill is always stored in base img if there is a fill).
-	const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
 	std::map<QString, subColorData> subColorsMap;
 	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.

@@ -152,6 +152,18 @@ private:
 	PoseType poseCurrent = PoseType::FRONT_FACING;
 	ComponentType componentCurrent = ComponentType::NONE;
 
+	// We can support multiple naming conventions for files here.
+	// Ex: If asset folder is called "tShirt", camel or pascal case will work.
+	// If asset folder is called "t_shirt", snake case will work.
+	const QString imgExtensionStandard = ".png";
+	enum class AssetImgType { FILL, OUTLINE, THUMBNAIL };
+	std::map<AssetImgType, QStringList> assetImgTypeMap =
+	{
+		{AssetImgType::FILL, QStringList{ "Fill", "_fill", "-fill" } },
+		{AssetImgType::OUTLINE, QStringList{ "Outline", "_outline", "-outline" } },
+		{AssetImgType::THUMBNAIL, QStringList{ "Thumbnail", "_thumbnail", "-thumbnail" } },
+	};
+
 	struct textInputSingleLine
 	{
 		const TextInputSingleLineType inputType = TextInputSingleLineType::NONE;
@@ -169,13 +181,15 @@ private:
 	const QPixmap pickerPasteColorIcon = QPixmap(":/ZenCharacterCreator2D/Resources/clipboardColorIcon.png");
 
 	const QPixmap imgError = QPixmap(":/ZenCharacterCreator2D/Resources/error.png");
+	const QString imgErrorPath = ":/ZenCharacterCreator2D/Resources/error.png";
 
 	// private functions:
 	QString extractSubstringInbetweenQt(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QString extractSubstringInbetweenRevFind(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
 	QStringList extractSubstringInbetweenLoopList(const QString strBegin, const QString strEnd, const QString &strExtractFrom);
-	QStringList fileGetAssetDirectories(const QString &subPath);
+	QStringList fileGetAssetDirectoriesOnStartup(const QString &path);
 	QStringList fileGetAssets(const QString &path);
+	QString getPathIfExists(const QString &assetFolderPath, const AssetImgType &assetImgType);
 	void updatePartInScene(const componentData &component, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
 	QPixmap recolorPixmapSolid(const assetsData &asset, const PaintType &paintType);
