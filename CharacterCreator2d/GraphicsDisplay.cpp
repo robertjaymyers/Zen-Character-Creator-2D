@@ -17,32 +17,6 @@ This file is part of Zen Character Creator 2D.
 GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	: QGraphicsView(parent)
 {
-	// there seems to be an issue with "checked" on the context menu stuff when swapping
-	// like it's not getting initially set on some or something and so doesn't work? idk.
-
-	// also, maybe I should make componentMap next to poseMap in genderMap.
-	// instead of a componentMap in each poseMap, which is kind of redundant and memory hog.
-
-	// actually, that won't work quite right cause of the need for different assets for poses
-	// but there may be a better way to do this. redundant image storage in buttons is a problem for memory...
-
-	// if I could just split ui from it somehow...
-
-	// I think what I can do is move the UI to the species level.
-	// and then have it connect() point to whatever the current gender/pose are for swapping/picking/etc.
-
-	// then see if can have pose change keep assets/colors the same (if they exist)
-	// rather than always reverting to default from template.
-
-
-	// also, possibly see if there's a way to do "multiswap":
-	// this would be combos of parts (such as Body + Ears for elf) so that you can, for example,
-	// swap ears, while having it still fill all of the right parts of the image
-	// e.g. if you're on Ear 1, it fills Body + Ear Fill 1
-	// if you're on Ear 2, it fills Body + Ear Fill 2
-	// something like that.
-	// could make head swapping more feasible if can get it to work, i.e. Body + Head1/Head2/ etc.
-
 	this->setMinimumSize(QSize(width, height));
 
 	contextMenu.get()->addAction(actionFileNew.get());
