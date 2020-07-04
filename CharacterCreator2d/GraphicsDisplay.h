@@ -190,7 +190,7 @@ private:
 	QStringList fileGetAssetDirectoriesOnStartup(const QString &path);
 	QStringList fileGetAssets(const QString &path);
 	QString getPathIfExists(const QString &assetFolderPath, const AssetImgType &assetImgType);
-	void updatePartInScene(const componentData &component, const assetsData &asset);
+	void updatePartInScene(const componentUiData &componentUi, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
 	QPixmap recolorPixmapSolid(const assetsData &asset, const PaintType &paintType);
 	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset, const PaintType &paintType);
@@ -205,4 +205,10 @@ private:
 	void setBackgroundImage(const QString &imgPath);
 	void removeCurrentSpeciesFromScene();
 	void applyCurrentSpeciesToScene();
+	speciesData& speciesCurrentSecond();
+	genderData& genderCurrentSecond();
+	poseData& poseCurrentSecond();
+	componentUiData& componentUiCurrentSecond();
+	componentData& componentCurrentSecond();
+	assetsData& assetCurrentSecond();
 };

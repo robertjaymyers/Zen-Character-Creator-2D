@@ -17,6 +17,32 @@ This file is part of Zen Character Creator 2D.
 GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	: QGraphicsView(parent)
 {
+	// there seems to be an issue with "checked" on the context menu stuff when swapping
+	// like it's not getting initially set on some or something and so doesn't work? idk.
+
+	// also, maybe I should make componentMap next to poseMap in genderMap.
+	// instead of a componentMap in each poseMap, which is kind of redundant and memory hog.
+
+	// actually, that won't work quite right cause of the need for different assets for poses
+	// but there may be a better way to do this. redundant image storage in buttons is a problem for memory...
+
+	// if I could just split ui from it somehow...
+
+	// I think what I can do is move the UI to the species level.
+	// and then have it connect() point to whatever the current gender/pose are for swapping/picking/etc.
+
+	// then see if can have pose change keep assets/colors the same (if they exist)
+	// rather than always reverting to default from template.
+
+
+	// also, possibly see if there's a way to do "multiswap":
+	// this would be combos of parts (such as Body + Ears for elf) so that you can, for example,
+	// swap ears, while having it still fill all of the right parts of the image
+	// e.g. if you're on Ear 1, it fills Body + Ear Fill 1
+	// if you're on Ear 2, it fills Body + Ear Fill 2
+	// something like that.
+	// could make head swapping more feasible if can get it to work, i.e. Body + Head1/Head2/ etc.
+
 	this->setMinimumSize(QSize(width, height));
 
 	contextMenu.get()->addAction(actionFileNew.get());
@@ -130,6 +156,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	for (const auto& species : speciesTypeMap)
 	{
 		speciesMap.try_emplace(species.first, speciesData{ species.second.assetStr });
+		for (const auto& componentSettings : species.second.componentMapRef)
+			speciesMap.at(species.first).componentUiMap.try_emplace(componentSettings.first, componentUiData{ componentSettings.second });
 		for (const auto& gender : genderTypeMap)
 		{
 			speciesMap.at(species.first).genderMap.try_emplace(gender.first, genderData{ gender.second });
@@ -137,11 +165,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			{
 				speciesMap.at(species.first).genderMap.at(gender.first).poseMap.try_emplace(pose.first, poseData{ pose.second });
 
-				for (const auto& component : species.second.componentMapRef)
+				for (const auto& componentSettings : species.second.componentMapRef)
 				{
 					speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first).componentMap.try_emplace
 					(
-						component.first, componentData{ component.second }
+						componentSettings.first, componentData{ }
 					);
 
 					QStringList assetFolderPathList = fileGetAssetDirectoriesOnStartup(
@@ -150,7 +178,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						species.second.assetStr + "/" +
 						gender.second + "/" +
 						pose.second + "/" +
-						component.second.assetStr
+						componentSettings.second.assetStr
 					);
 
 					// Note: We store as filename only (e.g. NOT including full path), 
@@ -160,7 +188,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						QString outlinePath = assetFolderPath;
 						QString thumbnailPath = assetFolderPath;
 						speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
-							.componentMap.at(component.first).assetsMap.try_emplace
+							.componentMap.at(componentSettings.first).assetsMap.try_emplace
 							(
 								QDir(assetFolderPath).dirName(),
 								assetsData
@@ -169,8 +197,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									getPathIfExists(assetFolderPath, AssetImgType::FILL),
 									getPathIfExists(assetFolderPath, AssetImgType::OUTLINE),
 									getPathIfExists(assetFolderPath, AssetImgType::THUMBNAIL),
-									component.second.defaultInitialColor,
-									component.second.defaultInitialColor,
+									componentSettings.second.defaultInitialColor,
+									componentSettings.second.defaultInitialColor,
 								}
 						);
 						//qDebug() << assetFolderPath;
@@ -184,16 +212,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							for (const auto& colorPath : multicolorPathList)
 							{
 								auto& currentAssetsMap = speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
-									.componentMap.at(component.first).assetsMap;
+									.componentMap.at(componentSettings.first).assetsMap;
 								currentAssetsMap.at(QDir(assetFolderPath).dirName()).subColorsMap.try_emplace
 								(
 									QFileInfo(colorPath).baseName(),
 									subColorData
 									{
+										QFileInfo(colorPath).baseName(),
 										colorPath,
-										QFileInfo(colorPath).fileName(),
-										component.second.defaultInitialColor,
-										component.second.defaultInitialColor,
+										componentSettings.second.defaultInitialColor,
+										componentSettings.second.defaultInitialColor,
 									}
 								);
 								currentAssetsMap.at(QDir(assetFolderPath).dirName()).subColorsKeyList.append
@@ -228,11 +256,307 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						gender.second.actionGender.get()->setVisible(true);
 					genderCurrent = speciesMap.at(speciesCurrent).genderMap.begin()->first;
 					speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
+					speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+						.actionPose.get()->setChecked(true);
 					applyCurrentSpeciesToScene();
 					loadDefaultCharacterFromTemplate();
 				}
 			}
 		});
+
+		for (auto& componentUi : species.second.componentUiMap)
+		{
+			if (componentUi.second.settings.partHasBtnSwap)
+			{
+				componentUi.second.btnSwapComponent.get()->setStyleSheet
+				(
+					componentUi.second.settings.btnStyleSheetTemplate
+					.arg(componentUi.second.settings.btnSwapIcons[0])
+					.arg(componentUi.second.settings.btnSwapIcons[1])
+					.arg(componentUi.second.settings.btnSwapIcons[2])
+				);
+				componentUi.second.btnSwapComponent.get()->setParent(this);
+				componentUi.second.btnSwapComponent.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+				componentUi.second.btnSwapComponent.get()->setFixedSize
+				(
+					QSize
+					(
+						componentUi.second.settings.btnSwapWidth,
+						componentUi.second.settings.btnSwapHeight
+					)
+				);
+				componentUi.second.btnSwapComponent.get()->setVisible(false);
+
+				connect(componentUi.second.btnSwapComponent.get(), &QPushButton::clicked, this, [&]() {
+					componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
+
+					for (auto& asset : componentCurrentSecond().assetsMap)
+					{
+						asset.second.btnSwapAsset.get()->setEnabled(true);
+						asset.second.btnSwapAsset.get()->setVisible(false);
+					}
+
+					componentUi.second.btnSwapComponent.get()->setEnabled(false);
+
+					for (auto& asset : poseCurrentSecond().componentMap.at(componentUi.first).assetsMap)
+					{
+						asset.second.btnSwapAsset.get()->setEnabled(true);
+						asset.second.btnSwapAsset.get()->setVisible(true);
+					}
+
+					partSwapScroll.get()->verticalScrollBar()->setValue(0);
+					partSwapScroll.get()->horizontalScrollBar()->setValue(0);
+
+					componentCurrent = componentUi.first;
+
+					assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
+				});
+			}
+			if (componentUi.second.settings.partHasBtnPickColor)
+			{
+				componentUi.second.btnPickColor.get()->setStyleSheet
+				(
+					componentUi.second.settings.btnStyleSheetTemplate
+					.arg(componentUi.second.settings.btnPickColorIcons[0])
+					.arg(componentUi.second.settings.btnPickColorIcons[1])
+					.arg(componentUi.second.settings.btnPickColorIcons[2])
+				);
+				componentUi.second.btnPickColor.get()->setParent(this);
+				componentUi.second.btnPickColor.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+				componentUi.second.btnPickColor.get()->setFixedSize
+				(
+					QSize
+					(
+						componentUi.second.settings.btnPickColorWidth,
+						componentUi.second.settings.btnPickColorHeight
+					)
+				);
+				componentUi.second.btnPickColor.get()->setVisible(false);
+
+				componentUi.second.contextMenuForBtnPickColor.get()->addAction(componentUi.second.actionCopyColor.get());
+				componentUi.second.contextMenuForBtnPickColor.get()->addAction(componentUi.second.actionPasteColor.get());
+				componentUi.second.contextMenuForBtnPickColor.get()->addSeparator();
+				componentUi.second.contextMenuForBtnPickColor.get()->addAction(componentUi.second.actionApplyColorToAllInSet.get());
+
+				componentUi.second.btnPickColor.get()->setContextMenuPolicy(Qt::CustomContextMenu);
+				connect(componentUi.second.btnPickColor.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
+					QPoint globalPos = componentUi.second.btnPickColor.get()->mapToGlobal(point);
+					componentUi.second.contextMenuForBtnPickColor.get()->exec(globalPos);
+				});
+
+				connect(componentUi.second.actionCopyColor.get(), &QAction::triggered, this, [&]() {
+					auto& componentCurrentSecondLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+					auto& assetCurrentSecondLocal = componentCurrentSecondLocal.assetsMap.at(componentCurrentSecondLocal.displayedAssetKey);
+					
+					if (assetCurrentSecondLocal.subColorsMap.empty())
+						pickerCopiedColor = assetCurrentSecondLocal.colorAltered;
+					else
+					{
+						QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
+						dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
+						bool ok;
+						QString pickedKey = QInputDialog::getItem(
+							this->parentWidget(),
+							"Pick Part To Copy Color From",
+							tr("Part Name:"),
+							dropdownList,
+							0,
+							false,
+							&ok,
+							Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+						if (ok && !pickedKey.isEmpty())
+						{
+							if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
+								pickerCopiedColor = assetCurrentSecondLocal.colorAltered;
+							else
+								pickerCopiedColor = assetCurrentSecondLocal.subColorsMap.at(pickedKey).colorAltered;
+						}
+					}
+					pickerUpdatePasteIconColor(pickerCopiedColor);
+				});
+
+				connect(componentUi.second.actionPasteColor.get(), &QAction::triggered, this, [&]() {
+					auto& componentCurrentSecondLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+					auto& assetCurrentSecondLocal = componentCurrentSecondLocal.assetsMap.at(componentCurrentSecondLocal.displayedAssetKey);
+					
+					if (pickerCopiedColor.isValid())
+					{
+						if (assetCurrentSecondLocal.subColorsMap.empty())
+						{
+							assetCurrentSecondLocal.colorAltered = pickerCopiedColor;
+							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+							{
+								for (auto& asset : componentCurrentSecondLocal.assetsMap)
+								{
+									asset.second.colorAltered = pickerCopiedColor;
+								}
+							}
+						}
+						else
+						{
+							QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
+							dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
+							bool ok;
+							QString pickedKey = QInputDialog::getItem(
+								this->parentWidget(),
+								"Pick Part To Paste Color To",
+								tr("Part Name:"),
+								dropdownList,
+								0,
+								false,
+								&ok,
+								Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+							if (ok && !pickedKey.isEmpty())
+							{
+								if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
+								{
+									assetCurrentSecondLocal.colorAltered = pickerCopiedColor;
+									for (auto& subColor : assetCurrentSecondLocal.subColorsMap)
+										subColor.second.colorAltered = pickerCopiedColor;
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+									{
+										for (auto& asset : componentCurrentSecondLocal.assetsMap)
+										{
+											asset.second.colorAltered = pickerCopiedColor;
+										}
+									}
+								}
+								else
+									assetCurrentSecondLocal.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
+							}
+						}
+						updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+						characterModified = true;
+					}
+				});
+
+				connect(componentUi.second.actionApplyColorToAllInSet.get(), &QAction::triggered, this, [&]() {
+					auto& componentCurrentSecondLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+					auto& assetCurrentSecondLocal = componentCurrentSecondLocal.assetsMap.at(componentCurrentSecondLocal.displayedAssetKey);
+					
+					if (componentUi.second.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
+						componentUi.second.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+					{
+						QColor currentColor;
+						if (assetCurrentSecondLocal.subColorsMap.empty())
+							currentColor = assetCurrentSecondLocal.colorAltered;
+						else
+						{
+							QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
+							dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
+							bool ok;
+							QString pickedKey = QInputDialog::getItem(
+								this->parentWidget(),
+								"Pick Part To Apply Color From",
+								tr("Part Name:"),
+								dropdownList,
+								0,
+								false,
+								&ok,
+								Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+							if (ok && !pickedKey.isEmpty())
+							{
+								if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
+									currentColor = assetCurrentSecondLocal.colorAltered;
+								else
+									currentColor = assetCurrentSecondLocal.subColorsMap.at(pickedKey).colorAltered;
+								for (auto& subColor : assetCurrentSecondLocal.subColorsMap)
+									subColor.second.colorAltered = currentColor;
+								updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+							}
+						}
+						for (auto& asset : componentCurrentSecondLocal.assetsMap)
+							asset.second.colorAltered = currentColor;
+						characterModified = true;
+					}
+				});
+
+				connect(componentUi.second.btnPickColor.get(), &QPushButton::clicked, this, [&]() {
+					auto& componentCurrentSecondLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+					auto& assetCurrentSecondLocal = componentCurrentSecondLocal.assetsMap.at(componentCurrentSecondLocal.displayedAssetKey);
+					
+					if (!assetCurrentSecondLocal.subColorsMap.empty())
+					{
+						QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
+						dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
+						bool ok;
+						QString pickedKey = QInputDialog::getItem(
+							this->parentWidget(),
+							"Pick Part To Recolor",
+							tr("Part Name:"),
+							dropdownList,
+							0,
+							false,
+							&ok,
+							Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+
+						if (ok && !pickedKey.isEmpty())
+						{
+							if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
+							{
+								QColor colorNew = QColorDialog::getColor(assetCurrentSecondLocal.colorAltered, this->parentWidget(), "Choose Color");
+								if (colorNew.isValid())
+								{
+									assetCurrentSecondLocal.colorAltered = colorNew;
+									for (auto& subColor : assetCurrentSecondLocal.subColorsMap)
+										subColor.second.colorAltered = colorNew;
+									updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+									characterModified = true;
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+									{
+										for (auto& asset : componentCurrentSecondLocal.assetsMap)
+										{
+											asset.second.colorAltered = colorNew;
+										}
+									}
+								}
+							}
+							else
+							{
+								auto& pickedColorObj = assetCurrentSecondLocal.subColorsMap.at(pickedKey);
+								QColor colorNew = QColorDialog::getColor(pickedColorObj.colorAltered, this->parentWidget(), "Choose Color");
+								if (colorNew.isValid())
+								{
+									pickedColorObj.colorAltered = colorNew;
+									updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+									characterModified = true;
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+									{
+										for (auto& asset : componentCurrentSecondLocal.assetsMap)
+										{
+											asset.second.colorAltered = colorNew;
+										}
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						QColor colorNew = QColorDialog::getColor(assetCurrentSecondLocal.colorAltered, this->parentWidget(), "Choose Color");
+						if (colorNew.isValid())
+						{
+							assetCurrentSecondLocal.colorAltered = colorNew;
+							updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+							characterModified = true;
+							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+							{
+								for (auto& asset : componentCurrentSecondLocal.assetsMap)
+								{
+									asset.second.colorAltered = colorNew;
+								}
+							}
+						}
+					}
+				});
+			}
+
+			componentUi.second.item.get()->setZValue(componentUi.second.settings.displayOrderZ);
+			componentUi.second.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
+		}
 
 		for (auto& gender : species.second.genderMap)
 		{
@@ -252,6 +576,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						removeCurrentSpeciesFromScene();
 						genderCurrent = gender.first;
 						poseCurrent = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.begin()->first;
+						speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+							.actionPose.get()->setChecked(true);
 						applyCurrentSpeciesToScene();
 						loadDefaultCharacterFromTemplate();
 					}
@@ -283,62 +609,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 				for (auto& component : pose.second.componentMap)
 				{
-					if (component.second.settings.partHasBtnSwap)
+					auto& componentUi = species.second.componentUiMap.at(component.first);
+					if (componentUi.settings.partHasBtnSwap)
 					{
-						component.second.btnSwapComponent.get()->setStyleSheet
-						(
-							component.second.settings.btnStyleSheetTemplate
-							.arg(component.second.settings.btnSwapIcons[0])
-							.arg(component.second.settings.btnSwapIcons[1])
-							.arg(component.second.settings.btnSwapIcons[2])
-						);
-						component.second.btnSwapComponent.get()->setParent(this);
-						component.second.btnSwapComponent.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-						component.second.btnSwapComponent.get()->setFixedSize
-						(
-							QSize
-							(
-								component.second.settings.btnSwapWidth,
-								component.second.settings.btnSwapHeight
-							)
-						);
-						component.second.btnSwapComponent.get()->setVisible(false);
-
-						connect(component.second.btnSwapComponent.get(), &QPushButton::clicked, this, [&]() {
-							species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
-								componentMap.at(componentCurrent).btnSwapComponent.get()->setEnabled(true);
-
-							for (auto& asset : species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
-								componentMap.at(componentCurrent).assetsMap)
-							{
-								asset.second.btnSwapAsset.get()->setEnabled(true);
-								asset.second.btnSwapAsset.get()->setVisible(false);
-							}
-
-							component.second.btnSwapComponent.get()->setEnabled(false);
-
-							for (auto& asset : component.second.assetsMap)
-							{
-								asset.second.btnSwapAsset.get()->setEnabled(true);
-								asset.second.btnSwapAsset.get()->setVisible(true);
-							}
-
-							partSwapScroll.get()->verticalScrollBar()->setValue(0);
-							partSwapScroll.get()->horizontalScrollBar()->setValue(0);
-
-							componentCurrent = component.first;
-
-							species.second.genderMap.at(genderCurrent).poseMap.at(poseCurrent).
-								componentMap.at(componentCurrent).assetsMap.at(component.second.displayedAssetKey)
-								.btnSwapAsset.get()->setEnabled(false);
-						});
-
-
 						for (auto& asset : component.second.assetsMap)
 						{
 							asset.second.btnSwapAsset.get()->setStyleSheet
 							(
-								component.second.settings.btnStyleSheetTemplate
+								componentUi.settings.btnStyleSheetTemplate
 								.arg(asset.second.imgThumbnailPath)
 								.arg(asset.second.imgThumbnailPath)
 								.arg(asset.second.imgThumbnailPath)
@@ -349,8 +627,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							(
 								QSize
 								(
-									component.second.settings.btnSwapWidth,
-									component.second.settings.btnSwapHeight
+									componentUi.settings.btnSwapWidth,
+									componentUi.settings.btnSwapHeight
 								)
 							);
 							asset.second.btnSwapAsset.get()->setVisible(false);
@@ -359,247 +637,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
 								component.second.displayedAssetKey = asset.first;
 								asset.second.btnSwapAsset.get()->setEnabled(false);
-								updatePartInScene(component.second, asset.second);
+								updatePartInScene(componentUi, asset.second);
 								characterModified = true;
 							});
 						}
 					}
-					if (component.second.settings.partHasBtnPickColor)
-					{
-						component.second.btnPickColor.get()->setStyleSheet
-						(
-							component.second.settings.btnStyleSheetTemplate
-							.arg(component.second.settings.btnPickColorIcons[0])
-							.arg(component.second.settings.btnPickColorIcons[1])
-							.arg(component.second.settings.btnPickColorIcons[2])
-						);
-						component.second.btnPickColor.get()->setParent(this);
-						component.second.btnPickColor.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-						component.second.btnPickColor.get()->setFixedSize
-						(
-							QSize
-							(
-								component.second.settings.btnPickColorWidth,
-								component.second.settings.btnPickColorHeight
-							)
-						);
-						component.second.btnPickColor.get()->setVisible(false);
-
-						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionCopyColor.get());
-						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionPasteColor.get());
-						component.second.contextMenuForBtnPickColor.get()->addSeparator();
-						component.second.contextMenuForBtnPickColor.get()->addAction(component.second.actionApplyColorToAllInSet.get());
-
-						component.second.btnPickColor.get()->setContextMenuPolicy(Qt::CustomContextMenu);
-						connect(component.second.btnPickColor.get(), &QPushButton::customContextMenuRequested, this, [&](const QPoint &point) {
-							QPoint globalPos = component.second.btnPickColor.get()->mapToGlobal(point);
-							component.second.contextMenuForBtnPickColor.get()->exec(globalPos);
-						});
-
-						connect(component.second.actionCopyColor.get(), &QAction::triggered, this, [&]() {
-							if (component.second.assetsMap.at(component.second.displayedAssetKey).subColorsMap.empty())
-								pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
-							else
-							{
-								QStringList dropdownList = component.second.assetsMap.at(component.second.displayedAssetKey).subColorsKeyList;
-								dropdownList.prepend(component.second.displayedAssetKey);
-								bool ok;
-								QString pickedKey = QInputDialog::getItem(
-									this->parentWidget(),
-									"Pick Part To Copy Color From",
-									tr("Part Name:"),
-									dropdownList,
-									0,
-									false,
-									&ok,
-									Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
-								if (ok && !pickedKey.isEmpty())
-								{
-									if (pickedKey == component.second.displayedAssetKey)
-										pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey).colorAltered;
-									else
-										pickerCopiedColor = component.second.assetsMap.at(component.second.displayedAssetKey)
-											.subColorsMap.at(pickedKey).colorAltered;
-								}
-							}
-							pickerUpdatePasteIconColor(pickerCopiedColor);
-						});
-
-						connect(component.second.actionPasteColor.get(), &QAction::triggered, this, [&]() {
-							if (pickerCopiedColor.isValid())
-							{
-								auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
-								if (currentAsset.subColorsMap.empty())
-								{
-									currentAsset.colorAltered = pickerCopiedColor;
-									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-									{
-										for (auto& asset : component.second.assetsMap)
-										{
-											asset.second.colorAltered = pickerCopiedColor;
-										}
-									}
-								}
-								else
-								{
-									QStringList dropdownList = currentAsset.subColorsKeyList;
-									dropdownList.prepend(component.second.displayedAssetKey);
-									bool ok;
-									QString pickedKey = QInputDialog::getItem(
-										this->parentWidget(),
-										"Pick Part To Paste Color To",
-										tr("Part Name:"),
-										dropdownList,
-										0,
-										false,
-										&ok,
-										Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
-									if (ok && !pickedKey.isEmpty())
-									{
-										if (pickedKey == component.second.displayedAssetKey)
-										{
-											currentAsset.colorAltered = pickerCopiedColor;
-											for (auto& subColor : currentAsset.subColorsMap)
-												subColor.second.colorAltered = pickerCopiedColor;
-											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-											{
-												for (auto& asset : component.second.assetsMap)
-												{
-													asset.second.colorAltered = pickerCopiedColor;
-												}
-											}
-										}
-										else
-											currentAsset.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
-									}
-								}
-								updatePartInScene(component.second, currentAsset);
-								characterModified = true;
-							}
-						});
-
-						connect(component.second.actionApplyColorToAllInSet.get(), &QAction::triggered, this, [&]() {
-							if (component.second.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE ||
-								component.second.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
-							{
-								auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
-								QColor currentColor;
-								if (currentAsset.subColorsMap.empty())
-									currentColor = currentAsset.colorAltered;
-								else
-								{
-									QStringList dropdownList = currentAsset.subColorsKeyList;
-									dropdownList.prepend(component.second.displayedAssetKey);
-									bool ok;
-									QString pickedKey = QInputDialog::getItem(
-										this->parentWidget(),
-										"Pick Part To Apply Color From",
-										tr("Part Name:"),
-										dropdownList,
-										0,
-										false,
-										&ok,
-										Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
-									if (ok && !pickedKey.isEmpty())
-									{
-										if (pickedKey == component.second.displayedAssetKey)
-											currentColor = currentAsset.colorAltered;
-										else
-											currentColor = currentAsset.subColorsMap.at(pickedKey).colorAltered;
-										for (auto& subColor : currentAsset.subColorsMap)
-											subColor.second.colorAltered = currentColor;
-										updatePartInScene(component.second, currentAsset);
-									}
-								}
-								for (auto& asset : component.second.assetsMap)
-									asset.second.colorAltered = currentColor;
-								characterModified = true;
-							}
-						});
-
-						connect(component.second.btnPickColor.get(), &QPushButton::clicked, this, [&]() {
-							auto& currentAsset = component.second.assetsMap.at(component.second.displayedAssetKey);
-							if (!currentAsset.subColorsMap.empty())
-							{
-								QStringList dropdownList = currentAsset.subColorsKeyList;
-								dropdownList.prepend(component.second.displayedAssetKey);
-								bool ok;
-								QString pickedKey = QInputDialog::getItem(
-									this->parentWidget(),
-									"Pick Part To Recolor",
-									tr("Part Name:"),
-									dropdownList,
-									0,
-									false,
-									&ok,
-									Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
-								if (ok && !pickedKey.isEmpty())
-								{
-									if (pickedKey == component.second.displayedAssetKey)
-									{
-										QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
-										if (colorNew.isValid())
-										{
-											currentAsset.colorAltered = colorNew;
-											for (auto& subColor : currentAsset.subColorsMap)
-												subColor.second.colorAltered = colorNew;
-											updatePartInScene(component.second, currentAsset);
-											characterModified = true;
-											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-											{
-												for (auto& asset : component.second.assetsMap)
-												{
-													asset.second.colorAltered = colorNew;
-												}
-											}
-										}
-									}
-									else
-									{
-										auto& pickedColorObj = currentAsset.subColorsMap.at(pickedKey);
-										QColor colorNew = QColorDialog::getColor(pickedColorObj.colorAltered, this->parentWidget(), "Choose Color");
-										if (colorNew.isValid())
-										{
-											pickedColorObj.colorAltered = colorNew;
-											updatePartInScene(component.second, currentAsset);
-											characterModified = true;
-											if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-											{
-												for (auto& asset : component.second.assetsMap)
-												{
-													asset.second.colorAltered = colorNew;
-												}
-											}
-										}
-									}
-								}
-							}
-							else
-							{
-								QColor colorNew = QColorDialog::getColor(currentAsset.colorAltered, this->parentWidget(), "Choose Color");
-								if (colorNew.isValid())
-								{
-									currentAsset.colorAltered = colorNew;
-									updatePartInScene(component.second, currentAsset);
-									characterModified = true;
-									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
-									{
-										for (auto& asset : component.second.assetsMap)
-										{
-											asset.second.colorAltered = colorNew;
-										}
-									}
-								}
-							}
-						});
-					}
-
-					component.second.item.get()->setZValue(component.second.settings.displayOrderZ);
-					component.second.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
 				}
 			}
 		}
@@ -609,6 +651,15 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	// (since we're just starting the program, the "current" is the default)
 
 	speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+
+	/*for (auto& species : speciesMap)
+	{
+		species.second.genderMap.begin()->second.actionGender.get()->setChecked(true);
+		for (auto& gender : species.second.genderMap)
+		{
+			gender.second.poseMap.begin()->second.actionPose.get()->setChecked(true);
+		}
+	}*/
 	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
 	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).actionPose.get()->setChecked(true);
 
@@ -617,32 +668,34 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	for (auto& pose : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap)
 			pose.second.actionPose.get()->setVisible(true);
 	
-	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
 	{
-		if (component.second.settings.partHasBtnSwap)
+		if (componentUi.second.settings.partHasBtnSwap)
 		{
 			partSwapGroupLayout.get()->addWidget
 			(
-				component.second.btnSwapComponent.get(),
-				component.second.settings.gridPlaceSwapComponent[0],
-				component.second.settings.gridPlaceSwapComponent[1],
-				component.second.settings.gridAlignSwapComponent
+				componentUi.second.btnSwapComponent.get(),
+				componentUi.second.settings.gridPlaceSwapComponent[0],
+				componentUi.second.settings.gridPlaceSwapComponent[1],
+				componentUi.second.settings.gridAlignSwapComponent
 			);
-			component.second.btnSwapComponent.get()->setVisible(true);
+			componentUi.second.btnSwapComponent.get()->setVisible(true);
 
-			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
-			if (component.second.assetsMap.count("none") > 0)
+			int count = componentUi.second.settings.gridPlaceSwapAssetOrigin[0];
+			auto& currentComponentAt = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+				.componentMap.at(componentUi.first);
+			if (currentComponentAt.assetsMap.count("none") > 0)
 				count++;
-			for (auto& asset : component.second.assetsMap)
+			for (auto& asset : currentComponentAt.assetsMap)
 			{
 				if (asset.first == "none")
 				{
 					partSwapGroupLayout.get()->addWidget
 					(
 						asset.second.btnSwapAsset.get(),
-						component.second.settings.gridPlaceSwapAssetOrigin[0],
-						component.second.settings.gridPlaceSwapAssetOrigin[1],
-						component.second.settings.gridAlignSwapAsset
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[0],
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
+						componentUi.second.settings.gridAlignSwapAsset
 					);
 				}
 				else
@@ -651,35 +704,35 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					(
 						asset.second.btnSwapAsset.get(),
 						count,
-						component.second.settings.gridPlaceSwapAssetOrigin[1],
-						component.second.settings.gridAlignSwapAsset
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
+						componentUi.second.settings.gridAlignSwapAsset
 					);
 					count++;
 				}
 			}
 
-			if (componentCurrent == ComponentType::NONE && component.first != ComponentType::NONE)
+			if (componentCurrent == ComponentType::NONE && componentUi.first != ComponentType::NONE)
 			{
-				componentCurrent = component.first;
-				for (auto& asset : component.second.assetsMap)
+				componentCurrent = componentUi.first;
+				for (auto& asset : currentComponentAt.assetsMap)
 				{
 					asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
 			}
 		}
-		if (component.second.settings.partHasBtnPickColor)
+		if (componentUi.second.settings.partHasBtnPickColor)
 		{
 			partPickerGroupLayout.get()->addWidget
 			(
-				component.second.btnPickColor.get(),
-				component.second.settings.gridPlacePickColor[0],
-				component.second.settings.gridPlacePickColor[1],
-				component.second.settings.gridAlignPickColor
+				componentUi.second.btnPickColor.get(),
+				componentUi.second.settings.gridPlacePickColor[0],
+				componentUi.second.settings.gridPlacePickColor[1],
+				componentUi.second.settings.gridAlignPickColor
 			);
-			component.second.btnPickColor.get()->setVisible(true);
+			componentUi.second.btnPickColor.get()->setVisible(true);
 		}
-		scene.get()->addItem(component.second.item.get());
+		scene.get()->addItem(componentUi.second.item.get());
 	}
 
 	// Now set up the rest of the UI.
@@ -785,9 +838,9 @@ void GraphicsDisplay::contextMenuEvent(QContextMenuEvent *event)
 void GraphicsDisplay::resizeEvent(QResizeEvent *event)
 {
 	setBackgroundImage(backgroundImage);
-	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	for (auto& component : poseCurrentSecond().componentMap)
 	{
-		updatePartInScene(component.second, component.second.assetsMap.at(component.second.displayedAssetKey));
+		updatePartInScene(speciesMap.at(speciesCurrent).componentUiMap.at(component.first), component.second.assetsMap.at(component.second.displayedAssetKey));
 	}
 }
 
@@ -924,26 +977,26 @@ QString GraphicsDisplay::getPathIfExists(const QString &assetFolderPath, const A
 	return imgErrorPath;
 }
 
-void GraphicsDisplay::updatePartInScene(const componentData &component, const assetsData &asset)
+void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, const assetsData &asset)
 {
 	if (asset.subColorsMap.empty())
 	{
-		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+		if (componentUi.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::SINGLE);
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
 			);
 		}
-		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+		else if (componentUi.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolid(asset, PaintType::SINGLE);
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos(this->width() - newPix.width(), this->height() - newPix.height());
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos(this->width() - newPix.width(), this->height() - newPix.height());
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
@@ -952,8 +1005,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 		else
 		{
 			QPixmap newPix = asset.imgOutlinePath;
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
@@ -962,21 +1015,21 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 	}
 	else
 	{
-		if (component.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
+		if (componentUi.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::COMBINED);
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
 			);
 		}
-		else if (component.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
+		else if (componentUi.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolid(asset, PaintType::COMBINED);
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
@@ -985,8 +1038,8 @@ void GraphicsDisplay::updatePartInScene(const componentData &component, const as
 		else
 		{
 			QPixmap newPix = asset.imgOutlinePath;
-			component.item.get()->setPixmap(newPix);
-			component.item.get()->setPos
+			componentUi.item.get()->setPixmap(newPix);
+			componentUi.item.get()->setPos
 			(
 				(this->size().width() - newPix.width()) / 2,
 				(this->size().height() - newPix.height()) / 2
@@ -1102,10 +1155,10 @@ QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, 
 
 void GraphicsDisplay::pickerUpdatePasteIconColor(const QColor &color)
 {
-	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
-		QPixmap newIcon = recolorPixmapSolid(component.second.actionPasteColor->icon().pixmap(QSize(20, 20)), color);
-		component.second.actionPasteColor->setIcon(newIcon);
+		QPixmap newIcon = recolorPixmapSolid(componentUi.second.actionPasteColor->icon().pixmap(QSize(20, 20)), color);
+		componentUi.second.actionPasteColor->setIcon(newIcon);
 	}
 }
 
@@ -1132,13 +1185,10 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 
 void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 {
-	auto& componentCurrentObj = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap
-		.at(poseCurrent).componentMap.at(componentCurrent);
+	speciesMap.at(speciesCurrent).componentUiMap.at(componentCurrent).btnSwapComponent.get()->setEnabled(true);
 
-	componentCurrentObj.btnSwapComponent.get()->setEnabled(true);
-
-	if (!componentCurrentObj.displayedAssetKey.isEmpty())
-		componentCurrentObj.assetsMap.at(componentCurrentObj.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
+	if (!componentCurrentSecond().displayedAssetKey.isEmpty())
+		assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 
 	QString fileContents;
 	QFile fileRead(filePath);
@@ -1173,6 +1223,10 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 										poseCurrent = pose.first;
 										applyCurrentSpeciesToScene();
 										speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
+										speciesMap.at(speciesCurrent).genderMap.at(genderCurrent)
+											.actionGender->setChecked(true);
+										speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+											.actionPose->setChecked(true);
 										break;
 									}
 								}
@@ -1185,19 +1239,20 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			}
 			for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
 			{
-				if (line.contains(component.second.settings.assetStr + "="))
+				auto& currentComponentUiAt = speciesMap.at(speciesCurrent).componentUiMap.at(component.first);
+				if (line.contains(currentComponentUiAt.settings.assetStr + "="))
 				{
-					if (line.contains(component.second.settings.assetStr + "=[Single]"))
+					if (line.contains(currentComponentUiAt.settings.assetStr + "=[Single]"))
 					{
 						QString assetKey = extractSubstringInbetweenQt("=[Single]", ",", line);
 						if (component.second.assetsMap.count(assetKey) > 0)
 						{
 							component.second.displayedAssetKey = assetKey;
 							component.second.assetsMap.at(assetKey).colorAltered = QColor(extractSubstringInbetweenQt(",", "", line));
-							updatePartInScene(component.second, component.second.assetsMap.at(assetKey));
+							updatePartInScene(currentComponentUiAt, component.second.assetsMap.at(assetKey));
 							if (component.first == componentCurrent)
 							{
-								component.second.btnSwapComponent.get()->setEnabled(false);
+								currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
 								component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
 
@@ -1213,7 +1268,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 						else
 							missingParts.append(" | " + assetKey);
 					}
-					else if (line.contains(component.second.settings.assetStr + "=[Combined]"))
+					else if (line.contains(currentComponentUiAt.settings.assetStr + "=[Combined]"))
 					{
 						QString assetKey = extractSubstringInbetweenQt("=[Combined]", ",", line);
 						if (component.second.assetsMap.count(assetKey) > 0)
@@ -1222,7 +1277,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							component.second.assetsMap.at(assetKey).colorAltered = QColor(extractSubstringInbetweenQt(",", "[Parts]", line));
 							if (component.first == componentCurrent)
 							{
-								component.second.btnSwapComponent.get()->setEnabled(false);
+								currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
 								component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
 
@@ -1243,7 +1298,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 									subPartsStrMap.at(subColor.second.imgFilename)
 								);
 							}
-							updatePartInScene(component.second, component.second.assetsMap.at(assetKey));
+							updatePartInScene(currentComponentUiAt, component.second.assetsMap.at(assetKey));
 						}
 						else
 							missingParts.append(" | " + assetKey);
@@ -1347,16 +1402,17 @@ bool GraphicsDisplay::fileSave()
 
 			for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
 			{
+				auto& currentComponentUiAt = speciesMap.at(speciesCurrent).componentUiMap.at(component.first);
 				auto& currentPart = component.second.assetsMap.at(component.second.displayedAssetKey);
 				if (currentPart.subColorsMap.empty())
 				{
-					qStream << component.second.settings.assetStr +
+					qStream << currentComponentUiAt.settings.assetStr +
 						"=[Single]" + currentPart.imgFilename +
 						"," + currentPart.colorAltered.name() + "\r\n";
 				}
 				else
 				{
-					qStream << component.second.settings.assetStr +
+					qStream << currentComponentUiAt.settings.assetStr +
 						"=[Combined]" + currentPart.imgFilename +
 						"," + currentPart.colorAltered.name();
 
@@ -1441,27 +1497,27 @@ void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
 
 void GraphicsDisplay::removeCurrentSpeciesFromScene()
 {
-	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
 	{
-		if (component.second.settings.partHasBtnSwap)
+		if (componentUi.second.settings.partHasBtnSwap)
 		{
-			component.second.btnSwapComponent.get()->setVisible(false);
-			partSwapGroupLayout.get()->removeWidget(component.second.btnSwapComponent.get());
-			for (auto& asset : component.second.assetsMap)
+			componentUi.second.btnSwapComponent.get()->setVisible(false);
+			partSwapGroupLayout.get()->removeWidget(componentUi.second.btnSwapComponent.get());
+			for (auto& asset : poseCurrentSecond().componentMap.at(componentUi.first).assetsMap)
 			{
 				asset.second.btnSwapAsset.get()->setVisible(false);
 				partSwapGroupLayout.get()->removeWidget(asset.second.btnSwapAsset.get());
 			}
 		}
-		if (component.second.settings.partHasBtnPickColor)
+		if (componentUi.second.settings.partHasBtnPickColor)
 		{
-			component.second.btnPickColor.get()->setVisible(false);
-			partPickerGroupLayout.get()->removeWidget(component.second.btnPickColor.get());
+			componentUi.second.btnPickColor.get()->setVisible(false);
+			partPickerGroupLayout.get()->removeWidget(componentUi.second.btnPickColor.get());
 		}
 
 		// We remove rather than using QGraphicsScene clear() function,
 		// to avoid deleting the items (they need to be reusable).
-		scene.get()->removeItem(component.second.item.get());
+		scene.get()->removeItem(componentUi.second.item.get());
 	}
 	componentCurrent = ComponentType::NONE;
 }
@@ -1471,30 +1527,31 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 	// Note: We make the widgets visible AFTER adding them to layout.
 	// Otherwise, they may be briefly visible outside of the layout
 	// and then get added to it, causing a flickering effect from the adjustment of position.
-	for (auto& component : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).componentMap)
+	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
 	{
-		if (component.second.settings.partHasBtnSwap)
+		if (componentUi.second.settings.partHasBtnSwap)
 		{
 			partSwapGroupLayout.get()->addWidget
 			(
-				component.second.btnSwapComponent.get(),
-				component.second.settings.gridPlaceSwapComponent[0],
-				component.second.settings.gridPlaceSwapComponent[1],
-				component.second.settings.gridAlignSwapComponent
+				componentUi.second.btnSwapComponent.get(),
+				componentUi.second.settings.gridPlaceSwapComponent[0],
+				componentUi.second.settings.gridPlaceSwapComponent[1],
+				componentUi.second.settings.gridAlignSwapComponent
 			);
-			int count = component.second.settings.gridPlaceSwapAssetOrigin[0];
-			if (component.second.assetsMap.count("none") > 0)
+			int count = componentUi.second.settings.gridPlaceSwapAssetOrigin[0];
+			auto& currentComponentAt = poseCurrentSecond().componentMap.at(componentUi.first);
+			if (currentComponentAt.assetsMap.count("none") > 0)
 				count++;
-			for (auto& asset : component.second.assetsMap)
+			for (auto& asset : currentComponentAt.assetsMap)
 			{
 				if (asset.first == "none")
 				{
 					partSwapGroupLayout.get()->addWidget
 					(
 						asset.second.btnSwapAsset.get(),
-						component.second.settings.gridPlaceSwapAssetOrigin[0],
-						component.second.settings.gridPlaceSwapAssetOrigin[1],
-						component.second.settings.gridAlignSwapAsset
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[0],
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
+						componentUi.second.settings.gridAlignSwapAsset
 					);
 				}
 				else
@@ -1503,35 +1560,71 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 					(
 						asset.second.btnSwapAsset.get(),
 						count,
-						component.second.settings.gridPlaceSwapAssetOrigin[1],
-						component.second.settings.gridAlignSwapAsset
+						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
+						componentUi.second.settings.gridAlignSwapAsset
 					);
 					count++;
 				}
 			}
-			component.second.btnSwapComponent.get()->setVisible(true);
+			componentUi.second.btnSwapComponent.get()->setVisible(true);
 
-			if (componentCurrent == ComponentType::NONE && component.first != ComponentType::NONE)
+			if (componentCurrent == ComponentType::NONE && componentUi.first != ComponentType::NONE)
 			{
-				componentCurrent = component.first;
-				for (auto& asset : component.second.assetsMap)
+				componentCurrent = componentUi.first;
+				for (auto& asset : currentComponentAt.assetsMap)
 				{
 					asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
 			}
 		}
-		if (component.second.settings.partHasBtnPickColor)
+		if (componentUi.second.settings.partHasBtnPickColor)
 		{
 			partPickerGroupLayout.get()->addWidget
 			(
-				component.second.btnPickColor.get(),
-				component.second.settings.gridPlacePickColor[0],
-				component.second.settings.gridPlacePickColor[1],
-				component.second.settings.gridAlignPickColor
+				componentUi.second.btnPickColor.get(),
+				componentUi.second.settings.gridPlacePickColor[0],
+				componentUi.second.settings.gridPlacePickColor[1],
+				componentUi.second.settings.gridAlignPickColor
 			);
-			component.second.btnPickColor.get()->setVisible(true);
+			componentUi.second.btnPickColor.get()->setVisible(true);
 		}
-		scene.get()->addItem(component.second.item.get());
+		scene.get()->addItem(componentUi.second.item.get());
 	}
+}
+
+speciesData& GraphicsDisplay::speciesCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent);
+}
+
+genderData& GraphicsDisplay::genderCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent).genderMap.at(genderCurrent);
+}
+
+poseData& GraphicsDisplay::poseCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent);
+}
+
+componentUiData& GraphicsDisplay::componentUiCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent).componentUiMap.at(componentCurrent);
+}
+
+componentData& GraphicsDisplay::componentCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+		.componentMap.at(componentCurrent);
+}
+
+assetsData& GraphicsDisplay::assetCurrentSecond()
+{
+	return speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+		.componentMap.at(componentCurrent).assetsMap.at
+		(
+			speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
+			.componentMap.at(componentCurrent).displayedAssetKey
+		);
 }

@@ -23,7 +23,7 @@
 
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
-enum class PoseType { FRONT_FACING };
+enum class PoseType { FRONT_FACING, FRONT_FACING_ATTN_STANCE };
 enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, NECK, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
@@ -35,8 +35,8 @@ enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 // too many parts may be a pain for the user to recolor.
 struct subColorData
 {
-	const QString imgPath;
 	const QString imgFilename; // We use this for saving/loading by filename of an img part.
+	const QString imgPath;
 	const QColor colorDefault;
 	QColor colorAltered;
 };
@@ -54,7 +54,7 @@ struct assetsData
 	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.
 };
 
-struct componentDataInit
+struct componentDataSettings
 {
 	// Since we're working with 2D elements that can overlap, we use a display order
 	// to ensure that the elements get added to the scene to overlap in the way we want.
@@ -84,9 +84,13 @@ struct componentDataInit
 
 struct componentData
 {
-	const componentDataInit settings;
 	std::map<QString, assetsData> assetsMap;
 	QString displayedAssetKey;
+};
+
+struct componentUiData
+{
+	const componentDataSettings settings;
 	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
 	std::unique_ptr<QPushButton> btnSwapComponent = std::make_unique<QPushButton>(nullptr);
 	std::unique_ptr<QPushButton> btnPickColor = std::make_unique<QPushButton>(nullptr);
@@ -113,6 +117,7 @@ struct genderData
 struct speciesData
 {
 	const QString assetStr;
+	std::map<ComponentType, componentUiData> componentUiMap;
 	std::map<GenderType, genderData> genderMap;
 	std::unique_ptr<QAction> actionSpecies = std::make_unique<QAction>();
 };
@@ -120,13 +125,13 @@ struct speciesData
 struct mapInitData
 {
 	const QString assetStr;
-	const std::map<ComponentType, componentDataInit>& componentMapRef;
+	const std::map<ComponentType, componentDataSettings>& componentMapRef;
 };
 
-const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
+const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 {
 	{ComponentType::BODY,
-	componentDataInit
+	componentDataSettings
 	{
 		1, // Display order in scene (higher numbers overlap lower numbers)
 		"Body",
@@ -158,7 +163,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::EYES,
-	componentDataInit
+	componentDataSettings
 	{
 		2, // Display order in scene (higher numbers overlap lower numbers)
 		"Eyes",
@@ -190,7 +195,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::LIPS,
-	componentDataInit
+	componentDataSettings
 	{
 		3, // Display order in scene (higher numbers overlap lower numbers)
 		"Lips",
@@ -222,7 +227,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::BLUSH,
-	componentDataInit
+	componentDataSettings
 	{
 		4, // Display order in scene (higher numbers overlap lower numbers)
 		"Blush",
@@ -254,7 +259,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::HEAD,
-	componentDataInit
+	componentDataSettings
 	{
 		5, // Display order in scene (higher numbers overlap lower numbers)
 		"Head",
@@ -284,7 +289,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::NECK,
-	componentDataInit
+	componentDataSettings
 	{
 		6, // Display order in scene (higher numbers overlap lower numbers)
 		"Neck",
@@ -317,7 +322,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::BOTTOM,
-	componentDataInit
+	componentDataSettings
 	{
 		7, // Display order in scene (higher numbers overlap lower numbers)
 		"Bottom",
@@ -350,7 +355,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::CHEST,
-	componentDataInit
+	componentDataSettings
 	{
 		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Chest",
@@ -383,7 +388,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::FEET,
-	componentDataInit
+	componentDataSettings
 	{
 		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
@@ -416,7 +421,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::MASK,
-	componentDataInit
+	componentDataSettings
 	{
 		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
@@ -449,7 +454,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	}
 	},
 	{ComponentType::HAIR,
-	componentDataInit
+	componentDataSettings
 	{
 		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
@@ -483,10 +488,10 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForHuman =
 	},
 };
 
-const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
+const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 {
 	{ComponentType::BODY,
-	componentDataInit
+	componentDataSettings
 	{
 		1, // Display order in scene (higher numbers overlap lower numbers)
 		"Body",
@@ -518,7 +523,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::EYES,
-	componentDataInit
+	componentDataSettings
 	{
 		2, // Display order in scene (higher numbers overlap lower numbers)
 		"Eyes",
@@ -550,7 +555,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::LIPS,
-	componentDataInit
+	componentDataSettings
 	{
 		3, // Display order in scene (higher numbers overlap lower numbers)
 		"Lips",
@@ -582,7 +587,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::BLUSH,
-	componentDataInit
+	componentDataSettings
 	{
 		4, // Display order in scene (higher numbers overlap lower numbers)
 		"Blush",
@@ -614,7 +619,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::HEAD,
-	componentDataInit
+	componentDataSettings
 	{
 		5, // Display order in scene (higher numbers overlap lower numbers)
 		"Head",
@@ -644,7 +649,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::NECK,
-	componentDataInit
+	componentDataSettings
 	{
 		6, // Display order in scene (higher numbers overlap lower numbers)
 		"Neck",
@@ -677,7 +682,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::BOTTOM,
-	componentDataInit
+	componentDataSettings
 	{
 		7, // Display order in scene (higher numbers overlap lower numbers)
 		"Bottom",
@@ -710,7 +715,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::CHEST,
-	componentDataInit
+	componentDataSettings
 	{
 		8, // Display order in scene (higher numbers overlap lower numbers)
 		"Chest",
@@ -743,7 +748,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::FEET,
-	componentDataInit
+	componentDataSettings
 	{
 		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
@@ -776,7 +781,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::MASK,
-	componentDataInit
+	componentDataSettings
 	{
 		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
@@ -809,7 +814,7 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 	}
 	},
 	{ComponentType::HAIR,
-	componentDataInit
+	componentDataSettings
 	{
 		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
@@ -845,7 +850,8 @@ const std::map<ComponentType, componentDataInit> componentTypeMapForElf =
 
 const std::map<PoseType, QString> poseTypeMap =
 {
-	{ PoseType::FRONT_FACING, "Front Facing" }
+	{ PoseType::FRONT_FACING, "Front Facing" },
+	{ PoseType::FRONT_FACING_ATTN_STANCE, "Front Facing Attn Stance" }
 };
 
 const std::map<GenderType, QString> genderTypeMap =
