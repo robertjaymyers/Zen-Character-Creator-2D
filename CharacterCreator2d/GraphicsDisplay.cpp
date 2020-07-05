@@ -1047,38 +1047,31 @@ QString GraphicsDisplay::getPathIfExists(const QString &assetFolderPath, const A
 
 void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, const assetsData &asset)
 {
+	auto setNewPixmapAndPos = [&](const QPixmap &newPix) {
+		componentUi.item.get()->setPixmap(newPix);
+		componentUi.item.get()->setPos
+		(
+			(this->size().width() - newPix.width()) / 2,
+			(this->size().height() - newPix.height()) / 2
+		);
+	};
+
 	if (asset.subColorsMap.empty())
 	{
 		if (componentUi.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::SINGLE);
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 		else if (componentUi.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolid(asset, PaintType::SINGLE);
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos(this->width() - newPix.width(), this->height() - newPix.height());
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 		else
 		{
 			QPixmap newPix = asset.imgOutlinePath;
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 	}
 	else
@@ -1086,32 +1079,17 @@ void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, cons
 		if (componentUi.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::COMBINED);
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 		else if (componentUi.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 		{
 			QPixmap newPix = recolorPixmapSolid(asset, PaintType::COMBINED);
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 		else
 		{
 			QPixmap newPix = asset.imgOutlinePath;
-			componentUi.item.get()->setPixmap(newPix);
-			componentUi.item.get()->setPos
-			(
-				(this->size().width() - newPix.width()) / 2,
-				(this->size().height() - newPix.height()) / 2
-			);
+			setNewPixmapAndPos(newPix);
 		}
 	}
 }
