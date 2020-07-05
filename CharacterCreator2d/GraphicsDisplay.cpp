@@ -1332,6 +1332,26 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 									asset.second.colorAltered = colorToApply;
 								}
 							}
+
+							for (auto& sub : currentComponentUiAt.settings.sharedColoringSubList)
+							{
+								auto& subCompCurrentSecondLocal = poseCurrentSecond().componentMap.at(sub);
+								if (!subCompCurrentSecondLocal.displayedAssetKey.isEmpty())
+								{
+									subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+										.colorAltered = component.second.assetsMap.at(assetKey).colorAltered;
+									updatePartInScene
+									(
+										speciesCurrentSecond().componentUiMap.at(sub),
+										subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+									);
+								}
+
+								for (auto& assetSub : poseCurrentSecond().componentMap.at(sub).assetsMap)
+								{
+									assetSub.second.colorAltered = component.second.assetsMap.at(assetKey).colorAltered;
+								}
+							}
 						}
 						else
 							missingParts.append(" | " + assetKey);
