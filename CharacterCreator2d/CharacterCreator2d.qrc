@@ -40,5 +40,9 @@
         <file>Resources/btnPickerNeckHover.png</file>
         <file>Resources/btnSwapCharacterPartNeck.png</file>
         <file>Resources/btnSwapCharacterPartNeckHover.png</file>
+        <file>Resources/btnPickerElfEars.png</file>
+        <file>Resources/btnPickerElfEarsHover.png</file>
+        <file>Resources/btnSwapCharacterPartElfEars.png</file>
+        <file>Resources/btnSwapCharacterPartElfEarsHover.png</file>
     </qresource>
 </RCC>

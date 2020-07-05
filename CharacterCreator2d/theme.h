@@ -24,7 +24,7 @@
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
 enum class PoseType { FRONT_FACING, FRONT_FACING_ATTN_STANCE };
-enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, NECK, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
+enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 
@@ -80,6 +80,15 @@ struct componentDataSettings
 	const int btnSwapHeight;
 	const int btnPickColorWidth;
 	const int btnPickColorHeight;
+
+	// Components that this one bases its colors on.
+	// Ex: Elf "Ears" bases its colors on the color of Body
+	// NOTE: Components that have a Dom list should NOT have a color picker button.
+	const std::vector<ComponentType> sharedColoringDomList;
+
+	// Components that get their color changed when this one is changed.
+	// Ex: When Body color is changed, the Elf "Ears" also has its color changed to the same thing.
+	const std::vector<ComponentType> sharedColoringSubList;
 };
 
 struct componentData
@@ -520,6 +529,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		75, // SWAP BTN: Height
 		75, // PICK COLOR BTN: Width
 		75, // PICK COLOR BTN: Height
+		{},
+		{ComponentType::EARS} // Components that get their color changed when this one is changed.
 	}
 	},
 	{ComponentType::EYES,
@@ -618,6 +629,37 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		75, // PICK COLOR BTN: Height
 	}
 	},
+	{ ComponentType::EARS,
+	componentDataSettings
+	{
+		1, // Display order in scene (higher numbers overlap lower numbers)
+		"Ears",
+		"#FFFFFF",
+		ColorSetType::FILL_WITH_OUTLINE,
+		true, // SWAP BTN: Flag for whether part is expected to display btn
+		false, // PICK COLOR BTN: Flag for whether part is expected to display btn
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
+		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		QStringList()
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEars.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEarsHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEarsHover.png",
+		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
+		{-1, -1}, // PICK COLOR BTN: Row/Col placement in grid layout
+		nullptr, // PICK COLOR BTN: Alignment in grid layout
+		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
+		75, // SWAP BTN: Width
+		75, // SWAP BTN: Height
+		75, // PICK COLOR BTN: Width
+		75, // PICK COLOR BTN: Height
+		{ComponentType::BODY} // Components that this one bases its colors on.
+	}
+	},
 	{ComponentType::HEAD,
 	componentDataSettings
 	{
@@ -638,7 +680,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -671,7 +713,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerNeckHover.png",
 		{6, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -704,7 +746,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
 		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -737,7 +779,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
 		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -770,7 +812,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
 		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout

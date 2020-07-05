@@ -223,15 +223,24 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				if (fileSaveModifCheck())
 				{
 					removeCurrentSpeciesFromScene();
-					for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
+
+					for (auto& gender : speciesCurrentSecond().genderMap)
 						gender.second.actionGender.get()->setVisible(false);
+					for (auto& pose : genderCurrentSecond().poseMap)
+						pose.second.actionPose.get()->setVisible(false);
+
 					speciesCurrent = species.first;
-					for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
+					for (auto& gender : speciesCurrentSecond().genderMap)
 						gender.second.actionGender.get()->setVisible(true);
-					genderCurrent = speciesMap.at(speciesCurrent).genderMap.begin()->first;
-					speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
-					speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
-						.actionPose.get()->setChecked(true);
+
+					genderCurrent = speciesCurrentSecond().genderMap.begin()->first;
+					genderCurrentSecond().actionGender.get()->setChecked(true);
+					for (auto& pose : genderCurrentSecond().poseMap)
+						pose.second.actionPose.get()->setVisible(true);
+
+					poseCurrent = genderCurrentSecond().poseMap.begin()->first;
+					poseCurrentSecond().actionPose.get()->setChecked(true);
+
 					applyCurrentSpeciesToScene();
 					loadDefaultCharacterFromTemplate();
 				}
@@ -359,11 +368,19 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						if (assetCurrentSecondLocal.subColorsMap.empty())
 						{
 							assetCurrentSecondLocal.colorAltered = pickerCopiedColor;
+
 							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 							{
 								for (auto& asset : componentCurrentSecondLocal.assetsMap)
 								{
 									asset.second.colorAltered = pickerCopiedColor;
+								}
+								for (auto& sub : componentUi.second.settings.sharedColoringSubList)
+								{
+									for (auto& assetSub : poseCurrentSecond().componentMap.at(sub).assetsMap)
+									{
+										assetSub.second.colorAltered = pickerCopiedColor;
+									}
 								}
 							}
 						}
@@ -399,6 +416,22 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								}
 								else
 									assetCurrentSecondLocal.subColorsMap.at(pickedKey).colorAltered = pickerCopiedColor;
+							}
+						}
+						for (auto& sub : componentUi.second.settings.sharedColoringSubList)
+						{
+							auto& subCompCurrentSecondLocal = poseCurrentSecond().componentMap.at(sub);
+							subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+								.colorAltered = pickerCopiedColor;
+							updatePartInScene
+							(
+								speciesCurrentSecond().componentUiMap.at(sub),
+								subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+							);
+
+							for (auto& assetSub : poseCurrentSecond().componentMap.at(sub).assetsMap)
+							{
+								assetSub.second.colorAltered = pickerCopiedColor;
 							}
 						}
 						updatePartInScene(componentUi.second, assetCurrentSecondLocal);
@@ -440,6 +473,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								for (auto& subColor : assetCurrentSecondLocal.subColorsMap)
 									subColor.second.colorAltered = currentColor;
 								updatePartInScene(componentUi.second, assetCurrentSecondLocal);
+							}
+						}
+						for (auto& sub : componentUi.second.settings.sharedColoringSubList)
+						{
+							for (auto& assetSub : poseCurrentSecond().componentMap.at(sub).assetsMap)
+							{
+								assetSub.second.colorAltered = currentColor;
 							}
 						}
 						for (auto& asset : componentCurrentSecondLocal.assetsMap)
@@ -516,6 +556,22 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							assetCurrentSecondLocal.colorAltered = colorNew;
 							updatePartInScene(componentUi.second, assetCurrentSecondLocal);
 							characterModified = true;
+							for (auto& sub : componentUi.second.settings.sharedColoringSubList)
+							{
+								auto& subCompCurrentSecondLocal = poseCurrentSecond().componentMap.at(sub);
+								subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+									.colorAltered = colorNew;
+								updatePartInScene
+								(
+									speciesCurrentSecond().componentUiMap.at(sub),
+									subCompCurrentSecondLocal.assetsMap.at(subCompCurrentSecondLocal.displayedAssetKey)
+								);
+
+								for (auto& assetSub : poseCurrentSecond().componentMap.at(sub).assetsMap)
+								{
+									assetSub.second.colorAltered = colorNew;
+								}
+							}
 							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 							{
 								for (auto& asset : componentCurrentSecondLocal.assetsMap)
@@ -550,8 +606,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						removeCurrentSpeciesFromScene();
 						genderCurrent = gender.first;
 						poseCurrent = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.begin()->first;
-						speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
-							.actionPose.get()->setChecked(true);
 						applyCurrentSpeciesToScene();
 						loadDefaultCharacterFromTemplate();
 					}
@@ -573,10 +627,50 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					{
 						if (fileSaveModifCheck())
 						{
+							componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
+							if (!componentCurrentSecond().displayedAssetKey.isEmpty())
+								assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 							removeCurrentSpeciesFromScene();
+							for (auto& component : poseCurrentSecond().componentMap)
+							{
+								// We check if a matching asset exists for the new pose.
+								// If it does, we use the matching asset. Otherwise, we default to first available asset.
+								// We do this so that, where possible, the experience of pose changing is ONLY a 
+								// change of pose. As opposed to user having to redo a bunch of customizations.
+								auto& newPoseSecond = genderCurrentSecond().poseMap.at(pose.first);
+								auto& newPoseComponentSecond = newPoseSecond.componentMap.at(component.first);
+								auto& assetCurrentSecondLocal = component.second.assetsMap.at(component.second.displayedAssetKey);
+								if (newPoseComponentSecond.assetsMap.count(component.second.displayedAssetKey) > 0)
+								{
+									newPoseComponentSecond.displayedAssetKey = component.second.displayedAssetKey;
+									auto& newPoseAssetSecond = newPoseComponentSecond.assetsMap.at(newPoseComponentSecond.displayedAssetKey);
+									newPoseAssetSecond.colorAltered = assetCurrentSecondLocal.colorAltered;
+									if (!assetCurrentSecondLocal.subColorsMap.empty() && !newPoseAssetSecond.subColorsMap.empty())
+									{
+										for (auto& subColor : newPoseAssetSecond.subColorsMap)
+										{
+											if (assetCurrentSecondLocal.subColorsMap.count(subColor.first) > 0)
+											{
+												subColor.second.colorAltered = assetCurrentSecondLocal.subColorsMap.at(subColor.first).colorAltered;
+												updatePartInScene(speciesCurrentSecond().componentUiMap.at(component.first), newPoseAssetSecond);
+											}
+										}
+									}
+									updatePartInScene(speciesCurrentSecond().componentUiMap.at(component.first), newPoseAssetSecond);
+								}
+								else
+								{
+									newPoseComponentSecond.displayedAssetKey = newPoseComponentSecond.assetsMap.begin()->first;
+									auto& newPoseAssetSecond = newPoseComponentSecond.assetsMap.at(newPoseComponentSecond.displayedAssetKey);
+									updatePartInScene(speciesCurrentSecond().componentUiMap.at(component.first), newPoseAssetSecond);
+								}
+							}
 							poseCurrent = pose.first;
 							applyCurrentSpeciesToScene();
-							loadDefaultCharacterFromTemplate();
+							componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(false);
+							assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
+
+							characterModified = false;
 						}
 					}
 				});
