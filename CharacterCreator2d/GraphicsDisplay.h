@@ -207,6 +207,7 @@ private:
 	void applyCurrentSpeciesToScene();
 	void setChosen(bool isChosen, assetsData &asset);
 	void setChosen(bool isChosen, componentUiData &componentUi);
+	void setCharacterModified(const bool newState);
 	speciesData& speciesCurrentSecond();
 	genderData& genderCurrentSecond();
 	poseData& poseCurrentSecond();

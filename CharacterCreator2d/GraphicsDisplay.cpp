@@ -44,13 +44,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	});
 	connect(actionFileSave.get(), &QAction::triggered, this, [=]() {
 		if (fileSave())
-			characterModified = false;
+			setCharacterModified(false);
 	});
 	connect(actionFileRender.get(), &QAction::triggered, this, &GraphicsDisplay::fileRenderCharacter);
 	connect(actionSetBackgroundColor.get(), &QAction::triggered, this, [=]() {
 		QColor colorNew = QColorDialog::getColor(backgroundColor, this->parentWidget(), "Choose Color");
 		if (colorNew.isValid())
+		{
 			setBackgroundColor(colorNew);
+			setCharacterModified(true);
+		}
 	});
 	connect(actionSetBackgroundImage.get(), &QAction::triggered, this, [=]() {
 		QString filePath = QFileDialog::getOpenFileName(this, tr("Open"), fileDirLastOpenedImage, tr("IMG Files (*.png *.gif *.jpg *.bmp)"));
@@ -58,10 +61,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 		{
 			setBackgroundImage(filePath);
 			fileDirLastOpenedImage = filePath;
+			setCharacterModified(true);
 		}
 	});
 	connect(actionClearBackgroundImage.get(), &QAction::triggered, this, [=]() {
 		setBackgroundImage(backgroundImageDefault);
+		setCharacterModified(true);
 	});
 
 	textInputSingleLineList.emplace_back
@@ -450,7 +455,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							}
 						}
 						updatePartInScene(componentUi.second, assetCurrentSecondLocal);
-						characterModified = true;
+						setCharacterModified(true);
 					}
 				});
 
@@ -499,7 +504,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						}
 						for (auto& asset : componentCurrentSecondLocal.assetsMap)
 							asset.second.colorAltered = currentColor;
-						characterModified = true;
+						setCharacterModified(true);
 					}
 				});
 
@@ -533,7 +538,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									for (auto& subColor : assetCurrentSecondLocal.subColorsMap)
 										subColor.second.colorAltered = colorNew;
 									updatePartInScene(componentUi.second, assetCurrentSecondLocal);
-									characterModified = true;
+									setCharacterModified(true);
 									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 									{
 										for (auto& asset : componentCurrentSecondLocal.assetsMap)
@@ -551,7 +556,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								{
 									pickedColorObj.colorAltered = colorNew;
 									updatePartInScene(componentUi.second, assetCurrentSecondLocal);
-									characterModified = true;
+									setCharacterModified(true);
 									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
 									{
 										for (auto& asset : componentCurrentSecondLocal.assetsMap)
@@ -570,7 +575,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						{
 							assetCurrentSecondLocal.colorAltered = colorNew;
 							updatePartInScene(componentUi.second, assetCurrentSecondLocal);
-							characterModified = true;
+							setCharacterModified(true);
 							for (auto& sub : componentUi.second.settings.sharedColoringSubList)
 							{
 								auto& subCompCurrentSecondLocal = poseCurrentSecond().componentMap.at(sub);
@@ -700,7 +705,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							setChosen(true, assetCurrentSecond());
 							//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(false);
 							//assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
-							characterModified = false;
+							setCharacterModified(false);
 						}
 					}
 				});
@@ -749,7 +754,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									//asset.second.btnSwapAsset.get()->setEnabled(false);
 
 									updatePartInScene(componentUi, asset.second);
-									characterModified = true;
+									setCharacterModified(true);
 								}
 							});
 						}
@@ -1433,7 +1438,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 			}
 		}
 		fileRead.close();
-		characterModified = false;
+		setCharacterModified(false);
 		if (!missingParts.isEmpty())
 		{
 			QMessageBox::information
@@ -1462,7 +1467,7 @@ void GraphicsDisplay::fileNew()
 	{
 		textInputSL.inputWidget.get()->setText("");
 	}
-	characterModified = false;
+	setCharacterModified(false);
 
 	loadDefaultCharacterFromTemplate();
 }
@@ -1591,7 +1596,6 @@ void GraphicsDisplay::setBackgroundColor(const QColor &color)
 {
 	backgroundColor = color;
 	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
-	characterModified = true;
 }
 
 void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
@@ -1602,7 +1606,6 @@ void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
 		QPixmap(backgroundImage).scaled(QSize(this->size().width(), this->size().height()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)
 	);
 	backgroundImageItem.get()->setPos(0, 0);
-	characterModified = true;
 }
 
 void GraphicsDisplay::removeCurrentSpeciesFromScene()
@@ -1730,6 +1733,15 @@ void GraphicsDisplay::setChosen(bool isChosen, componentUiData &componentUi)
 		componentUi.btnSwapComponent.get()->setStyleSheet(componentUi.btnSwapComponentStyle);
 		componentUi.btnComponentChosen = false;
 	}
+}
+
+void GraphicsDisplay::setCharacterModified(const bool newState)
+{
+	characterModified = newState;
+	/*if (characterModified)
+		qDebug() << "Character modified state set to: TRUE";
+	else
+		qDebug() << "Character modified state set to: FALSE";*/
 }
 
 speciesData& GraphicsDisplay::speciesCurrentSecond()
