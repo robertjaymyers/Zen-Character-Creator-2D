@@ -50,6 +50,7 @@ struct assetsData
 	const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
 	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
+	bool btnAssetChosen = false;
 	std::map<QString, subColorData> subColorsMap;
 	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.
 };
@@ -68,6 +69,7 @@ struct componentDataSettings
 	const bool partHasBtnSwap;
 	const bool partHasBtnPickColor;
 	const QString btnStyleSheetTemplate;
+	const QString btnStyleSheetTemplateChosen;
 	const QStringList btnSwapIcons;
 	const QStringList btnPickColorIcons;
 	const std::vector<int> gridPlacePickColor;
@@ -100,6 +102,7 @@ struct componentData
 struct componentUiData
 {
 	const componentDataSettings settings;
+	bool btnComponentChosen = false;
 	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
 	std::unique_ptr<QPushButton> btnSwapComponent = std::make_unique<QPushButton>(nullptr);
 	std::unique_ptr<QPushButton> btnPickColor = std::make_unique<QPushButton>(nullptr);
@@ -148,9 +151,10 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		ColorSetType::FILL_WITH_OUTLINE,
 		false, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -178,25 +182,26 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"Eyes",
 		"#aaaa7f",
 		ColorSetType::FILL_WITH_OUTLINE,
-		false, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyes.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyes.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png",
 		{1, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{-1, -1}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
-		nullptr, // SWAP COMPONENT BTN: Alignment in grid layout
-		{-1, -1}, // SWAP ASSET BTN: Row/Col placement in grid layout
-		nullptr, // SWAP ASSET BTN: Alignment in grid layout
+		{0, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
 		75, // SWAP BTN: Width
 		75, // SWAP BTN: Height
 		75, // PICK COLOR BTN: Width
@@ -210,25 +215,26 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"Lips",
 		"#555500",
 		ColorSetType::FILL_WITH_OUTLINE,
-		false, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLips.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLips.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png",
 		{2, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{-1, -1}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
-		nullptr, // SWAP COMPONENT BTN: Alignment in grid layout
-		{-1, -1}, // SWAP ASSET BTN: Row/Col placement in grid layout
-		nullptr, // SWAP ASSET BTN: Alignment in grid layout
+		{1, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
 		75, // SWAP BTN: Width
 		75, // SWAP BTN: Height
 		75, // PICK COLOR BTN: Width
@@ -244,9 +250,10 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		ColorSetType::FILL_NO_OUTLINE,
 		false, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -278,8 +285,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		false, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
@@ -287,7 +294,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -308,8 +315,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeck.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeckHover.png"
@@ -320,7 +327,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerNeckHover.png",
 		{6, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -341,8 +348,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
@@ -353,7 +360,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
 		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -374,8 +381,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
@@ -386,7 +393,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
 		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -407,8 +414,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
@@ -419,7 +426,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
 		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -440,8 +447,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
@@ -452,7 +459,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png",
 		{4, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{0, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -473,8 +480,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
@@ -485,7 +492,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
 		{5, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{1, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -508,9 +515,10 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		ColorSetType::FILL_WITH_OUTLINE,
 		false, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -540,25 +548,26 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"Eyes",
 		"#aaaa7f",
 		ColorSetType::FILL_WITH_OUTLINE,
-		false, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyes.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyes.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerEyesHover.png",
 		{1, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{-1, -1}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
-		nullptr, // SWAP COMPONENT BTN: Alignment in grid layout
-		{-1, -1}, // SWAP ASSET BTN: Row/Col placement in grid layout
-		nullptr, // SWAP ASSET BTN: Alignment in grid layout
+		{0, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
 		75, // SWAP BTN: Width
 		75, // SWAP BTN: Height
 		75, // PICK COLOR BTN: Width
@@ -572,25 +581,26 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"Lips",
 		"#555500",
 		ColorSetType::FILL_WITH_OUTLINE,
-		false, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
-		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover-pressed.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLips.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLips.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerLipsHover.png",
 		{2, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{-1, -1}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
-		nullptr, // SWAP COMPONENT BTN: Alignment in grid layout
-		{-1, -1}, // SWAP ASSET BTN: Row/Col placement in grid layout
-		nullptr, // SWAP ASSET BTN: Alignment in grid layout
+		{1, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
 		75, // SWAP BTN: Width
 		75, // SWAP BTN: Height
 		75, // PICK COLOR BTN: Width
@@ -606,9 +616,10 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		ColorSetType::FILL_NO_OUTLINE,
 		false, // SWAP BTN: Flag for whether part is expected to display btn
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
-		"QPushButton{border: none; image: url(%1);}"
-		"QPushButton:hover:!pressed{border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{border: none; image: url(%3);}",
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -640,8 +651,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		false, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEars.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEarsHover.png"
@@ -649,7 +660,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -671,8 +682,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		false, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
@@ -680,7 +691,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		QStringList(), // Head color changing is controlled by skin color, so we leave this empty
 		{-1, -1}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -701,8 +712,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeck.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeckHover.png"
@@ -713,7 +724,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerNeckHover.png",
 		{6, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{4, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -734,8 +745,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
@@ -746,7 +757,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
 		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -767,8 +778,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
@@ -779,7 +790,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
 		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{5, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -800,8 +811,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
@@ -812,7 +823,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
 		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{9, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -833,8 +844,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
@@ -845,7 +856,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerMaskHover.png",
 		{4, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		nullptr, // PICK COLOR BTN: Alignment in grid layout
-		{0, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{2, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -866,8 +877,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
-		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}"
-		"QPushButton:disabled{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
@@ -878,7 +889,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerHairHover.png",
 		{5, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{1, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{3, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -892,8 +903,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 
 const std::map<PoseType, QString> poseTypeMap =
 {
-	{ PoseType::FRONT_FACING, "Front Facing" },
-	{ PoseType::FRONT_FACING_ATTN_STANCE, "Front Facing Attn Stance" }
+	{ PoseType::FRONT_FACING, "Front Facing" }
 };
 
 const std::map<GenderType, QString> genderTypeMap =
