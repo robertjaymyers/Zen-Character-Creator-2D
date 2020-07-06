@@ -300,7 +300,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::NECK,
 	componentDataSettings
 	{
-		6, // Display order in scene (higher numbers overlap lower numbers)
+		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Neck",
 		"#b5b5b5",
 		ColorSetType::FILL_WITH_OUTLINE,

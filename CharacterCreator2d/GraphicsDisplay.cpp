@@ -657,6 +657,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 										}
 									}
 									updatePartInScene(speciesCurrentSecond().componentUiMap.at(component.first), newPoseAssetSecond);
+
+									if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
+									{
+										for (auto& asset : newPoseComponentSecond.assetsMap)
+										{
+											asset.second.colorAltered = assetCurrentSecondLocal.colorAltered;;
+										}
+									}
 								}
 								else
 								{
@@ -669,7 +677,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							applyCurrentSpeciesToScene();
 							componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(false);
 							assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
-
 							characterModified = false;
 						}
 					}
