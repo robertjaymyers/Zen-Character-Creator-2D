@@ -612,7 +612,11 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					if (fileSaveModifCheck())
 					{
 						removeCurrentSpeciesFromScene();
+						for (auto& pose : genderCurrentSecond().poseMap)
+							pose.second.actionPose.get()->setVisible(false);
 						genderCurrent = gender.first;
+						for (auto& pose : genderCurrentSecond().poseMap)
+							pose.second.actionPose.get()->setVisible(true);
 						poseCurrent = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.begin()->first;
 						applyCurrentSpeciesToScene();
 						loadDefaultCharacterFromTemplate();
