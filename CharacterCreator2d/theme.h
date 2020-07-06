@@ -50,6 +50,8 @@ struct assetsData
 	const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
 	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
+	QString btnSwapAssetStyle;
+	QString btnSwapAssetChosenStyle;
 	bool btnAssetChosen = false;
 	std::map<QString, subColorData> subColorsMap;
 	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.
@@ -102,6 +104,9 @@ struct componentData
 struct componentUiData
 {
 	const componentDataSettings settings;
+	QString btnSwapComponentStyle;
+	QString btnSwapComponentChosenStyle;
+	QString btnPickColorStyle;
 	bool btnComponentChosen = false;
 	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
 	std::unique_ptr<QPushButton> btnSwapComponent = std::make_unique<QPushButton>(nullptr);
@@ -187,7 +192,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyes.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png"
@@ -220,7 +225,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLips.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png"
@@ -253,7 +258,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -286,7 +291,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
@@ -316,7 +321,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeck.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeckHover.png"
@@ -349,7 +354,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
@@ -382,7 +387,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
@@ -415,7 +420,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
@@ -448,7 +453,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
@@ -481,7 +486,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"
@@ -518,7 +523,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -553,7 +558,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyes.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartEyesHover.png"
@@ -586,7 +591,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLips.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartLipsHover.png"
@@ -619,7 +624,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch.png"
 		<< ":/ZenCharacterCreator2D/Resources/button-left-pencil-sketch-hover.png"
@@ -652,7 +657,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEars.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartElfEarsHover.png"
@@ -683,7 +688,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHead.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHeadHover.png"
@@ -713,7 +718,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeck.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartNeckHover.png"
@@ -746,7 +751,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartBottomHover.png"
@@ -779,7 +784,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
@@ -812,7 +817,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartFeetHover.png"
@@ -845,7 +850,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMask.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartMaskHover.png"
@@ -878,7 +883,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
 		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
-		"QPushButton{background: #E5884E; border: none; image: url(%2);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHair.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartHairHover.png"

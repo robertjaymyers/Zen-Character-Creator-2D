@@ -205,7 +205,7 @@ private:
 	void setBackgroundImage(const QString &imgPath);
 	void removeCurrentSpeciesFromScene();
 	void applyCurrentSpeciesToScene();
-	void setChosen(bool isChosen, const componentUiData &componentUi, assetsData &asset);
+	void setChosen(bool isChosen, assetsData &asset);
 	void setChosen(bool isChosen, componentUiData &componentUi);
 	speciesData& speciesCurrentSecond();
 	genderData& genderCurrentSecond();

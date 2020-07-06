@@ -251,13 +251,19 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 		{
 			if (componentUi.second.settings.partHasBtnSwap)
 			{
-				componentUi.second.btnSwapComponent.get()->setStyleSheet
-				(
+				componentUi.second.btnSwapComponentStyle =
 					componentUi.second.settings.btnStyleSheetTemplate
 					.arg(componentUi.second.settings.btnSwapIcons[0])
 					.arg(componentUi.second.settings.btnSwapIcons[1])
 					.arg(componentUi.second.settings.btnSwapIcons[2])
-				);
+					;
+
+				componentUi.second.btnSwapComponentChosenStyle =
+					componentUi.second.settings.btnStyleSheetTemplateChosen
+					.arg(componentUi.second.settings.btnSwapIcons[1])
+					;
+
+				componentUi.second.btnSwapComponent.get()->setStyleSheet(componentUi.second.btnSwapComponentStyle);
 				componentUi.second.btnSwapComponent.get()->setParent(this);
 				componentUi.second.btnSwapComponent.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 				componentUi.second.btnSwapComponent.get()->setFixedSize
@@ -278,7 +284,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 						for (auto& asset : componentCurrentSecond().assetsMap)
 						{
-							setChosen(false, componentUi.second, asset.second);
+							setChosen(false, asset.second);
 							//asset.second.btnSwapAsset.get()->setEnabled(true);
 							asset.second.btnSwapAsset.get()->setVisible(false);
 						}
@@ -288,7 +294,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 						for (auto& asset : poseCurrentSecond().componentMap.at(componentUi.first).assetsMap)
 						{
-							setChosen(false, componentUi.second, asset.second);
+							setChosen(false, asset.second);
 							//asset.second.btnSwapAsset.get()->setEnabled(true);
 							asset.second.btnSwapAsset.get()->setVisible(true);
 						}
@@ -298,20 +304,21 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 						componentCurrent = componentUi.first;
 
-						setChosen(true, componentUi.second, assetCurrentSecond());
+						setChosen(true, assetCurrentSecond());
 						//assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
 					}
 				});
 			}
 			if (componentUi.second.settings.partHasBtnPickColor)
 			{
-				componentUi.second.btnPickColor.get()->setStyleSheet
-				(
+				componentUi.second.btnPickColorStyle =
 					componentUi.second.settings.btnStyleSheetTemplate
 					.arg(componentUi.second.settings.btnPickColorIcons[0])
 					.arg(componentUi.second.settings.btnPickColorIcons[1])
 					.arg(componentUi.second.settings.btnPickColorIcons[2])
-				);
+					;
+
+				componentUi.second.btnPickColor.get()->setStyleSheet(componentUi.second.btnPickColorStyle);
 				componentUi.second.btnPickColor.get()->setParent(this);
 				componentUi.second.btnPickColor.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 				componentUi.second.btnPickColor.get()->setFixedSize
@@ -642,7 +649,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							setChosen(false, componentUiCurrentSecond());
 							//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
 							if (!componentCurrentSecond().displayedAssetKey.isEmpty())
-								setChosen(false, componentUiCurrentSecond(), assetCurrentSecond());
+								setChosen(false, assetCurrentSecond());
 								//assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 							removeCurrentSpeciesFromScene();
 							for (auto& component : poseCurrentSecond().componentMap)
@@ -690,7 +697,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							poseCurrent = pose.first;
 							applyCurrentSpeciesToScene();
 							setChosen(true, componentUiCurrentSecond());
-							setChosen(true, componentUiCurrentSecond(), assetCurrentSecond());
+							setChosen(true, assetCurrentSecond());
 							//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(false);
 							//assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
 							characterModified = false;
@@ -705,13 +712,19 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					{
 						for (auto& asset : component.second.assetsMap)
 						{
-							asset.second.btnSwapAsset.get()->setStyleSheet
-							(
+							asset.second.btnSwapAssetStyle = 
 								componentUi.settings.btnStyleSheetTemplate
 								.arg(asset.second.imgThumbnailPath)
 								.arg(asset.second.imgThumbnailPath)
 								.arg(asset.second.imgThumbnailPath)
-							);
+								;
+
+							asset.second.btnSwapAssetChosenStyle =
+								componentUi.settings.btnStyleSheetTemplateChosen
+								.arg(asset.second.imgThumbnailPath)
+								;
+
+							asset.second.btnSwapAsset.get()->setStyleSheet(asset.second.btnSwapAssetStyle);
 							asset.second.btnSwapAsset.get()->setParent(this);
 							asset.second.btnSwapAsset.get()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 							asset.second.btnSwapAsset.get()->setFixedSize
@@ -727,12 +740,12 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							connect(asset.second.btnSwapAsset.get(), &QPushButton::clicked, this, [&]() {
 								if (!asset.second.btnAssetChosen)
 								{
-									setChosen(false, componentUi, component.second.assetsMap.at(component.second.displayedAssetKey));
+									setChosen(false, component.second.assetsMap.at(component.second.displayedAssetKey));
 									//component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
 
 									component.second.displayedAssetKey = asset.first;
 
-									setChosen(true, componentUi, asset.second);
+									setChosen(true, asset.second);
 									//asset.second.btnSwapAsset.get()->setEnabled(false);
 
 									updatePartInScene(componentUi, asset.second);
@@ -808,7 +821,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				componentCurrent = componentUi.first;
 				for (auto& asset : currentComponentAt.assetsMap)
 				{
-					setChosen(false, componentUi.second, asset.second);
+					setChosen(false, asset.second);
 					//asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
@@ -1260,7 +1273,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 	//speciesMap.at(speciesCurrent).componentUiMap.at(componentCurrent).btnSwapComponent.get()->setEnabled(true);
 
 	if (!componentCurrentSecond().displayedAssetKey.isEmpty())
-		setChosen(false, componentUiCurrentSecond(), assetCurrentSecond());
+		setChosen(false, assetCurrentSecond());
 		//assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 
 	QString fileContents;
@@ -1326,7 +1339,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							if (component.first == componentCurrent)
 							{
 								setChosen(true, currentComponentUiAt);
-								setChosen(true, currentComponentUiAt, component.second.assetsMap.at(assetKey));
+								setChosen(true, component.second.assetsMap.at(assetKey));
 								//currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
 								//component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
@@ -1373,7 +1386,7 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							if (component.first == componentCurrent)
 							{
 								setChosen(true, currentComponentUiAt);
-								setChosen(true, currentComponentUiAt, component.second.assetsMap.at(assetKey));
+								setChosen(true, component.second.assetsMap.at(assetKey));
 								//currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
 								//component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
@@ -1670,7 +1683,7 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 				componentCurrent = componentUi.first;
 				for (auto& asset : currentComponentAt.assetsMap)
 				{
-					setChosen(false, componentUi.second, asset.second);
+					setChosen(false, asset.second);
 					//asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
@@ -1691,26 +1704,16 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 	}
 }
 
-void GraphicsDisplay::setChosen(bool isChosen, const componentUiData &componentUi, assetsData &asset)
+void GraphicsDisplay::setChosen(bool isChosen, assetsData &asset)
 {
 	if (isChosen)
 	{
-		asset.btnSwapAsset.get()->setStyleSheet
-		(
-			componentUi.settings.btnStyleSheetTemplateChosen
-			.arg(asset.imgThumbnailPath)
-		);
+		asset.btnSwapAsset.get()->setStyleSheet(asset.btnSwapAssetChosenStyle);
 		asset.btnAssetChosen = true;
 	}
 	else
 	{
-		asset.btnSwapAsset.get()->setStyleSheet
-		(
-			componentUi.settings.btnStyleSheetTemplate
-			.arg(asset.imgThumbnailPath)
-			.arg(asset.imgThumbnailPath)
-			.arg(asset.imgThumbnailPath)
-		);
+		asset.btnSwapAsset.get()->setStyleSheet(asset.btnSwapAssetStyle);
 		asset.btnAssetChosen = false;
 	}
 }
@@ -1719,22 +1722,12 @@ void GraphicsDisplay::setChosen(bool isChosen, componentUiData &componentUi)
 {
 	if (isChosen)
 	{
-		componentUi.btnSwapComponent.get()->setStyleSheet
-		(
-			componentUi.settings.btnStyleSheetTemplateChosen
-			.arg(componentUi.settings.btnSwapIcons[1])
-		);
+		componentUi.btnSwapComponent.get()->setStyleSheet(componentUi.btnSwapComponentChosenStyle);
 		componentUi.btnComponentChosen = true;
 	}
 	else
 	{
-		componentUi.btnSwapComponent.get()->setStyleSheet
-		(
-			componentUi.settings.btnStyleSheetTemplate
-			.arg(componentUi.settings.btnSwapIcons[0])
-			.arg(componentUi.settings.btnSwapIcons[1])
-			.arg(componentUi.settings.btnSwapIcons[2])
-		);
+		componentUi.btnSwapComponent.get()->setStyleSheet(componentUi.btnSwapComponentStyle);
 		componentUi.btnComponentChosen = false;
 	}
 }
