@@ -318,22 +318,18 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						}
 
 						setChosen(false, componentUiCurrentSecond());
-						//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
 
 						for (auto& asset : componentCurrentSecond().assetsMap)
 						{
 							setChosen(false, asset.second);
-							//asset.second.btnSwapAsset.get()->setEnabled(true);
 							asset.second.btnSwapAsset.get()->setVisible(false);
 						}
 
 						setChosen(true, componentUi.second);
-						//componentUi.second.btnSwapComponent.get()->setEnabled(false);
 
 						for (auto& asset : poseCurrentSecond().componentMap.at(componentUi.first).assetsMap)
 						{
 							setChosen(false, asset.second);
-							//asset.second.btnSwapAsset.get()->setEnabled(true);
 							asset.second.btnSwapAsset.get()->setVisible(true);
 						}
 
@@ -343,7 +339,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						componentCurrent = componentUi.first;
 
 						setChosen(true, assetCurrentSecond());
-						//assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
 					}
 				});
 			}
@@ -694,10 +689,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						if (fileSaveModifCheck())
 						{
 							setChosen(false, componentUiCurrentSecond());
-							//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
 							if (!componentCurrentSecond().displayedAssetKey.isEmpty())
 								setChosen(false, assetCurrentSecond());
-								//assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 							removeCurrentSpeciesFromScene();
 							for (auto& component : poseCurrentSecond().componentMap)
 							{
@@ -745,8 +738,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							applyCurrentSpeciesToScene();
 							setChosen(true, componentUiCurrentSecond());
 							setChosen(true, assetCurrentSecond());
-							//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(false);
-							//assetCurrentSecond().btnSwapAsset.get()->setEnabled(false);
 							setCharacterModified(false);
 						}
 					}
@@ -796,12 +787,10 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									}
 
 									setChosen(false, component.second.assetsMap.at(component.second.displayedAssetKey));
-									//component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
 
 									component.second.displayedAssetKey = asset.first;
 
 									setChosen(true, asset.second);
-									//asset.second.btnSwapAsset.get()->setEnabled(false);
 
 									updatePartInScene(componentUi, asset.second);
 									setCharacterModified(true);
@@ -877,7 +866,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				for (auto& asset : currentComponentAt.assetsMap)
 				{
 					setChosen(false, asset.second);
-					//asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
 			}
@@ -1363,11 +1351,9 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 {
 	setChosen(false, componentUiCurrentSecond());
-	//speciesMap.at(speciesCurrent).componentUiMap.at(componentCurrent).btnSwapComponent.get()->setEnabled(true);
 
 	if (!componentCurrentSecond().displayedAssetKey.isEmpty())
 		setChosen(false, assetCurrentSecond());
-		//assetCurrentSecond().btnSwapAsset.get()->setEnabled(true);
 
 	QString fileContents;
 	QFile fileRead(filePath);
@@ -1433,8 +1419,6 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							{
 								setChosen(true, currentComponentUiAt);
 								setChosen(true, component.second.assetsMap.at(assetKey));
-								//currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
-								//component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
 
 							if (actionColorChangeSettingsApplyToAllOnPicker.get()->isChecked())
@@ -1480,8 +1464,6 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 							{
 								setChosen(true, currentComponentUiAt);
 								setChosen(true, component.second.assetsMap.at(assetKey));
-								//currentComponentUiAt.btnSwapComponent.get()->setEnabled(false);
-								//component.second.assetsMap.at(assetKey).btnSwapAsset.get()->setEnabled(false);
 							}
 
 							QString subPartsStr = extractSubstringInbetweenQt("[Parts]=", "", line);
@@ -1777,7 +1759,6 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 				for (auto& asset : currentComponentAt.assetsMap)
 				{
 					setChosen(false, asset.second);
-					//asset.second.btnSwapAsset.get()->setEnabled(true);
 					asset.second.btnSwapAsset.get()->setVisible(true);
 				}
 			}
