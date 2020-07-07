@@ -68,7 +68,7 @@ public:
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
-	void resizeEvent(QResizeEvent *event);
+	void resizeEvent(QResizeEvent *event) override;
 
 private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
@@ -86,6 +86,7 @@ private:
 	const QString backgroundImageDefault = ":/ZenCharacterCreator2D/Resources/invisible.png";
 	QString backgroundImage = backgroundImageDefault;
 	std::unique_ptr<QGraphicsPixmapItem> backgroundImageItem = std::make_unique<QGraphicsPixmapItem>(nullptr);
+	const int backgroundImageItemZValue = 0;
 
 	std::unique_ptr<QScrollArea> partSwapScroll = std::make_unique<QScrollArea>(this);
 	std::unique_ptr<QGroupBox> partSwapGroup = std::make_unique<QGroupBox>(this);

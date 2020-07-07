@@ -18,6 +18,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	: QGraphicsView(parent)
 {
 	this->setMinimumSize(QSize(width, height));
+	this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
@@ -123,6 +125,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 	this->setStyleSheet(styleSheetEditable.arg(backgroundColor.name()));
 	scene.get()->addItem(backgroundImageItem.get());
+	backgroundImageItem.get()->setZValue(backgroundImageItemZValue);
 	backgroundImageItem.get()->setPixmap(backgroundImage);
 	backgroundImageItem.get()->setPos(0, 0);
 	this->setLayout(layout.get());
@@ -949,9 +952,16 @@ void GraphicsDisplay::contextMenuEvent(QContextMenuEvent *event)
 void GraphicsDisplay::resizeEvent(QResizeEvent *event)
 {
 	setBackgroundImage(backgroundImage);
-	for (auto& component : poseCurrentSecond().componentMap)
+	for (auto& item : scene.get()->items())
 	{
-		updatePartInScene(speciesMap.at(speciesCurrent).componentUiMap.at(component.first), component.second.assetsMap.at(component.second.displayedAssetKey));
+		if (item->zValue() != backgroundImageItemZValue)
+		{
+			item->setPos
+			(
+				(this->size().width() - item->boundingRect().width()) / 2,
+				(this->size().height() - item->boundingRect().height()) / 2
+			);
+		}
 	}
 }
 
@@ -1092,11 +1102,11 @@ void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, cons
 {
 	auto setNewPixmapAndPos = [&](const QPixmap &newPix) {
 		componentUi.item.get()->setPixmap(newPix);
-		componentUi.item.get()->setPos
+		/*componentUi.item.get()->setPos
 		(
 			(this->size().width() - newPix.width()) / 2,
 			(this->size().height() - newPix.height()) / 2
-		);
+		);*/
 	};
 
 	if (asset.subColorsMap.empty())
