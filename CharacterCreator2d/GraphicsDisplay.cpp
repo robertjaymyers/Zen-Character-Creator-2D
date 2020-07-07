@@ -891,9 +891,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	characterNameInputGroup.get()->setFlat(true);
 	layout.get()->addWidget(characterNameInputGroup.get(), 1, 0, Qt::AlignLeft);
 
-	fullscreenBtn.get()->setText("Fullscreen");
-	fullscreenBtn.get()->setStyleSheet(fullscreenBtnStyle);
-	layout.get()->addWidget(fullscreenBtn.get(), 1, 2, Qt::AlignRight);
+	/*fullscreenBtn.get()->setText("Fullscreen");
+	fullscreenBtn.get()->setStyleSheet(utilityBtnStyle);
+	layout.get()->addWidget(fullscreenBtn.get(), 1, 2, Qt::AlignRight);*/
+
+	utilityBtnExit.get()->setText("Exit");
+	utilityBtnExit.get()->setStyleSheet(utilityBtnStyle);
+	layout.get()->addWidget(utilityBtnExit.get(), 1, 2, Qt::AlignRight);
+	connect(utilityBtnExit.get(), &QPushButton::clicked, this, [=]() {
+		this->parentWidget()->parentWidget()->close();
+	});
 
 	actionColorChangeSettingsApplyToAllOnPicker.get()->setParent(this);
 	actionColorChangeSettingsApplyToAllOnPicker.get()->setCheckable(true);
@@ -963,6 +970,7 @@ void GraphicsDisplay::resizeEvent(QResizeEvent *event)
 			);
 		}
 	}
+	QWidget::resizeEvent(event);
 }
 
 // private:

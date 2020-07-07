@@ -36,6 +36,7 @@ This file is part of Zen Character Creator 2D.
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QShortcut>
+#include <QTimer>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -63,12 +64,12 @@ class GraphicsDisplay : public QGraphicsView
 public:
 	GraphicsDisplay(QWidget *parent = nullptr, int width = 800, int height = 600);
 	bool fileSaveModifCheck();
-	std::unique_ptr<QShortcut> fullscreenShortcutExit = std::make_unique<QShortcut>(QKeySequence(tr("ESC", "Exit Fullscreen")), this);
-	std::unique_ptr<QPushButton> fullscreenBtn = std::make_unique<QPushButton>(this);
+	//std::unique_ptr<QShortcut> fullscreenShortcutExit = std::make_unique<QShortcut>(QKeySequence(tr("ESC", "Exit Fullscreen")), this);
+	//std::unique_ptr<QPushButton> fullscreenBtn = std::make_unique<QPushButton>(this);
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event) override;
-	void resizeEvent(QResizeEvent *event) override;
+	void resizeEvent(QResizeEvent *event);
 
 private:
 	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
@@ -99,7 +100,8 @@ private:
 	std::unique_ptr<QGroupBox> characterNameInputGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> characterNameInputGroupLayout = std::make_unique<QGridLayout>();
 
-	const QString fullscreenBtnStyle = 
+	std::unique_ptr<QPushButton> utilityBtnExit = std::make_unique<QPushButton>(this);
+	const QString utilityBtnStyle = 
 	{
 		"QPushButton"
 		"{"
