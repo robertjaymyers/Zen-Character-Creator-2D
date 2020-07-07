@@ -21,6 +21,28 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+	{
+		QStringList soundtrackPathList;
+		QDirIterator dirIt(soundtrackPath);
+		while (dirIt.hasNext())
+		{
+			QString path = dirIt.next();
+			if (QFileInfo(path).suffix() == "mp3")
+				soundtrackPathList.append(path);
+		}
+
+		if (!soundtrackPathList.isEmpty())
+		{
+			for (const auto& path : soundtrackPathList)
+				soundtrackPlaylist.get()->addMedia(QUrl::fromLocalFile(path));
+
+			soundtrackPlaylist->setPlaybackMode(QMediaPlaylist::Random);
+
+			soundtrackPlayer.get()->setPlaylist(soundtrackPlaylist.get());
+			soundtrackPlayer.get()->play();
+		}
+	}
+
 	contextMenu.get()->addAction(actionFileNew.get());
 	contextMenu.get()->addAction(actionFileOpen.get());
 	contextMenu.get()->addAction(actionFileSave.get());
@@ -155,7 +177,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					);
 
 					QStringList assetFolderPathList = fileGetAssetDirectoriesOnStartup(
-						QCoreApplication::applicationDirPath() +
+						appExecutablePath +
 						"/Assets/Species/" +
 						species.second.assetStr + "/" +
 						gender.second + "/" +
@@ -287,6 +309,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				connect(componentUi.second.btnSwapComponent.get(), &QPushButton::clicked, this, [&]() {
 					if (!componentUi.second.btnComponentChosen)
 					{
+						if (soundEnabled)
+						{
+							QTimer::singleShot(0, this, [=]() {
+								if (QFile(soundEffectComponentSwap).exists())
+									QSound::play(soundEffectComponentSwap);
+							});
+						}
+
 						setChosen(false, componentUiCurrentSecond());
 						//componentUiCurrentSecond().btnSwapComponent.get()->setEnabled(true);
 
@@ -512,6 +542,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				});
 
 				connect(componentUi.second.btnPickColor.get(), &QPushButton::clicked, this, [&]() {
+					if (soundEnabled)
+					{
+						QTimer::singleShot(0, this, [=]() {
+							if (QFile(soundEffectPickColor).exists())
+								QSound::play(soundEffectPickColor);
+						});
+					}
+
 					auto& componentCurrentSecondLocal = poseCurrentSecond().componentMap.at(componentUi.first);
 					auto& assetCurrentSecondLocal = componentCurrentSecondLocal.assetsMap.at(componentCurrentSecondLocal.displayedAssetKey);
 					
@@ -748,6 +786,14 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							connect(asset.second.btnSwapAsset.get(), &QPushButton::clicked, this, [&]() {
 								if (!asset.second.btnAssetChosen)
 								{
+									if (soundEnabled)
+									{
+										QTimer::singleShot(0, this, [=]() {
+											if (QFile(soundEffectAssetSwap).exists())
+												QSound::play(soundEffectAssetSwap);
+										});
+									}
+
 									setChosen(false, component.second.assetsMap.at(component.second.displayedAssetKey));
 									//component.second.assetsMap.at(component.second.displayedAssetKey).btnSwapAsset.get()->setEnabled(true);
 
@@ -895,9 +941,32 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	fullscreenBtn.get()->setStyleSheet(utilityBtnStyle);
 	layout.get()->addWidget(fullscreenBtn.get(), 1, 2, Qt::AlignRight);*/
 
+	utilityBtnGroupLayout.get()->setMargin(10);
+	utilityBtnGroup.get()->setLayout(utilityBtnGroupLayout.get());
+	utilityBtnGroup.get()->setFlat(true);
+	layout.get()->addWidget(utilityBtnGroup.get(), 1, 2, Qt::AlignRight);
+
+	utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
+	utilityBtnVolume.get()->setStyleSheet(utilityBtnStyle);
+	utilityBtnGroupLayout.get()->addWidget(utilityBtnVolume.get(), 0);
+	connect(utilityBtnVolume.get(), &QPushButton::clicked, this, [=]() {
+		if (soundEnabled)
+		{
+			soundEnabled = false;
+			soundtrackPlayer.get()->setMuted(true);
+			utilityBtnVolume.get()->setIcon(utilityBtnVolumeMutedIcon);
+		}
+		else
+		{
+			soundEnabled = true;
+			soundtrackPlayer.get()->setMuted(false);
+			utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
+		}
+	});
+
 	utilityBtnExit.get()->setText("Exit");
 	utilityBtnExit.get()->setStyleSheet(utilityBtnStyle);
-	layout.get()->addWidget(utilityBtnExit.get(), 1, 2, Qt::AlignRight);
+	utilityBtnGroupLayout.get()->addWidget(utilityBtnExit.get(), 1);
 	connect(utilityBtnExit.get(), &QPushButton::clicked, this, [=]() {
 		this->parentWidget()->parentWidget()->close();
 	});
@@ -1275,7 +1344,7 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	// a default character can be loaded from a template file.
 	// Template is built identical to a saved character, so the loading logic can be reused.
 	const QString templatePath =
-		QCoreApplication::applicationDirPath() +
+		appExecutablePath +
 		"/Assets/Species/" +
 		speciesMap.at(speciesCurrent).assetStr +
 		"/" +

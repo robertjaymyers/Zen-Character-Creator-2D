@@ -48,5 +48,7 @@
         <file>Resources/btnSwapCharacterPartLipsHover.png</file>
         <file>Resources/btnSwapCharacterPartEyes.png</file>
         <file>Resources/btnSwapCharacterPartEyesHover.png</file>
+        <file>Resources/utilityIconVolume.png</file>
+        <file>Resources/utilityIconVolumeMuted.png</file>
     </qresource>
 </RCC>

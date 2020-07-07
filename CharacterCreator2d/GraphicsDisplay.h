@@ -17,6 +17,7 @@ This file is part of Zen Character Creator 2D.
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QAction>
@@ -37,6 +38,9 @@ This file is part of Zen Character Creator 2D.
 #include <QScrollBar>
 #include <QShortcut>
 #include <QTimer>
+#include <QSound>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -72,14 +76,25 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
-	QString fileDirLastOpened = QCoreApplication::applicationDirPath() + "/Saves";
-	QString fileDirLastSaved = QCoreApplication::applicationDirPath() + "/Saves";
-	QString fileDirLastRendered = QCoreApplication::applicationDirPath() + "/Renders";
-	QString fileDirLastOpenedImage = QCoreApplication::applicationDirPath() + "/Backgrounds";
+	const QString appExecutablePath = QCoreApplication::applicationDirPath();
+	QString fileDirLastOpened = appExecutablePath + "/Saves";
+	QString fileDirLastSaved = appExecutablePath + "/Saves";
+	QString fileDirLastRendered = appExecutablePath + "/Renders";
+	QString fileDirLastOpenedImage = appExecutablePath + "/Backgrounds";
 	bool characterModified = false;
 	QString styleSheetEditable = "border: none; background-color: %1;";
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
 	QColor backgroundColor = backgroundColorDefault;
+
+	bool soundEnabled = true;
+	const QString soundEffectsPath = appExecutablePath + "/SoundEffects";
+	const QString soundEffectComponentSwap = soundEffectsPath + "/componentSwap.wav";
+	const QString soundEffectAssetSwap = soundEffectsPath + "/assetSwap.wav";
+	const QString soundEffectPickColor = soundEffectsPath + "/pickColor.wav";
+
+	const QString soundtrackPath = appExecutablePath + "/Soundtrack";
+	std::unique_ptr<QMediaPlayer> soundtrackPlayer = std::make_unique<QMediaPlayer>();
+	std::unique_ptr<QMediaPlaylist> soundtrackPlaylist = std::make_unique<QMediaPlaylist>();
 
 	std::unique_ptr<QGridLayout> layout = std::make_unique<QGridLayout>();
 	std::unique_ptr<QGraphicsScene> scene = std::make_unique<QGraphicsScene>();
@@ -99,6 +114,13 @@ private:
 
 	std::unique_ptr<QGroupBox> characterNameInputGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QGridLayout> characterNameInputGroupLayout = std::make_unique<QGridLayout>();
+
+	std::unique_ptr<QGroupBox> utilityBtnGroup = std::make_unique<QGroupBox>(this);
+	std::unique_ptr<QHBoxLayout> utilityBtnGroupLayout = std::make_unique<QHBoxLayout>();
+
+	std::unique_ptr<QPushButton> utilityBtnVolume = std::make_unique<QPushButton>(this);
+	const QIcon utilityBtnVolumeIcon = QIcon(":/ZenCharacterCreator2D/Resources/utilityIconVolume.png");
+	const QIcon utilityBtnVolumeMutedIcon = QIcon(":/ZenCharacterCreator2D/Resources/utilityIconVolumeMuted.png");
 
 	std::unique_ptr<QPushButton> utilityBtnExit = std::make_unique<QPushButton>(this);
 	const QString utilityBtnStyle = 
@@ -146,8 +168,6 @@ private:
 	std::unique_ptr<QActionGroup> actioColorChangeSettingsGroup = std::make_unique<QActionGroup>(this);
 	std::unique_ptr<QAction> actionColorChangeSettingsApplyToAllOnPicker = std::make_unique<QAction>("Apply Color Change To All In Set");
 	std::unique_ptr<QAction> actionColorChangeSettingsDontApplyToAllOnPicker = std::make_unique<QAction>("Apply Color Change To Current Item Only");
-
-	const QString appExecutablePath = QCoreApplication::applicationDirPath();
 
 	std::map<SpeciesType, speciesData> speciesMap;
 	SpeciesType speciesCurrent = SpeciesType::HUMAN;
