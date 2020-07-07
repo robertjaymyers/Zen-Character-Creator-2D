@@ -1110,11 +1110,11 @@ void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, cons
 {
 	auto setNewPixmapAndPos = [&](const QPixmap &newPix) {
 		componentUi.item.get()->setPixmap(newPix);
-		/*componentUi.item.get()->setPos
+		componentUi.item.get()->setPos
 		(
 			(this->size().width() - newPix.width()) / 2,
 			(this->size().height() - newPix.height()) / 2
-		);*/
+		);
 	};
 
 	if (asset.subColorsMap.empty())
