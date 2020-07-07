@@ -670,7 +670,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						genderCurrent = gender.first;
 						for (auto& pose : genderCurrentSecond().poseMap)
 							pose.second.actionPose.get()->setVisible(true);
-						poseCurrent = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.begin()->first;
+						poseCurrent = genderCurrentSecond().poseMap.begin()->first;
+						poseCurrentSecond().actionPose.get()->setChecked(true);
 						applyCurrentSpeciesToScene();
 						loadDefaultCharacterFromTemplate();
 					}
@@ -1701,10 +1702,12 @@ void GraphicsDisplay::removeCurrentSpeciesFromScene()
 	{
 		if (componentUi.second.settings.partHasBtnSwap)
 		{
+			setChosen(false, componentUi.second);
 			componentUi.second.btnSwapComponent.get()->setVisible(false);
 			partSwapGroupLayout.get()->removeWidget(componentUi.second.btnSwapComponent.get());
 			for (auto& asset : poseCurrentSecond().componentMap.at(componentUi.first).assetsMap)
 			{
+				setChosen(false, asset.second);
 				asset.second.btnSwapAsset.get()->setVisible(false);
 				partSwapGroupLayout.get()->removeWidget(asset.second.btnSwapAsset.get());
 			}
