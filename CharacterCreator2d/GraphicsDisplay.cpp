@@ -694,6 +694,19 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 				connect(pose.second.actionPose.get(), &QAction::triggered, this, [&]() {
 					if (poseCurrent != pose.first)
 					{
+						// We check to see if we're going to be able to switch poses without changing any assets.
+						// If we can, we go with character as unmodified to ensure no save check, for convenience.
+						// If we can't, we make sure character is set to modified, so there will be a save check.
+						setCharacterModified(false);
+						auto& newPoseSecond = genderCurrentSecond().poseMap.at(pose.first);
+						for (auto& component : poseCurrentSecond().componentMap)
+						{
+							if (newPoseSecond.componentMap.at(component.first).assetsMap.count(component.second.displayedAssetKey) == 0)
+							{
+								setCharacterModified(true);
+								break;
+							}
+						}
 						if (fileSaveModifCheck())
 						{
 							setChosen(false, componentUiCurrentSecond());
@@ -706,7 +719,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								// If it does, we use the matching asset. Otherwise, we default to first available asset.
 								// We do this so that, where possible, the experience of pose changing is ONLY a 
 								// change of pose. As opposed to user having to redo a bunch of customizations.
-								auto& newPoseSecond = genderCurrentSecond().poseMap.at(pose.first);
 								auto& newPoseComponentSecond = newPoseSecond.componentMap.at(component.first);
 								auto& assetCurrentSecondLocal = component.second.assetsMap.at(component.second.displayedAssetKey);
 								if (newPoseComponentSecond.assetsMap.count(component.second.displayedAssetKey) > 0)
@@ -746,7 +758,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							applyCurrentSpeciesToScene();
 							setChosen(true, componentUiCurrentSecond());
 							setChosen(true, assetCurrentSecond());
-							setCharacterModified(false);
 						}
 					}
 				});
@@ -823,7 +834,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	for (auto& pose : genderCurrentSecond().poseMap)
 			pose.second.actionPose.get()->setVisible(true);
 
-	applyDisplayOrder();
+	applyCurrentDisplayOrder();
 	
 	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
@@ -839,8 +850,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			componentUi.second.btnSwapComponent.get()->setVisible(true);
 
 			int count = componentUi.second.settings.gridPlaceSwapAssetOrigin[0];
-			auto& currentComponentAt = speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent)
-				.componentMap.at(componentUi.first);
+			auto& currentComponentAt = poseCurrentSecond().componentMap.at(componentUi.first);
 			if (currentComponentAt.assetsMap.count("none") > 0)
 				count++;
 			for (auto& asset : currentComponentAt.assetsMap)
@@ -1690,7 +1700,7 @@ void GraphicsDisplay::setBackgroundImage(const QString &imgPath)
 
 void GraphicsDisplay::removeCurrentSpeciesFromScene()
 {
-	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
+	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
 		if (componentUi.second.settings.partHasBtnSwap)
 		{
@@ -1722,7 +1732,7 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 	// Note: We make the widgets visible AFTER adding them to layout.
 	// Otherwise, they may be briefly visible outside of the layout
 	// and then get added to it, causing a flickering effect from the adjustment of position.
-	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
+	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
 		if (componentUi.second.settings.partHasBtnSwap)
 		{
@@ -1787,7 +1797,25 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 		scene.get()->addItem(componentUi.second.item.get());
 	}
 
-	applyDisplayOrder();
+	applyCurrentDisplayOrder();
+}
+
+void GraphicsDisplay::applyCurrentDisplayOrder()
+{
+	if (!poseCurrentSecond().displayOrderZOverrideMap.empty())
+	{
+		for (const auto& overridePair : poseCurrentSecond().displayOrderZOverrideMap)
+		{
+			speciesCurrentSecond().componentUiMap.at(overridePair.first).item.get()->setZValue(overridePair.second);
+		}
+	}
+	else
+	{
+		for (auto& componentUi : speciesCurrentSecond().componentUiMap)
+		{
+			componentUi.second.item.get()->setZValue(componentUi.second.settings.displayOrderZ);
+		}
+	}
 }
 
 void GraphicsDisplay::setChosen(bool isChosen, assetsData &asset)
@@ -1839,24 +1867,6 @@ const QString GraphicsDisplay::getDropdownListItem(const QString &title, const Q
 			false,
 			&ok,
 			Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-}
-
-void GraphicsDisplay::applyDisplayOrder()
-{
-	if (!poseCurrentSecond().displayOrderZOverrideMap.empty())
-	{
-		for (const auto& overrideMap : poseCurrentSecond().displayOrderZOverrideMap)
-		{
-			speciesCurrentSecond().componentUiMap.at(overrideMap.first).item.get()->setZValue(overrideMap.second);
-		}
-	}
-	else
-	{
-		for (auto& componentUi : speciesCurrentSecond().componentUiMap)
-		{
-			componentUi.second.item.get()->setZValue(componentUi.second.settings.displayOrderZ);
-		}
-	}
 }
 
 speciesData& GraphicsDisplay::speciesCurrentSecond()
