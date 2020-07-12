@@ -169,12 +169,56 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			{
 				speciesMap.at(species.first).genderMap.at(gender.first).poseMap.try_emplace(pose.first, poseData{ pose.second });
 
+				// We design override list to only be relevant if one is found and contains applicable overrides. 
+				// Otherwise, default order list is used for any given pose.
+				QStringList displayOrderOverrideList;
+				QString displayOrderOverridePath =
+					appExecutablePath +
+					"/Assets/Species/" +
+					species.second.assetStr + "/" +
+					gender.second + "/" +
+					pose.second + "/" +
+					"displayOrderOverride.txt";
+				if (QFile(displayOrderOverridePath).exists())
+				{
+					QFile fileRead(displayOrderOverridePath);
+					if (fileRead.open(QIODevice::ReadOnly))
+					{
+						QTextStream qStream(&fileRead);
+						while (!qStream.atEnd())
+						{
+							QString line = qStream.readLine();
+							if (line[0] == '/' && line[1] == '/')
+								continue;
+							displayOrderOverrideList.append(line);
+						}
+						fileRead.close();
+					}
+				}
+
 				for (const auto& componentSettings : species.second.componentMapRef)
 				{
 					speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first).componentMap.try_emplace
 					(
 						componentSettings.first, componentData{ }
 					);
+
+					if (!displayOrderOverrideList.isEmpty())
+					{
+						QString componentLine;
+						for (const auto& line : displayOrderOverrideList)
+							if (line.contains(componentSettings.second.assetStr + "="))
+								componentLine = line;
+						if (!componentLine.isEmpty())
+						{
+							speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+								.displayOrderZOverrideMap.try_emplace
+								(
+									componentSettings.first,
+									extractSubstringInbetweenQt(componentSettings.second.assetStr + "=", "", componentLine).toInt()
+								);
+						}
+					}
 
 					QStringList assetFolderPathList = fileGetAssetDirectoriesOnStartup(
 						appExecutablePath +
@@ -386,16 +430,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
 						dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
 						bool ok;
-						QString pickedKey = QInputDialog::getItem(
-							this->parentWidget(),
-							"Pick Part To Copy Color From",
-							tr("Part Name:"),
-							dropdownList,
-							0,
-							false,
-							&ok,
-							Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
+						QString pickedKey = getDropdownListItem("Copy Color From", "Part Name:", dropdownList, ok);
 						if (ok && !pickedKey.isEmpty())
 						{
 							if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
@@ -437,16 +472,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
 							dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
 							bool ok;
-							QString pickedKey = QInputDialog::getItem(
-								this->parentWidget(),
-								"Pick Part To Paste Color To",
-								tr("Part Name:"),
-								dropdownList,
-								0,
-								false,
-								&ok,
-								Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
+							QString pickedKey = getDropdownListItem("Paste Color To", "Part Name:", dropdownList, ok);
 							if (ok && !pickedKey.isEmpty())
 							{
 								if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
@@ -502,16 +528,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 							QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
 							dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
 							bool ok;
-							QString pickedKey = QInputDialog::getItem(
-								this->parentWidget(),
-								"Pick Part To Apply Color From",
-								tr("Part Name:"),
-								dropdownList,
-								0,
-								false,
-								&ok,
-								Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
+							QString pickedKey = getDropdownListItem("Apply Color From", "Part Name:", dropdownList, ok);
 							if (ok && !pickedKey.isEmpty())
 							{
 								if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
@@ -553,16 +570,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 						QStringList dropdownList = assetCurrentSecondLocal.subColorsKeyList;
 						dropdownList.prepend(componentCurrentSecondLocal.displayedAssetKey);
 						bool ok;
-						QString pickedKey = QInputDialog::getItem(
-							this->parentWidget(),
-							"Pick Part To Recolor",
-							tr("Part Name:"),
-							dropdownList,
-							0,
-							false,
-							&ok,
-							Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
-
+						QString pickedKey = getDropdownListItem("Pick Color For", "Part Name:", dropdownList, ok);
 						if (ok && !pickedKey.isEmpty())
 						{
 							if (pickedKey == componentCurrentSecondLocal.displayedAssetKey)
@@ -806,16 +814,18 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	// Now apply settings for the current species/gender/pose/components/assets
 	// (since we're just starting the program, the "current" is the default)
 
-	speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
-	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).actionGender.get()->setChecked(true);
-	speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).actionPose.get()->setChecked(true);
+	speciesCurrentSecond().actionSpecies.get()->setChecked(true);
+	genderCurrentSecond().actionGender.get()->setChecked(true);
+	poseCurrentSecond().actionPose.get()->setChecked(true);
 
-	for (auto& gender : speciesMap.at(speciesCurrent).genderMap)
+	for (auto& gender : speciesCurrentSecond().genderMap)
 		gender.second.actionGender.get()->setVisible(true);
-	for (auto& pose : speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap)
+	for (auto& pose : genderCurrentSecond().poseMap)
 			pose.second.actionPose.get()->setVisible(true);
+
+	applyDisplayOrder();
 	
-	for (auto& componentUi : speciesMap.at(speciesCurrent).componentUiMap)
+	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
 		if (componentUi.second.settings.partHasBtnSwap)
 		{
@@ -1776,6 +1786,8 @@ void GraphicsDisplay::applyCurrentSpeciesToScene()
 		}
 		scene.get()->addItem(componentUi.second.item.get());
 	}
+
+	applyDisplayOrder();
 }
 
 void GraphicsDisplay::setChosen(bool isChosen, assetsData &asset)
@@ -1813,6 +1825,38 @@ void GraphicsDisplay::setCharacterModified(const bool newState)
 		qDebug() << "Character modified state set to: TRUE";
 	else
 		qDebug() << "Character modified state set to: FALSE";*/
+}
+
+const QString GraphicsDisplay::getDropdownListItem(const QString &title, const QString &label, const QStringList &items, bool &ok)
+{
+	return
+		QInputDialog::getItem(
+			this->parentWidget(),
+			title,
+			label,
+			items,
+			0,
+			false,
+			&ok,
+			Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+}
+
+void GraphicsDisplay::applyDisplayOrder()
+{
+	if (!poseCurrentSecond().displayOrderZOverrideMap.empty())
+	{
+		for (const auto& overrideMap : poseCurrentSecond().displayOrderZOverrideMap)
+		{
+			speciesCurrentSecond().componentUiMap.at(overrideMap.first).item.get()->setZValue(overrideMap.second);
+		}
+	}
+	else
+	{
+		for (auto& componentUi : speciesCurrentSecond().componentUiMap)
+		{
+			componentUi.second.item.get()->setZValue(componentUi.second.settings.displayOrderZ);
+		}
+	}
 }
 
 speciesData& GraphicsDisplay::speciesCurrentSecond()

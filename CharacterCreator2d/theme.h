@@ -23,7 +23,7 @@
 
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
-enum class PoseType { FRONT_FACING, FRONT_FACING_ATTN_STANCE };
+enum class PoseType { FRONT_FACING, BACK_FACING };
 enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
@@ -121,6 +121,7 @@ struct poseData
 {
 	const QString assetStr;
 	std::map<ComponentType, componentData> componentMap;
+	std::map<ComponentType, int> displayOrderZOverrideMap;
 	std::unique_ptr<QAction> actionPose = std::make_unique<QAction>();
 };
 
@@ -908,7 +909,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 
 const std::map<PoseType, QString> poseTypeMap =
 {
-	{ PoseType::FRONT_FACING, "Front Facing" }
+	{ PoseType::FRONT_FACING, "Front Facing" },
+	{ PoseType::BACK_FACING, "Back Facing" }
 };
 
 const std::map<GenderType, QString> genderTypeMap =

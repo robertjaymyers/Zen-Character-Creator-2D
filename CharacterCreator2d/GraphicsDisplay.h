@@ -231,6 +231,8 @@ private:
 	void setChosen(bool isChosen, assetsData &asset);
 	void setChosen(bool isChosen, componentUiData &componentUi);
 	void setCharacterModified(const bool newState);
+	const QString getDropdownListItem(const QString &title, const QString &label, const QStringList &items, bool &ok);
+	void applyDisplayOrder();
 	speciesData& speciesCurrentSecond();
 	genderData& genderCurrentSecond();
 	poseData& poseCurrentSecond();
