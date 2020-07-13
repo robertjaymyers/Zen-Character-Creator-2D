@@ -154,7 +154,9 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 	layout.get()->setMargin(50);
 
-	// Nested order is: Species->Gender->Component->Pose->Assets
+	// Nested order is: 
+	// species->gender->component->pose->assets
+	// apecies->uiComponent
 
 	// Create nested maps and data structures first.
 	for (const auto& species : speciesTypeMap)
@@ -834,75 +836,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	for (auto& pose : genderCurrentSecond().poseMap)
 			pose.second.actionPose.get()->setVisible(true);
 
-	applyCurrentDisplayOrder();
-	
-	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
-	{
-		if (componentUi.second.settings.partHasBtnSwap)
-		{
-			partSwapGroupLayout.get()->addWidget
-			(
-				componentUi.second.btnSwapComponent.get(),
-				componentUi.second.settings.gridPlaceSwapComponent[0],
-				componentUi.second.settings.gridPlaceSwapComponent[1],
-				componentUi.second.settings.gridAlignSwapComponent
-			);
-			componentUi.second.btnSwapComponent.get()->setVisible(true);
-
-			int count = componentUi.second.settings.gridPlaceSwapAssetOrigin[0];
-			auto& currentComponentAt = poseCurrentSecond().componentMap.at(componentUi.first);
-			if (currentComponentAt.assetsMap.count("none") > 0)
-				count++;
-			for (auto& asset : currentComponentAt.assetsMap)
-			{
-				if (asset.first == "none")
-				{
-					partSwapGroupLayout.get()->addWidget
-					(
-						asset.second.btnSwapAsset.get(),
-						componentUi.second.settings.gridPlaceSwapAssetOrigin[0],
-						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
-						componentUi.second.settings.gridAlignSwapAsset
-					);
-				}
-				else
-				{
-					partSwapGroupLayout.get()->addWidget
-					(
-						asset.second.btnSwapAsset.get(),
-						count,
-						componentUi.second.settings.gridPlaceSwapAssetOrigin[1],
-						componentUi.second.settings.gridAlignSwapAsset
-					);
-					//qDebug() << componentUi.second.settings.assetStr;
-					//qDebug() << count;
-					count++;
-				}
-			}
-
-			if (componentCurrent == ComponentType::NONE && componentUi.first != ComponentType::NONE)
-			{
-				componentCurrent = componentUi.first;
-				for (auto& asset : currentComponentAt.assetsMap)
-				{
-					setChosen(false, asset.second);
-					asset.second.btnSwapAsset.get()->setVisible(true);
-				}
-			}
-		}
-		if (componentUi.second.settings.partHasBtnPickColor)
-		{
-			partPickerGroupLayout.get()->addWidget
-			(
-				componentUi.second.btnPickColor.get(),
-				componentUi.second.settings.gridPlacePickColor[0],
-				componentUi.second.settings.gridPlacePickColor[1],
-				componentUi.second.settings.gridAlignPickColor
-			);
-			componentUi.second.btnPickColor.get()->setVisible(true);
-		}
-		scene.get()->addItem(componentUi.second.item.get());
-	}
+	applyCurrentSpeciesToScene();
 
 	// Now set up the rest of the UI.
 
