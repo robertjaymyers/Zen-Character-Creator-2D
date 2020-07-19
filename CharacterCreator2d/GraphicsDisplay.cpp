@@ -29,6 +29,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			QString path = dirIt.next();
 			if (QFileInfo(path).suffix() == "mp3")
 				soundtrackPathList.append(path);
+			qDebug() << path;
 		}
 
 		if (!soundtrackPathList.isEmpty())
@@ -39,7 +40,8 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			soundtrackPlaylist->setPlaybackMode(QMediaPlaylist::Random);
 
 			soundtrackPlayer.get()->setPlaylist(soundtrackPlaylist.get());
-			soundtrackPlayer.get()->play();
+			if (soundEnabled)
+				soundtrackPlayer.get()->play();
 		}
 	}
 
@@ -155,7 +157,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	layout.get()->setMargin(50);
 
 	// Nested order is: 
-	// species->gender->component->pose->assets
+	// species->gender->pose->component->assets
 	// apecies->uiComponent
 
 	// Create nested maps and data structures first.
@@ -889,23 +891,13 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	utilityBtnGroup.get()->setFlat(true);
 	layout.get()->addWidget(utilityBtnGroup.get(), 1, 2, Qt::AlignRight);
 
-	utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
+	if (soundEnabled)
+		utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
+	else
+		utilityBtnVolume.get()->setIcon(utilityBtnVolumeMutedIcon);
 	utilityBtnVolume.get()->setStyleSheet(utilityBtnStyle);
 	utilityBtnGroupLayout.get()->addWidget(utilityBtnVolume.get(), 0);
-	connect(utilityBtnVolume.get(), &QPushButton::clicked, this, [=]() {
-		if (soundEnabled)
-		{
-			soundEnabled = false;
-			soundtrackPlayer.get()->setMuted(true);
-			utilityBtnVolume.get()->setIcon(utilityBtnVolumeMutedIcon);
-		}
-		else
-		{
-			soundEnabled = true;
-			soundtrackPlayer.get()->setMuted(false);
-			utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
-		}
-	});
+	connect(utilityBtnVolume.get(), &QPushButton::clicked, this, &GraphicsDisplay::toggleSound);
 
 	utilityBtnExit.get()->setText("Exit");
 	utilityBtnExit.get()->setStyleSheet(utilityBtnStyle);
@@ -1289,11 +1281,11 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 	const QString templatePath =
 		appExecutablePath +
 		"/Assets/Species/" +
-		speciesMap.at(speciesCurrent).assetStr +
+		speciesCurrentSecond().assetStr +
 		"/" +
-		speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).assetStr +
+		genderCurrentSecond().assetStr +
 		"/" +
-		speciesMap.at(speciesCurrent).genderMap.at(genderCurrent).poseMap.at(poseCurrent).assetStr +
+		poseCurrentSecond().assetStr +
 		"/CharacterTemplate/default-character-template.zen2dx"
 		;
 	if (QFile::exists(templatePath))
@@ -1801,6 +1793,24 @@ const QString GraphicsDisplay::getDropdownListItem(const QString &title, const Q
 			false,
 			&ok,
 			Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
+}
+
+void GraphicsDisplay::toggleSound()
+{
+	if (soundEnabled)
+	{
+		soundEnabled = false;
+		soundtrackPlayer.get()->setMuted(true);
+		utilityBtnVolume.get()->setIcon(utilityBtnVolumeMutedIcon);
+	}
+	else
+	{
+		if (soundtrackPlayer.get()->state() == QMediaPlayer::StoppedState)
+			soundtrackPlayer.get()->play();
+		soundEnabled = true;
+		soundtrackPlayer.get()->setMuted(false);
+		utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
+	}
 }
 
 speciesData& GraphicsDisplay::speciesCurrentSecond()

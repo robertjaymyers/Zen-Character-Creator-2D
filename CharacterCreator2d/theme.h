@@ -24,7 +24,7 @@
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
 enum class PoseType { FRONT_FACING, BACK_FACING };
-enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
+enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, JACKET, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
 
@@ -364,9 +364,42 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
-		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
+		75, // SWAP BTN: Width
+		75, // SWAP BTN: Height
+		75, // PICK COLOR BTN: Width
+		75, // PICK COLOR BTN: Height
+	}
+	},
+	{ ComponentType::JACKET,
+	componentDataSettings
+	{
+		9, // Display order in scene (higher numbers overlap lower numbers)
+		"Jacket",
+		"#B5B5B5",
+		ColorSetType::FILL_WITH_OUTLINE,
+		true, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
+		QStringList()
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
+		QStringList()
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
+		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
+		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -397,9 +430,9 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
-		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -412,7 +445,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::FEET,
 	componentDataSettings
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -430,9 +463,9 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
-		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{10, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{9, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -445,7 +478,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::MASK,
 	componentDataSettings
 	{
-		10, // Display order in scene (higher numbers overlap lower numbers)
+		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -478,7 +511,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::HAIR,
 	componentDataSettings
 	{
-		11, // Display order in scene (higher numbers overlap lower numbers)
+		12, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -761,9 +794,42 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottom.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerBottomHover.png",
-		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{9, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
+		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
+		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
+		75, // SWAP BTN: Width
+		75, // SWAP BTN: Height
+		75, // PICK COLOR BTN: Width
+		75, // PICK COLOR BTN: Height
+	}
+	},
+	{ ComponentType::JACKET,
+	componentDataSettings
+	{
+		9, // Display order in scene (higher numbers overlap lower numbers)
+		"Jacket",
+		"#B5B5B5",
+		ColorSetType::FILL_WITH_OUTLINE,
+		true, // SWAP BTN: Flag for whether part is expected to display btn
+		true, // PICK COLOR BTN: Flag for whether part is expected to display btn
+		"QPushButton{background: #FFFFFF; border: none; image: url(%1);}"
+		"QPushButton:hover:!pressed{background: #F8F1E6; border: none; image: url(%2);}"
+		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
+		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
+		QStringList()
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
+		QStringList()
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
+		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
+		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -794,9 +860,9 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
-		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{8, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{8, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -809,7 +875,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::FEET,
 	componentDataSettings
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -827,9 +893,9 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeet.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png"
 		<< ":/ZenCharacterCreator2D/Resources/btnPickerFeetHover.png",
-		{9, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
+		{10, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
-		{9, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
+		{10, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP COMPONENT BTN: Alignment in grid layout
 		{0, 1}, // SWAP ASSET BTN: Row/Col placement in grid layout
 		Qt::AlignRight, // SWAP ASSET BTN: Alignment in grid layout
@@ -842,7 +908,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::MASK,
 	componentDataSettings
 	{
-		10, // Display order in scene (higher numbers overlap lower numbers)
+		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -875,7 +941,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::HAIR,
 	componentDataSettings
 	{
-		11, // Display order in scene (higher numbers overlap lower numbers)
+		12, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,

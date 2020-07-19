@@ -86,7 +86,7 @@ private:
 	const QColor backgroundColorDefault = QColor("#FFFFFF");
 	QColor backgroundColor = backgroundColorDefault;
 
-	bool soundEnabled = true;
+	bool soundEnabled = false;
 	const QString soundEffectsPath = appExecutablePath + "/SoundEffects";
 	const QString soundEffectComponentSwap = soundEffectsPath + "/componentSwap.wav";
 	const QString soundEffectAssetSwap = soundEffectsPath + "/assetSwap.wav";
@@ -233,6 +233,7 @@ private:
 	void setChosen(bool isChosen, componentUiData &componentUi);
 	void setCharacterModified(const bool newState);
 	const QString getDropdownListItem(const QString &title, const QString &label, const QStringList &items, bool &ok);
+	void toggleSound();
 	speciesData& speciesCurrentSecond();
 	genderData& genderCurrentSecond();
 	poseData& poseCurrentSecond();
