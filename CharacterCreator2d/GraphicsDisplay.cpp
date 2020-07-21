@@ -158,7 +158,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 	// Nested order is: 
 	// species->gender->pose->component->assets
-	// apecies->uiComponent
+	// species->uiComponent
 
 	// Create nested maps and data structures first.
 	for (const auto& species : speciesTypeMap)
@@ -1284,9 +1284,7 @@ void GraphicsDisplay::loadDefaultCharacterFromTemplate()
 		speciesCurrentSecond().assetStr +
 		"/" +
 		genderCurrentSecond().assetStr +
-		"/" +
-		poseCurrentSecond().assetStr +
-		"/CharacterTemplate/default-character-template.zen2dx"
+		"/defaultCharacterTemplate.zen2dx"
 		;
 	if (QFile::exists(templatePath))
 	{

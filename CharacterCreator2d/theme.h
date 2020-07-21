@@ -379,7 +379,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ ComponentType::JACKET,
 	componentDataSettings
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Jacket",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -390,13 +390,13 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
 		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacket.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacketHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacketHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacket.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacketHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacketHover.png",
 		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
 		{6, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
@@ -445,7 +445,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::FEET,
 	componentDataSettings
 	{
-		10, // Display order in scene (higher numbers overlap lower numbers)
+		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -478,7 +478,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::MASK,
 	componentDataSettings
 	{
-		11, // Display order in scene (higher numbers overlap lower numbers)
+		12, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -511,7 +511,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForHuman =
 	{ComponentType::HAIR,
 	componentDataSettings
 	{
-		12, // Display order in scene (higher numbers overlap lower numbers)
+		13, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -743,7 +743,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::NECK,
 	componentDataSettings
 	{
-		6, // Display order in scene (higher numbers overlap lower numbers)
+		9, // Display order in scene (higher numbers overlap lower numbers)
 		"Neck",
 		"#b5b5b5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -809,7 +809,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ ComponentType::JACKET,
 	componentDataSettings
 	{
-		9, // Display order in scene (higher numbers overlap lower numbers)
+		10, // Display order in scene (higher numbers overlap lower numbers)
 		"Jacket",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -820,13 +820,13 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 		"QPushButton:hover:pressed{background: #F8F1E6; border: none; image: url(%3);}",
 		"QPushButton{background: #E5884E; border: none; image: url(%1);}",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChest.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartChestHover.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacket.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacketHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnSwapCharacterPartJacketHover.png",
 		QStringList()
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChest.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png"
-		<< ":/ZenCharacterCreator2D/Resources/btnPickerChestHover.png",
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacket.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacketHover.png"
+		<< ":/ZenCharacterCreator2D/Resources/btnPickerJacketHover.png",
 		{7, 0}, // PICK COLOR BTN: Row/Col placement in grid layout
 		Qt::AlignLeft | Qt::AlignTop, // PICK COLOR BTN: Alignment in grid layout
 		{7, 0}, // SWAP COMPONENT BTN: Row/Col placement in grid layout
@@ -875,7 +875,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::FEET,
 	componentDataSettings
 	{
-		10, // Display order in scene (higher numbers overlap lower numbers)
+		11, // Display order in scene (higher numbers overlap lower numbers)
 		"Feet",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -908,7 +908,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::MASK,
 	componentDataSettings
 	{
-		11, // Display order in scene (higher numbers overlap lower numbers)
+		12, // Display order in scene (higher numbers overlap lower numbers)
 		"Mask",
 		"#B5B5B5",
 		ColorSetType::FILL_WITH_OUTLINE,
@@ -941,7 +941,7 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 	{ComponentType::HAIR,
 	componentDataSettings
 	{
-		12, // Display order in scene (higher numbers overlap lower numbers)
+		13, // Display order in scene (higher numbers overlap lower numbers)
 		"Hair",
 		"#000000",
 		ColorSetType::FILL_WITH_OUTLINE,

@@ -50,5 +50,9 @@
         <file>Resources/btnSwapCharacterPartEyesHover.png</file>
         <file>Resources/utilityIconVolume.png</file>
         <file>Resources/utilityIconVolumeMuted.png</file>
+        <file>Resources/btnPickerJacket.png</file>
+        <file>Resources/btnPickerJacketHover.png</file>
+        <file>Resources/btnSwapCharacterPartJacket.png</file>
+        <file>Resources/btnSwapCharacterPartJacketHover.png</file>
     </qresource>
 </RCC>
