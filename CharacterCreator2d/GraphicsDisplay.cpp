@@ -1347,9 +1347,17 @@ void GraphicsDisplay::fileLoadSavedCharacter(const QString &filePath)
 									if (pose.second.assetStr == poseStr)
 									{
 										removeCurrentSpeciesFromScene();
+										for (auto& gender : speciesCurrentSecond().genderMap)
+											gender.second.actionGender.get()->setVisible(false);
+										for (auto& pose : genderCurrentSecond().poseMap)
+											pose.second.actionPose.get()->setVisible(false);
 										speciesCurrent = species.first;
 										genderCurrent = gender.first;
 										poseCurrent = pose.first;
+										for (auto& gender : speciesCurrentSecond().genderMap)
+											gender.second.actionGender.get()->setVisible(true);
+										for (auto& pose : genderCurrentSecond().poseMap)
+											pose.second.actionPose.get()->setVisible(true);
 										applyCurrentSpeciesToScene();
 										speciesMap.at(speciesCurrent).actionSpecies.get()->setChecked(true);
 										speciesMap.at(speciesCurrent).genderMap.at(genderCurrent)
