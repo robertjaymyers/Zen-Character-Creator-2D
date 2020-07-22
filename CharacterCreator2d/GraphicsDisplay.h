@@ -213,6 +213,7 @@ private:
 	QStringList fileGetAssetDirectoriesOnStartup(const QString &path);
 	QStringList fileGetAssets(const QString &path);
 	QString getPathIfExists(const QString &assetFolderPath, const AssetImgType &assetImgType);
+	const QPoint getRelativePos(const QString &posPath);
 	void updatePartInScene(const componentUiData &componentUi, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
 	QPixmap recolorPixmapSolid(const assetsData &asset, const PaintType &paintType);

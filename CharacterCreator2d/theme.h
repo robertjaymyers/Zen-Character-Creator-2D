@@ -27,6 +27,13 @@ enum class PoseType { FRONT_FACING, BACK_FACING };
 enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, JACKET, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
+// The size of the frame that character assets get placed/positioned in, used for relative positioning of assets.
+// Example Usage: You make a 'frame' that is the size of your character overall when the pieces are put together.
+// This size could be used for things like collision detection in a game. 
+// Then you put together the character pieces with layers in your image editing program of choice and give each
+// a relative pos, based on what its X/Y coords are in your frame image. This way, the creator will know where to 
+// place them in the scene, relative to the frame.
+const QSize characterFrameSize = QSize(500, 550);
 
 // With subcolors, we allow assets to be split up into different "fill" image parts that can be recolored individually.
 // Any assets that are NOT split up are ignored by subcolor code and recolored as normal.
@@ -49,6 +56,7 @@ struct assetsData
 	const QString imgThumbnailPath; // The thumbnail for showing the asset in the swap UI.
 	const QColor colorDefault; // We revert to this when "resetting" with, for example, "new character."
 	QColor colorAltered; // Color changes are stored here and applied to the scene on part swap.
+	const QPoint relativePos; // Where asset should go in the scene, relative to the character frame size.
 	std::unique_ptr<QPushButton> btnSwapAsset = std::make_unique<QPushButton>(nullptr);
 	QString btnSwapAssetStyle;
 	QString btnSwapAssetChosenStyle;

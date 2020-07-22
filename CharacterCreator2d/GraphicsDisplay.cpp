@@ -237,8 +237,6 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 					// so that if exe moves, character saves can still be loaded correctly in relation to loaded assets.
 					for (const auto& assetFolderPath : assetFolderPathList)
 					{
-						QString outlinePath = assetFolderPath;
-						QString thumbnailPath = assetFolderPath;
 						speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
 							.componentMap.at(componentSettings.first).assetsMap.try_emplace
 							(
@@ -251,6 +249,7 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 									getPathIfExists(assetFolderPath, AssetImgType::THUMBNAIL),
 									componentSettings.second.defaultInitialColor,
 									componentSettings.second.defaultInitialColor,
+									getRelativePos(assetFolderPath + "/pos.zen2dpos")
 								}
 						);
 						//qDebug() << assetFolderPath;
@@ -963,16 +962,15 @@ void GraphicsDisplay::contextMenuEvent(QContextMenuEvent *event)
 void GraphicsDisplay::resizeEvent(QResizeEvent *event)
 {
 	setBackgroundImage(backgroundImage);
-	for (auto& item : scene.get()->items())
+	for (auto& component : poseCurrentSecond().componentMap)
 	{
-		if (item->zValue() != backgroundImageItemZValue)
-		{
-			item->setPos
-			(
-				(this->size().width() - item->boundingRect().width()) / 2,
-				(this->size().height() - item->boundingRect().height()) / 2
-			);
-		}
+		auto& assetInScene = component.second.assetsMap.at(component.second.displayedAssetKey);
+		speciesCurrentSecond().componentUiMap.at(component.first).item.get()->setPos
+		(
+			((this->size().width() - characterFrameSize.width()) / 2) + assetInScene.relativePos.x(),
+			((this->size().height() - characterFrameSize.height()) / 2) + assetInScene.relativePos.y()
+		);
+
 	}
 	QWidget::resizeEvent(event);
 }
@@ -1110,14 +1108,36 @@ QString GraphicsDisplay::getPathIfExists(const QString &assetFolderPath, const A
 	return imgErrorPath;
 }
 
+const QPoint GraphicsDisplay::getRelativePos(const QString &posPath)
+{
+	int x;
+	int y;
+	QFile fileRead(posPath);
+	if (fileRead.open(QIODevice::ReadOnly))
+	{
+		QTextStream qStream(&fileRead);
+		while (!qStream.atEnd())
+		{
+			QString line = qStream.readLine();
+			if (line.contains("x="))
+				x = extractSubstringInbetweenQt("x=", "", line).toInt();
+			else if (line.contains("y="))
+				y = extractSubstringInbetweenQt("y=", "", line).toInt();
+		}
+		fileRead.close();
+		return QPoint(x, y);
+	}
+	return QPoint(0, 0);
+}
+
 void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, const assetsData &asset)
 {
 	auto setNewPixmapAndPos = [&](const QPixmap &newPix) {
 		componentUi.item.get()->setPixmap(newPix);
 		componentUi.item.get()->setPos
 		(
-			(this->size().width() - newPix.width()) / 2,
-			(this->size().height() - newPix.height()) / 2
+			((this->size().width() - characterFrameSize.width()) / 2) + asset.relativePos.x(),
+			((this->size().height() - characterFrameSize.height()) / 2) + asset.relativePos.y()
 		);
 	};
 
