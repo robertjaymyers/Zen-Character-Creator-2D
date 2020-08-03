@@ -279,6 +279,95 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 								(QFileInfo(colorPath).baseName());
 							}
 						}
+
+						QString animationPath = assetFolderPath + "/animation";
+						if (QDir(animationPath).exists())
+						{
+							QString animationPropertiesPath = animationPath + "/animationProperties.zen2dani";
+
+							if (!QFile(animationPropertiesPath).exists())
+								continue;
+
+							animationFound = true;
+							animationEnabled = true;
+
+							auto& currentAsset = speciesMap.at(species.first).genderMap.at(gender.first).poseMap.at(pose.first)
+								.componentMap.at(componentSettings.first).assetsMap.at(QDir(assetFolderPath).dirName());
+
+							QStringList animationSequence;
+							int duration;
+							bool animateOutline;
+							bool animateFill;
+							bool repeating;
+							std::pair<int, int> repeatingTimeRange;
+							QEasingCurve::Type easingCurve;
+
+							QFile fileRead(animationPropertiesPath);
+							if (fileRead.open(QIODevice::ReadOnly))
+							{
+								QTextStream qStream(&fileRead);
+								while (!qStream.atEnd())
+								{
+									QString line = qStream.readLine();
+									if (line.contains("animationSequence="))
+									{
+										animationSequence = extractSubstringInbetweenLoopList("[", "]", line);
+									}
+									else if (line.contains("animationDuration="))
+										duration = extractSubstringInbetweenQt("animationDuration=", "", line).toInt();
+									else if (line.contains("animateOutline="))
+										animateOutline = QVariant(extractSubstringInbetweenQt("animateOutline=", "", line)).toBool();
+									else if (line.contains("animateFill="))
+										animateFill = QVariant(extractSubstringInbetweenQt("animateFill=", "", line)).toBool();
+									else if (line.contains("repeating="))
+										repeating = QVariant(extractSubstringInbetweenQt("repeating=", "", line)).toBool();
+									else if (line.contains("repeatingTimeRange="))
+									{
+										QStringList repeatingTimeRangeNumList;
+										repeatingTimeRangeNumList = extractSubstringInbetweenLoopList("[", "]", line);
+										repeatingTimeRange.first = repeatingTimeRangeNumList[0].toInt();
+										repeatingTimeRange.second = repeatingTimeRangeNumList[1].toInt();
+									}
+									else if (line.contains("easingCurve="))
+										easingCurve = qstringToEasingCurveType(extractSubstringInbetweenQt("easingCurve=", "", line));
+								}
+								fileRead.close();
+							}
+
+							currentAsset.animationPropertiesList.emplace_back
+							(
+								animationPropertyData
+								{
+									animationSequence,
+									duration,
+									animateOutline,
+									animateFill,
+									repeating,
+									repeatingTimeRange,
+									easingCurve
+								}
+							);
+
+							for (const auto& num : animationSequence)
+							{
+								currentAsset.animationFrameList.emplace_back
+								(
+									animationFrameData
+									{
+									getPathIfExistsAnimation(animationPath + "/" + num, animateOutline, AssetImgType::OUTLINE),
+									getPathIfExistsAnimation(animationPath + "/" + num, animateFill, AssetImgType::FILL)
+									}
+								);
+							}
+
+							currentAsset.animation.get()->setTargetObject
+							(
+								speciesMap.at(species.first).componentUiMap.at(componentSettings.first).item.get()
+							);
+							currentAsset.animation.get()->setPropertyName("pixmap");
+							currentAsset.animation.get()->setDuration(duration);
+							currentAsset.animation.get()->setEasingCurve(easingCurve);
+						}
 					}
 				}
 			}
@@ -653,6 +742,19 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 
 			componentUi.second.item.get()->setZValue(componentUi.second.settings.displayOrderZ);
 			componentUi.second.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
+
+			connect(componentUi.second.animationRepeatingTimer.get(), &QTimer::timeout, this, [&]() {
+				if (assetCurrentSecond().animation.get()->state() == QAbstractAnimation::State::Stopped)
+					assetCurrentSecond().animation.get()->start();
+				componentUi.second.animationRepeatingTimer->setInterval
+				(
+					getRandomIntInRange
+					(
+						assetCurrentSecond().animationPropertiesList[0].repeatingTimeRange.first,
+						assetCurrentSecond().animationPropertiesList[0].repeatingTimeRange.second
+					)
+				);
+			});
 		}
 
 		for (auto& gender : species.second.genderMap)
@@ -890,17 +992,30 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 	utilityBtnGroup.get()->setFlat(true);
 	layout.get()->addWidget(utilityBtnGroup.get(), 1, 2, Qt::AlignRight);
 
+	if (animationEnabled)
+		utilityBtnAnimation.get()->setIcon(utilityBtnAnimationStopIcon);
+	else
+		utilityBtnAnimation.get()->setIcon(utilityBtnAnimationPlayIcon);
+	utilityBtnAnimation.get()->setStyleSheet(utilityBtnStyle);
+	if (animationFound)
+	{
+		utilityBtnGroupLayout.get()->addWidget(utilityBtnAnimation.get());
+		connect(utilityBtnAnimation.get(), &QPushButton::clicked, this, &GraphicsDisplay::toggleAnimation);
+	}
+	else
+		utilityBtnAnimation.get()->setVisible(false);
+
 	if (soundEnabled)
 		utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
 	else
 		utilityBtnVolume.get()->setIcon(utilityBtnVolumeMutedIcon);
 	utilityBtnVolume.get()->setStyleSheet(utilityBtnStyle);
-	utilityBtnGroupLayout.get()->addWidget(utilityBtnVolume.get(), 0);
+	utilityBtnGroupLayout.get()->addWidget(utilityBtnVolume.get());
 	connect(utilityBtnVolume.get(), &QPushButton::clicked, this, &GraphicsDisplay::toggleSound);
 
 	utilityBtnExit.get()->setText("Exit");
 	utilityBtnExit.get()->setStyleSheet(utilityBtnStyle);
-	utilityBtnGroupLayout.get()->addWidget(utilityBtnExit.get(), 1);
+	utilityBtnGroupLayout.get()->addWidget(utilityBtnExit.get());
 	connect(utilityBtnExit.get(), &QPushButton::clicked, this, [=]() {
 		this->parentWidget()->parentWidget()->close();
 	});
@@ -1108,6 +1223,22 @@ QString GraphicsDisplay::getPathIfExists(const QString &assetFolderPath, const A
 	return imgErrorPath;
 }
 
+QString GraphicsDisplay::getPathIfExistsAnimation(const QString &assetAnimationPath, const bool existenceExpected, const AssetImgType &assetImgType)
+{
+	if (existenceExpected)
+	{
+		for (const auto& naming : assetImgTypeMap.at(assetImgType))
+		{
+			QString namePath = assetAnimationPath + naming + imgExtensionStandard;
+			if (QFile(namePath).exists())
+				return namePath;
+		}
+		return imgErrorPath;
+	}
+	else
+		return QString();
+}
+
 const QPoint GraphicsDisplay::getRelativePos(const QString &posPath)
 {
 	int x;
@@ -1141,12 +1272,69 @@ void GraphicsDisplay::updatePartInScene(const componentUiData &componentUi, cons
 		);
 	};
 
+	auto updateAnimationFrames = [&](const PaintType &paintType) {
+		if (asset.animation.get()->state() == QAbstractAnimation::State::Running)
+			asset.animation.get()->pause();
+		qreal increment = 1 / (qreal)(asset.animationFrameList.size() - 1);
+		qreal step = 0;
+		for (int frameNum = 0; frameNum < asset.animationFrameList.size(); frameNum++)
+		{
+			QPixmap temp = recolorPixmapSolidWithOutline(asset, frameNum, paintType);
+			asset.animation.get()->setKeyValueAt
+			(
+				step,
+				temp
+			);
+
+			if (step == 0)
+				setNewPixmapAndPos(temp);
+
+			if (step + increment > 1)
+				step = 1;
+			else
+				step += increment;
+		}
+
+		asset.animation.get()->setEndValue(recolorPixmapSolidWithOutline(asset, asset.animationFrameList.size() - 1, paintType));
+
+		if (asset.animation.get()->state() == QAbstractAnimation::State::Paused)
+			asset.animation.get()->resume();
+		else if (asset.animation.get()->state() == QAbstractAnimation::State::Stopped)
+			asset.animation.get()->start();
+
+		if (asset.animationPropertiesList[0].repeating)
+		{
+			componentUi.animationRepeatingTimer->setInterval
+			(
+				getRandomIntInRange
+				(
+					asset.animationPropertiesList[0].repeatingTimeRange.first,
+					asset.animationPropertiesList[0].repeatingTimeRange.second
+				)
+			);
+
+			componentUi.animationRepeatingTimer.get()->start();
+		}
+
+		//qDebug() << asset.animation.get()->keyValues();
+		//qDebug() << asset.animation.get()->endValue();
+	};
+
+	componentUi.animationRepeatingTimer->stop();
+
 	if (asset.subColorsMap.empty())
 	{
 		if (componentUi.settings.colorSetType == ColorSetType::FILL_WITH_OUTLINE)
 		{
-			QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::SINGLE);
-			setNewPixmapAndPos(newPix);
+			if (!asset.animationPropertiesList.empty() && animationEnabled)
+			{
+				updateAnimationFrames(PaintType::SINGLE);
+			}
+			else
+			{
+				QPixmap newPix = recolorPixmapSolidWithOutline(asset, PaintType::SINGLE);
+				setNewPixmapAndPos(newPix);
+			}
 		}
 		else if (componentUi.settings.colorSetType == ColorSetType::FILL_NO_OUTLINE)
 		{
@@ -1246,6 +1434,62 @@ QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, 
 		painter.fillRect(newImage.rect(), asset.colorAltered);
 		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 		painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
+		painter.end();
+		return newImage;
+	}
+	else if (paintType == PaintType::COMBINED)
+	{
+		std::vector<QPixmap> recoloredParts;
+		for (const auto& subColor : asset.subColorsMap)
+		{
+			QPixmap recoloredImg = QPixmap(subColor.second.imgPath);
+			QPainter painter;
+			painter.begin(&recoloredImg);
+			painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+			painter.fillRect
+			(
+				QPixmap(subColor.second.imgPath).rect(),
+				subColor.second.colorAltered
+			);
+			painter.end();
+			recoloredParts.emplace_back(recoloredImg);
+		}
+		QPixmap newImage = QPixmap(asset.imgFillPath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+		painter.fillRect(newImage.rect(), Qt::transparent);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		for (const auto& part : recoloredParts)
+		{
+			painter.drawPixmap(part.rect(), part);
+		}
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
+		painter.end();
+		return newImage;
+	}
+	return imgError;
+}
+
+QPixmap GraphicsDisplay::recolorPixmapSolidWithOutline(const assetsData &asset, const int &frameNum, const PaintType &paintType)
+{
+	if (paintType == PaintType::SINGLE)
+	{
+		QPixmap newImage;
+		if (!asset.animationPropertiesList[0].animateFill)
+			newImage = QPixmap(asset.imgFillPath);
+		else
+			newImage = QPixmap(asset.animationFrameList[frameNum].imgFillPath);
+		QPainter painter;
+		painter.begin(&newImage);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+		painter.fillRect(newImage.rect(), asset.colorAltered);
+		painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+		if (!asset.animationPropertiesList[0].animateOutline)
+			painter.drawPixmap(QPixmap(asset.imgOutlinePath).rect(), QPixmap(asset.imgOutlinePath));
+		else
+			painter.drawPixmap(QPixmap(asset.animationFrameList[frameNum].imgOutlinePath).rect(), QPixmap(asset.animationFrameList[frameNum].imgOutlinePath));
 		painter.end();
 		return newImage;
 	}
@@ -1821,6 +2065,31 @@ const QString GraphicsDisplay::getDropdownListItem(const QString &title, const Q
 			Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::MSWindowsFixedSizeDialogHint);
 }
 
+void GraphicsDisplay::toggleAnimation()
+{
+	if (animationEnabled)
+	{
+		animationEnabled = false;
+		utilityBtnAnimation.get()->setIcon(utilityBtnAnimationPlayIcon);
+		for (auto& componentUi : speciesCurrentSecond().componentUiMap)
+			componentUi.second.animationRepeatingTimer.get()->stop();
+	}
+	else
+	{
+		animationEnabled = true;
+		utilityBtnAnimation.get()->setIcon(utilityBtnAnimationStopIcon);
+		for (auto& componentUi : speciesCurrentSecond().componentUiMap)
+		{
+			auto& currentComponentLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+			if (!currentComponentLocal.assetsMap.at(currentComponentLocal.displayedAssetKey)
+				.animationPropertiesList.empty())
+			{
+				componentUi.second.animationRepeatingTimer.get()->start();
+			}
+		}
+	}
+}
+
 void GraphicsDisplay::toggleSound()
 {
 	if (soundEnabled)
@@ -1837,6 +2106,106 @@ void GraphicsDisplay::toggleSound()
 		soundtrackPlayer.get()->setMuted(false);
 		utilityBtnVolume.get()->setIcon(utilityBtnVolumeIcon);
 	}
+}
+
+QEasingCurve::Type GraphicsDisplay::qstringToEasingCurveType(const QString &str)
+{
+	if (str == "Linear")
+		return QEasingCurve::Linear;
+	else if (str == "InQuad")
+		return QEasingCurve::InQuad;
+	else if (str == "OutQuad")
+		return QEasingCurve::OutQuad;
+	else if (str == "InOutQuad")
+		return QEasingCurve::InOutQuad;
+	else if (str == "OutInQuad")
+		return QEasingCurve::OutInQuad;
+	else if (str == "InCubic")
+		return QEasingCurve::InCubic;
+	else if (str == "OutCubic")
+		return QEasingCurve::OutCubic;
+	else if (str == "InOutCubic")
+		return QEasingCurve::InOutCubic;
+	else if (str == "OutInCubic")
+		return QEasingCurve::OutInCubic;
+	else if (str == "InQuart")
+		return QEasingCurve::InQuart;
+	else if (str == "OutQuart")
+		return QEasingCurve::OutQuart;
+	else if (str == "InOutQuart")
+		return QEasingCurve::InOutQuart;
+	else if (str == "OutInQuart")
+		return QEasingCurve::OutInQuart;
+	else if (str == "InQuint")
+		return QEasingCurve::InQuint;
+	else if (str == "OutQuint")
+		return QEasingCurve::OutQuint;
+	else if (str == "InOutQuint")
+		return QEasingCurve::InOutQuint;
+	else if (str == "OutInQuint")
+		return QEasingCurve::OutInQuint;
+	else if (str == "InSine")
+		return QEasingCurve::InSine;
+	else if (str == "OutSine")
+		return QEasingCurve::OutSine;
+	else if (str == "InOutSine")
+		return QEasingCurve::InOutSine;
+	else if (str == "OutInSine")
+		return QEasingCurve::OutInSine;
+	else if (str == "InExpo")
+		return QEasingCurve::InExpo;
+	else if (str == "OutExpo")
+		return QEasingCurve::OutExpo;
+	else if (str == "InOutExpo")
+		return QEasingCurve::InOutExpo;
+	else if (str == "OutInExpo")
+		return QEasingCurve::OutInExpo;
+	else if (str == "InCirc")
+		return QEasingCurve::InCirc;
+	else if (str == "OutCirc")
+		return QEasingCurve::OutCirc;
+	else if (str == "InOutCirc")
+		return QEasingCurve::InOutCirc;
+	else if (str == "OutInCirc")
+		return QEasingCurve::OutInCirc;
+	else if (str == "InElastic")
+		return QEasingCurve::InElastic;
+	else if (str == "OutElastic")
+		return QEasingCurve::OutElastic;
+	else if (str == "InOutElastic")
+		return QEasingCurve::InOutElastic;
+	else if (str == "OutInElastic")
+		return QEasingCurve::OutInElastic;
+	else if (str == "InBack")
+		return QEasingCurve::InBack;
+	else if (str == "OutBack")
+		return QEasingCurve::OutBack;
+	else if (str == "InOutBack")
+		return QEasingCurve::InOutBack;
+	else if (str == "OutInBack")
+		return QEasingCurve::OutInBack;
+	else if (str == "InBounce")
+		return QEasingCurve::InBounce;
+	else if (str == "OutBounce")
+		return QEasingCurve::OutBounce;
+	else if (str == "InOutBounce")
+		return QEasingCurve::InOutBounce;
+	else if (str == "OutInBounce")
+		return QEasingCurve::OutInBounce;
+	else if (str == "BezierSpline")
+		return QEasingCurve::BezierSpline;
+	else if (str == "TCBSpline")
+		return QEasingCurve::TCBSpline;
+	else
+		return QEasingCurve::Linear;
+}
+
+int GraphicsDisplay::getRandomIntInRange(const int &min, const int &max)
+{
+	std::random_device rd;
+	std::mt19937 mt(rd());
+	std::uniform_int_distribution<int> dist(min, max);
+	return dist(mt);
 }
 
 speciesData& GraphicsDisplay::speciesCurrentSecond()

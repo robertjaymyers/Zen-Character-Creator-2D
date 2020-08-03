@@ -34,12 +34,18 @@
     <ClCompile Include="GraphicsDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PixmapItemAnimatable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CharacterCreator2d.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="GraphicsDisplay.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="PixmapItemAnimatable.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -54,5 +54,7 @@
         <file>Resources/btnPickerJacketHover.png</file>
         <file>Resources/btnSwapCharacterPartJacket.png</file>
         <file>Resources/btnSwapCharacterPartJacketHover.png</file>
+        <file>Resources/utilityIconAnimationPlay.png</file>
+        <file>Resources/utilityIconAnimationStop.png</file>
     </qresource>
 </RCC>

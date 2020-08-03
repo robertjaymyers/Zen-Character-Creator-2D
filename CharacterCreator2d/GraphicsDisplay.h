@@ -45,6 +45,7 @@ This file is part of Zen Character Creator 2D.
 #include <algorithm>
 #include <iterator>
 #include <map>
+#include <random>
 
 // Setting for painting recolored image as whole, or as multicolored parts.
 enum class PaintType { SINGLE, COMBINED };
@@ -117,6 +118,12 @@ private:
 
 	std::unique_ptr<QGroupBox> utilityBtnGroup = std::make_unique<QGroupBox>(this);
 	std::unique_ptr<QHBoxLayout> utilityBtnGroupLayout = std::make_unique<QHBoxLayout>();
+
+	bool animationFound = false; // At least one animation was found in assets.
+	bool animationEnabled = false;
+	std::unique_ptr<QPushButton> utilityBtnAnimation = std::make_unique<QPushButton>(this);
+	const QIcon utilityBtnAnimationPlayIcon = QIcon(":/ZenCharacterCreator2D/Resources/utilityIconAnimationPlay.png");
+	const QIcon utilityBtnAnimationStopIcon = QIcon(":/ZenCharacterCreator2D/Resources/utilityIconAnimationStop.png");
 
 	std::unique_ptr<QPushButton> utilityBtnVolume = std::make_unique<QPushButton>(this);
 	const QIcon utilityBtnVolumeIcon = QIcon(":/ZenCharacterCreator2D/Resources/utilityIconVolume.png");
@@ -213,11 +220,13 @@ private:
 	QStringList fileGetAssetDirectoriesOnStartup(const QString &path);
 	QStringList fileGetAssets(const QString &path);
 	QString getPathIfExists(const QString &assetFolderPath, const AssetImgType &assetImgType);
+	QString getPathIfExistsAnimation(const QString &assetAnimationPath, const bool existenceExpected, const AssetImgType &assetImgType);
 	const QPoint getRelativePos(const QString &posPath);
 	void updatePartInScene(const componentUiData &componentUi, const assetsData &asset);
 	QPixmap recolorPixmapSolid(const QPixmap &img, const QColor &color);
 	QPixmap recolorPixmapSolid(const assetsData &asset, const PaintType &paintType);
 	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset, const PaintType &paintType);
+	QPixmap recolorPixmapSolidWithOutline(const assetsData &asset, const int &frameNum, const PaintType &paintType);
 	void pickerUpdatePasteIconColor(const QColor &color);
 	void loadDefaultCharacterFromTemplate();
 	void fileLoadSavedCharacter(const QString &filePath);
@@ -234,7 +243,10 @@ private:
 	void setChosen(bool isChosen, componentUiData &componentUi);
 	void setCharacterModified(const bool newState);
 	const QString getDropdownListItem(const QString &title, const QString &label, const QStringList &items, bool &ok);
+	void toggleAnimation();
 	void toggleSound();
+	QEasingCurve::Type qstringToEasingCurveType(const QString &str);
+	int getRandomIntInRange(const int &min, const int &max);
 	speciesData& speciesCurrentSecond();
 	genderData& genderCurrentSecond();
 	poseData& poseCurrentSecond();

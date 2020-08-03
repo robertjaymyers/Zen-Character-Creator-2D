@@ -1,4 +1,5 @@
 #pragma once
+#include "PixmapItemAnimatable.h"
 #include <map>
 #include <vector>
 #include <memory>
@@ -9,6 +10,7 @@
 #include <QGraphicsPixmapItem>
 #include <QMenu>
 #include <QAction>
+#include <QPropertyAnimation>
 
 // We define creator theme properties here that can be defined without needing information from startup.
 // For example, what are the possible species? We can define that here.
@@ -23,7 +25,7 @@
 
 enum class SpeciesType { HUMAN, ELF };
 enum class GenderType { FEMALE, MALE };
-enum class PoseType { FRONT_FACING, BACK_FACING };
+enum class PoseType { FRONT_FACING, BACK_FACING, FRONT_STANDING };
 enum class ComponentType { BODY, EYES, LIPS, BLUSH, HEAD, EARS, NECK, JACKET, CHEST, BOTTOM, FEET, MASK, HAIR, NONE };
 enum class ColorSetType { FILL_NO_OUTLINE, FILL_WITH_OUTLINE, NONE };
 
@@ -48,6 +50,23 @@ struct subColorData
 	QColor colorAltered;
 };
 
+struct animationFrameData
+{
+	const QString imgOutlinePath; // The outline image for the animation frame.
+	QString imgFillPath; // If empty, we use default fill for animation, but alternate can be specified by frame here.
+};
+
+struct animationPropertyData
+{
+	const QStringList animationSequence; // Sequence of frames (which can be repeating, ex: 1, 2, 3, 2, 1).
+	const int duration; // How long the animation lasts in milliseconds.
+	const bool animateOutline; // Whether outline frames should be looked for and animated.
+	const bool animateFill; // Whether fill frames should be looked for and animated.
+	const bool repeating; // Whether animation should be repeating (ex: blinking eyes), or only play once when triggered.
+	const std::pair<int, int> repeatingTimeRange; // How frequently animation should repeat in random range.
+	const QEasingCurve::Type easingCurve; // See QEasingCurve documentation for details. Default is linear.
+};
+
 struct assetsData
 {
 	const QString imgFilename; // We use this for saving/loading by filename of an img part.
@@ -63,6 +82,9 @@ struct assetsData
 	bool btnAssetChosen = false;
 	std::map<QString, subColorData> subColorsMap;
 	QStringList subColorsKeyList; // Used to quickly populate the dropdown list.
+	std::vector<animationFrameData> animationFrameList; // Image frames for the animation.
+	std::vector <animationPropertyData> animationPropertiesList;
+	std::unique_ptr<QPropertyAnimation> animation = std::make_unique<QPropertyAnimation>();
 };
 
 struct componentDataSettings
@@ -116,13 +138,14 @@ struct componentUiData
 	QString btnSwapComponentChosenStyle;
 	QString btnPickColorStyle;
 	bool btnComponentChosen = false;
-	std::unique_ptr<QGraphicsPixmapItem> item = std::make_unique<QGraphicsPixmapItem>(nullptr);
+	std::unique_ptr<PixmapItemAnimatable> item = std::make_unique<PixmapItemAnimatable>(nullptr);
 	std::unique_ptr<QPushButton> btnSwapComponent = std::make_unique<QPushButton>(nullptr);
 	std::unique_ptr<QPushButton> btnPickColor = std::make_unique<QPushButton>(nullptr);
 	std::unique_ptr<QMenu> contextMenuForBtnPickColor = std::make_unique<QMenu>();
 	std::unique_ptr<QAction> actionCopyColor = std::make_unique<QAction>("Copy Color");
 	std::unique_ptr<QAction> actionPasteColor = std::make_unique<QAction>("Paste Color");
 	std::unique_ptr<QAction> actionApplyColorToAllInSet = std::make_unique<QAction>("Apply Current Color to All In Set");
+	std::unique_ptr<QTimer> animationRepeatingTimer = std::make_unique<QTimer>();
 };
 
 struct poseData
@@ -984,7 +1007,8 @@ const std::map<ComponentType, componentDataSettings> componentTypeMapForElf =
 const std::map<PoseType, QString> poseTypeMap =
 {
 	{ PoseType::FRONT_FACING, "Front Facing" },
-	{ PoseType::BACK_FACING, "Back Facing" }
+	{ PoseType::BACK_FACING, "Back Facing" },
+	{ PoseType::FRONT_STANDING, "Front Standing" }
 };
 
 const std::map<GenderType, QString> genderTypeMap =

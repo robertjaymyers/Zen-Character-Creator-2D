@@ -93,6 +93,7 @@
     <ClCompile Include="CharacterCreator2d.cpp" />
     <ClCompile Include="GraphicsDisplay.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PixmapItemAnimatable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="CharacterCreator2d.h" />
@@ -107,6 +108,7 @@
     <QtMoc Include="GraphicsDisplay.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="PixmapItemAnimatable.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="theme.h" />
   </ItemGroup>

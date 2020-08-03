@@ -29,10 +29,20 @@ This file is part of Zen Character Creator 2D.
 // It also means that you can concept out parts as a whole picture in an image editor, with layers,
 // and then simply hide the layers that don't belong to the part when you're ready to save it for usage in the program.
 
+QVariant myPixmapInterpolator(const QPixmap &start, const QPixmap &end, qreal progress)
+{
+	if (progress < 1.0)
+		return start;
+	else
+		return end;
+}
+
 CharacterCreator2d::CharacterCreator2d(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+
+	qRegisterAnimationInterpolator<QPixmap>(myPixmapInterpolator);
 
 	ui.centralWidget->setLayout(baseLayout.get());
 	baseLayout.get()->setMargin(0);
