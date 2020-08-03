@@ -744,14 +744,16 @@ GraphicsDisplay::GraphicsDisplay(QWidget* parent, int width, int height)
 			componentUi.second.actionPasteColor->setIcon(QIcon(pickerPasteColorIcon));
 
 			connect(componentUi.second.animationRepeatingTimer.get(), &QTimer::timeout, this, [&]() {
-				if (assetCurrentSecond().animation.get()->state() == QAbstractAnimation::State::Stopped)
-					assetCurrentSecond().animation.get()->start();
+				auto& componentCurrentLocal = poseCurrentSecond().componentMap.at(componentUi.first);
+				auto& assetCurrentLocal = componentCurrentLocal.assetsMap.at(componentCurrentLocal.displayedAssetKey);
+				if (assetCurrentLocal.animation.get()->state() == QAbstractAnimation::State::Stopped)
+					assetCurrentLocal.animation.get()->start();
 				componentUi.second.animationRepeatingTimer->setInterval
 				(
 					getRandomIntInRange
 					(
-						assetCurrentSecond().animationPropertiesList[0].repeatingTimeRange.first,
-						assetCurrentSecond().animationPropertiesList[0].repeatingTimeRange.second
+						assetCurrentLocal.animationPropertiesList[0].repeatingTimeRange.first,
+						assetCurrentLocal.animationPropertiesList[0].repeatingTimeRange.second
 					)
 				);
 			});
