@@ -1900,6 +1900,8 @@ void GraphicsDisplay::removeCurrentSpeciesFromScene()
 {
 	for (auto& componentUi : speciesCurrentSecond().componentUiMap)
 	{
+		componentUi.second.animationRepeatingTimer.get()->stop();
+
 		if (componentUi.second.settings.partHasBtnSwap)
 		{
 			setChosen(false, componentUi.second);
